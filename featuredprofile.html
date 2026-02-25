@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boost Your Visibility | Hitaishi Careers</title>
+    <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --secondary: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --success: #10b981;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            padding-top: 70px; /* Account for fixed navbar */
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+        }
+        
+        .text-primary {
+            color: var(--primary) !important;
+        }
+        
+        .text-success {
+            color: var(--success) !important;
+        }
+
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Features Section */
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        /* Comparison Section */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .comparison-table thead th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .comparison-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+        
+        .comparison-table tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .comparison-table .highlight {
+            background-color: #eef2ff;
+            font-weight: 600;
+        }
+        
+        .check-icon {
+            color: var(--success);
+        }
+        
+        /* Testimonials */
+        .testimonial-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* CTA Section */
+        .cta {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+        }
+        
+        .pricing-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 30px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .pricing-card.popular::before {
+            content: "Most Popular";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-bottom-left-radius: 12px;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+        
+        /* FAQ Section */
+        .faq-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+        
+        .faq-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .faq-answer {
+            color: var(--gray);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .faq-answer.active {
+            max-height: 500px;
+        }
+        
+        /* Duration Cards */
+        .duration-card {
+            cursor: pointer;
+        }
+        
+        .duration-content {
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .duration-card.selected .duration-content {
+            border-color: var(--primary);
+            background-color: #eef2ff;
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.1);
+        }
+        
+        /* Profile Comparison */
+        .profile-comparison {
+            position: relative;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .profile-badge {
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: gold;
+            color: var(--dark);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        /* Navbar Styles */
+        .navbar-nav .nav-link {
+            color: white !important;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: #ffcc00 !important;
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #ffcc00;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+        
+        .dropdown-menu {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 10px 0;
+        }
+        
+        .dropdown-item {
+            padding: 8px 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(106, 13, 173, 0.1);
+            color: var(--primary);
+        }
+        
+        /* Section Headings */
+        .section-heading {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .section-heading {
+                font-size: 2rem;
+            }
+            
+            .hero {
+                padding: 60px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Bootstrap Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary fixed-top py-2">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+                    <span class="fw-bold">Hitaishi Careers</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="jobs.html">Jobs</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown">
+                                Services
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                                <li><a class="dropdown-item" href="featuredprofile.html">Featured Profile</a></li>
+                                <li><a class="dropdown-item" href="featuredprofile.html">Profile Highlighter</a></li>
+                                <li><a class="dropdown-item" href="careerbooster.html">Career Booster</a></li>
+                                <li><a class="dropdown-item" href="resumebuild.html">Resume Writing</a></li>
+                                <li><a class="dropdown-item" href="resumebuild.html">Resume Builder</a></li>
+                                <li><a class="dropdown-item" href="network.html">LinkedIn Makeover</a></li>
+                                <li><a class="dropdown-item" href="preparation.html">Mock Interview</a></li>
+                                <li><a class="dropdown-item" href="preparation.html">Interview Preparation</a></li>
+                                <li><a class="dropdown-item" href="preparation.html">Skill Assessment</a></li>
+                                <li><a class="dropdown-item" href="preparation.html">Degree Programs</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="employerlogin.html">Post Jobs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="employer.html">Employers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="uploadResumeLink">Upload Resume</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="tutu.html">Apply with AI</a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Profile / Avatar -->
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="login.html" id="profileLink">
+                                <!-- Default Icon -->
+                                <i id="profile-icon" class="fas fa-user-circle fa-2x text-white"></i>
+                                <!-- User Avatar (hidden by default) -->
+                                <img id="profile-avatar" src="" alt="User Avatar"
+                                    class="rounded-circle d-none" width="40" height="40">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h1 class="display-4 fw-bold mb-4">Stand Out. Get Noticed. Get Hired Faster.</h1>
+                    <p class="lead mb-4">In today's competitive job market, you need more than just a good resume. Our premium visibility features help you rise above the crowd and get the attention you deserve from top employers.</p>
+                    <a href="#pricing" class="btn btn-primary btn-lg">Upgrade Now</a>
+                </div>
+                <div class="col-lg-6 text-center" data-aos="fade-left">
+                    <img src="images/candidatespotlight.png" alt="Candidates being spotlighted" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Introduction Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-heading" data-aos="fade-up">The Visibility Challenge</h2>
+            <p class="text-center text-muted mb-5" data-aos="fade-up" data-aos-delay="100">With thousands of candidates applying for the same positions, how do you make sure your profile gets seen by the right employers?</p>
+            
+            <div class="row g-4">
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>Featured Profile</h3>
+                        <p>Get premium placement at the top of search results and employer feeds, with a special badge that shows you're a top candidate.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-highlighter"></i>
+                        </div>
+                        <h3>Profile Highlighter</h3>
+                        <p>Make your profile stand out in listings with special highlighting that draws employer attention to your application.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Profile Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-heading" data-aos="fade-up">Featured Profile</h2>
+            <p class="text-center text-muted mb-5" data-aos="fade-up" data-aos-delay="100">Get the VIP treatment with our premium Featured Profile service.</p>
+            
+            <div class="row g-4 align-items-center ">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h3 class="mb-4">Why Choose Featured Profile?</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span>Appears at the top of search results and employer feeds</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span>Special "Featured" badge on your profile</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span>4x more profile views on average</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span>Priority consideration for matching jobs</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span>Access to exclusive job alerts before others</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span>Enhanced credibility with recruiters and peers</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span>Personalized profile recommendations and tips</span>
+                        </li>
+                    </ul>
+                    <p class="mt-4 fst-italic">"After making my profile Featured, I got 3 interview requests in the first week!" - Priya M., Software Developer</p>
+                    
+                    <p class="mt-4">
+                        Making your profile Featured is more than just visibility—it's about standing out in a competitive job market. Featured members often receive faster responses from recruiters, gain priority for job opportunities, and enjoy tools that make networking and showcasing skills easier than ever.
+                    </p>
+
+                    <div class="mt-4 p-3 bg-light border rounded">
+                        <strong>Tip:</strong> Keep your profile updated regularly to maximize the benefits of being Featured. Add recent projects, skills, and endorsements to attract more employers.
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 text-center" data-aos="fade-left">
+                    <div class="profile-comparison">
+                        <img src="images/normalprofile.png" alt="Normal profile" class="img-fluid rounded shadow-sm">
+                        <div class="profile-badge">Normal Profile</div>
+                    </div>
+                    
+                    <div class="my-4">
+                        <i class="fas fa-arrow-down fa-2x text-primary"></i>
+                    </div>
+                    
+                    <div class="profile-comparison">
+                        <img src="images/featuredprofile.png" alt="Featured profile" class="img-fluid rounded shadow-sm border border-primary">
+                        <div class="profile-badge">Featured Profile</div>
+                        <div class="featured-badge">
+                            <i class="fas fa-star"></i> Featured
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Highlighter Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-heading" data-aos="fade-up">Profile Highlighter</h2>
+            <p class="text-center text-muted mb-5" data-aos="fade-up" data-aos-delay="100">Make your profile impossible to ignore with our attention-grabbing highlighter.</p>
+            
+            <div class="row g-4 align-items-center gap-30">
+                <div class="col-lg-4 text-center" data-aos="fade-right">
+                    <div class="profile-comparison">
+                        <img src="images/normalprofile.png" alt="Normal profile in listing" class="img-fluid rounded shadow-sm">
+                        <div class="profile-badge">Normal</div>
+                    </div>
+                    
+                    <div class="my-4">
+                        <i class="fas fa-arrow-down fa-2x text-primary"></i>
+                    </div>
+                    
+                    <div class="profile-comparison">
+                        <img src="images/featuredprofile.png" alt="Highlighted profile in listing" class="img-fluid rounded shadow-sm border-start border-4 border-primary">
+                        <div class="profile-badge">Highlighted</div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6" data-aos="fade-left">
+                    <h3 class="mb-4">When to Use Profile Highlighter</h3>
+                    <p>The Profile Highlighter is perfect for:</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span><strong>New graduates</strong> with limited experience who need to stand out</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span><strong>Career changers</strong> transitioning to a new industry</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span><strong>Active job seekers</strong> applying to multiple positions</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span><strong>Anyone</strong> who wants to increase their profile views</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span><strong>Freelancers</strong> looking to attract new clients quickly</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span><strong>Professionals</strong> seeking a promotion or internal opportunities</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <span><strong>Networkers</strong> who want to make a strong impression on potential collaborators</span>
+                        </li>
+                    </ul>
+                    
+                    <p class="mt-4 fst-italic">"The highlighter made my profile stand out so much that recruiters started reaching out to me first!" - Rahul K., Marketing Professional</p>
+                    
+                    <p class="mt-4">
+                        Using the Profile Highlighter ensures your profile gets noticed in a competitive landscape. Whether you're looking for your first job, switching careers, or expanding your professional network, highlighted profiles consistently gain more visibility, leading to faster responses and better opportunities.
+                    </p>
+
+                    <div class="mt-4 p-3 bg-light border rounded">
+                        <strong>Pro Tip:</strong> Combine the highlighter with recent achievements and updated skills to maximize recruiter engagement. Highlighting works best when your profile is current and complete.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-heading" data-aos="fade-up">Choose Your Visibility Boost</h2>
+            <p class="text-center text-muted mb-5" data-aos="fade-up" data-aos-delay="100">Compare our visibility options to find the perfect fit for your job search needs.</p>
+            
+            <div class="table-responsive" data-aos="fade-up" data-aos-delay="200">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Free Profile</th>
+                            <th>Profile Highlighter</th>
+                            <th>Featured Profile</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-start fw-bold">Search Placement</td>
+                            <td>Standard</td>
+                            <td>Standard</td>
+                            <td class="highlight">Top of Results</td>
+                        </tr>
+                        <tr>
+                            <td class="text-start fw-bold">Profile Appearance</td>
+                            <td>Standard</td>
+                            <td class="highlight">Highlighted in Listings</td>
+                            <td>Standard with Badge</td>
+                        </tr>
+                        <tr>
+                            <td class="text-start fw-bold">Average Profile Views</td>
+                            <td>1x</td>
+                            <td>2-3x</td>
+                            <td class="highlight">4-5x</td>
+                        </tr>
+                        <tr>
+                            <td class="text-start fw-bold">Special Badge</td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td class="highlight"><i class="fas fa-check check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="text-start fw-bold">Priority Consideration</td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                            <td class="highlight"><i class="fas fa-check check-icon"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-heading" data-aos="fade-up">How It Works</h2>
+            <p class="text-center text-muted mb-5" data-aos="fade-up" data-aos-delay="100">Getting more visibility is quick and easy with Hitaishi Careers.</p>
+            
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <h3>1. Login</h3>
+                        <p>Access your Hitaishi Careers account and go to your profile settings.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <h3>2. Choose Your Feature</h3>
+                        <p>Select either Profile Highlighter or Featured Profile based on your needs.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>3. Get Noticed</h3>
+                        <p>Your profile will be instantly upgraded and start getting more attention.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="500">
+                <p class="mb-3">Choose your preferred duration:</p>
+                <div class="row justify-content-center g-4">
+                    <div class="col-sm-6 col-md-3">
+                        <div class="duration-card" data-duration="week">
+                            <div class="duration-content">
+                                <h4 class="mb-2">1 Week</h4>
+                                <p class="price">₹199</p>
+                                <p class="small text-muted">Perfect for short-term job search boosts</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-6 col-md-3">
+                        <div class="duration-card" data-duration="month">
+                            <div class="duration-content">
+                                <h4 class="mb-2">1 Month</h4>
+                                <p class="price">₹499</p>
+                                <p class="small text-muted">Great for active job seekers</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-6 col-md-3">
+                        <div class="duration-card selected" data-duration="3months">
+                            <div class="duration-content position-relative">
+                                <span class="position-absolute top-0 end-0 badge bg-success">Best Value</span>
+                                <h4 class="mb-2">3 Months</h4>
+                                <p class="price">₹1299</p>
+                                <p class="small text-muted">Save ₹498 compared to monthly</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-6 col-md-3">
+                        <div class="duration-card" data-duration="6months">
+                            <div class="duration-content">
+                                <h4 class="mb-2">6 Months</h4>
+                                <p class="price">₹2299</p>
+                                <p class="small text-muted">Ideal for extended job searches</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-heading" data-aos="fade-up">Frequently Asked Questions</h2>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+                    <div class="faq-item">
+                        <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            <span>Can I use both Featured Profile and Profile Highlighter at the same time?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer collapse" id="faq1">
+                            <p>Yes! You can absolutely use both services simultaneously for maximum visibility. Many of our most successful users combine both features to get the benefits of top placement in search results along with the visual highlighting that makes their profile stand out in listings.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            <span>Will this guarantee me a job?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer collapse" id="faq2">
+                            <p>While we can't guarantee you'll get a job (that ultimately depends on your qualifications and interview performance), our visibility features significantly increase your chances by ensuring more employers see your profile. On average, users of these features receive 3-5x more interview requests.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            <span>How do I remove the highlight or featured status?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer collapse" id="faq3">
+                            <p>You can remove these features at any time through your account settings. Simply go to the "Profile Visibility" section and toggle off the features you no longer want. Any remaining time on your subscription will be paused in case you want to reactivate later.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq4">
+                            <span>Can I get a refund if I'm not satisfied?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer collapse" id="faq4">
+                            <p>We offer a 7-day money-back guarantee if you're not satisfied with the results. Just contact our support team within 7 days of purchase for a full refund.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq5">
+                            <span>How long does it take to see results?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer collapse" id="faq5">
+                            <p>Most users see increased profile views within 24-48 hours, though the exact timing depends on when employers in your field are actively searching for candidates. We recommend keeping the features active for at least 2 weeks to maximize your visibility.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-5" style="background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);">
+        <div class="container">
+            <h2 class="section-heading" data-aos="fade-up">Success Stories</h2>
+            <p class="text-center text-muted mb-5" data-aos="fade-up" data-aos-delay="100">Hear from job seekers who boosted their visibility and got results.</p>
+            
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote fst-italic mb-4">
+                            "After making my profile Featured, I went from getting maybe 1-2 views per week to 10-15 views in the first few days. I landed two interviews in my first week and accepted an offer with a 25% salary increase!"
+                        </div>
+                        <div class="testimonial-author d-flex align-items-center">
+                            <img src="https://www.cinejosh.com/newsimg/newsmainimg/buttabomma-heroine-anikha-surendran-interview_b_1901230516.jpg" alt="Anika Patel" class="rounded-circle me-3" width="50" height="50">
+                            <div>
+                                <h5 class="mb-0">Anika Patel</h5>
+                                <p class="text-muted mb-0">Product Manager, Bangalore</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote fst-italic mb-4">
+                            "As a recent graduate with no experience, I was worried my profile would get lost. The Highlighter made such a difference - recruiters told me my profile caught their eye immediately. I got my first job within 3 weeks!"
+                        </div>
+                        <div class="testimonial-author d-flex align-items-center">
+                            <img src="https://www.azbpartners.com/wp-content/uploads/2021/08/Rohan-Bagai-Website-New.jpg" alt="Rohan Sharma" class="rounded-circle me-3" width="50" height="50">
+                            <div>
+                                <h5 class="mb-0">Rohan Sharma</h5>
+                                <p class="text-muted mb-0">Junior Developer, Pune</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote fst-italic mb-4">
+                            "I used both features while switching careers from finance to tech. The combination of being at the top of searches AND highlighted in results got me twice as many interviews as my colleagues making the same transition."
+                        </div>
+                        <div class="testimonial-author d-flex align-items-center">
+                            <img src="https://images.filmibeat.com/img/popcorn/profile_photos/neha-gupta-20230530172745-57568.jpg" alt="Neha Gupta" class="rounded-circle me-3" width="50" height="50">
+                            <div>
+                                <h5 class="mb-0">Neha Gupta</h5>
+                                <p class="text-muted mb-0">Data Analyst, Delhi</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="500">
+                <h3 class="mb-3">Employers Notice the Difference</h3>
+                <p class="mb-2">"When we're reviewing dozens of profiles, the highlighted ones naturally draw our attention first. And we always check the Featured profiles at the top - they're consistently high-quality candidates."</p>
+                <p class="fw-bold">- Rajesh Kumar, Talent Acquisition at TechSolutions Inc.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="cta py-5" id="pricing">
+        <div class="container">
+            <h2 class="text-white mb-4" data-aos="fade-up">Ready to Boost Your Visibility?</h2>
+            <p class="text-white-50 mb-5" data-aos="fade-up" data-aos-delay="100">Choose the option that's right for you and start getting noticed by top employers today.</p>
+            
+            <div class="row justify-content-center g-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-card">
+                        <h3 class="mb-4" style="color: #000;">Profile Highlighter</h3>
+                        <p class="text-muted mb-4">Make your profile stand out in search results</p>
+                        <div class="price">₹499</div>
+                        <p class="text-muted mb-4">per month</p>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-check text-success me-2"></i> Highlighted in search results</li>
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-check text-success me-2"></i> 2-3x more profile views</li>
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-check text-success me-2"></i> Priority consideration</li>
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-times text-muted me-2"></i> Top placement in searches</li>
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-times text-muted me-2"></i> Featured badge</li>
+                        
+                        </ul>
+                        <button class="btn btn-outline-primary w-100">Add to Profile</button>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="pricing-card popular">
+                        <h3 class="mb-4" style="color: #000;">Featured Profile</h3>
+                        <p class="text-muted mb-4">Premium placement with special badge</p>
+                        <div class="price">₹1299</div>
+                        <p class="text-muted mb-4">for 3 months</p>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-check text-success me-2"></i> Top of search results</li>
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-check text-success me-2"></i> Featured badge on profile</li>
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-check text-success me-2"></i> 4-5x more profile views</li>
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-check text-success me-2"></i> Priority consideration</li>
+                            <li class="mb-2" style="color: #000;"><i class="fas fa-check text-success me-2"></i> Highlighted in listings</li>
+                        </ul>
+                        <button class="btn btn-primary w-100">Add to Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-white py-5">
+        <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+            <div class="mb-4">
+                <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+                <span class="fw-bold fs-4">Hitaishi Careers</span>
+            </div>
+            <p class="mb-4">Connecting talented professionals with their dream jobs since 2022. Our mission is to make job searching efficient and effective for everyone.</p>
+            <div class="d-flex gap-3">
+                <a href="#" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+            </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-6">
+            <h5 class="mb-4">Quick Links</h5>
+            <ul class="list-unstyled">
+                <li class="mb-2"><a href="index.html" class="text-white-50">Home</a></li>
+                <li class="mb-2"><a href="jobs.html" class="text-white-50">Browse Jobs</a></li>
+                <li class="mb-2"><a href="employer.html" class="text-white-50">For Employers</a></li>
+                <li class="mb-2"><a href="about.html" class="text-white-50">About Us</a></li>
+                <li class="mb-2"><a href="contact.html" class="text-white-50">Contact</a></li>
+            </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+            <h5 class="mb-4">Job Seeker Resources</h5>
+            <ul class="list-unstyled">
+                <li class="mb-2"><a href="resumebuild.html" class="text-white-50">Resume Builder</a></li>
+                <li class="mb-2"><a href="preparation.html" class="text-white-50">Interview Tips</a></li>
+                <li class="mb-2"><a href="careerbooster.html" class="text-white-50">Career Advice</a></li>
+                <li class="mb-2"><a href="featuredprofile.html" class="text-white-50">Featured Profile</a></li>
+                <li class="mb-2"><a href="tutu.html" class="text-white-50">Apply with AI</a></li>
+            </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+            <h5 class="mb-4">Contact Us</h5>
+            <ul class="list-unstyled">
+                <li class="mb-3 d-flex align-items-start">
+                <i class="fas fa-map-marker-alt me-3 mt-1"></i>
+                <span class="text-white-50">985 pragathi nagar, Pragathi Nagar, Hyderabad, TS 500090</span>
+                </li>
+                <li class="mb-3 d-flex align-items-center">
+                <i class="fas fa-phone me-3"></i>
+                <a href="tel:+919876543210" class="text-white-50">+91 99087 93602</a>,  
+                <a href="tel:+919876543210" class="text-white-50">+91 87901 70525</a>
+                </li>
+                <li class="mb-3 d-flex align-items-center">
+                <i class="fas fa-envelope me-3"></i>
+                <a href="mailto:info@hitashicareers.com" class="text-white-50">info@hitashicareers.com</a>
+                </li>
+            </ul>
+            </div>
+        </div>
+        
+        <hr class="my-5">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+            <p class="mb-0">&copy; 2025 Hitaishi Careers. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+            <a href="PrivacyPolicy.html" class="text-white-50 me-3">Privacy Policy</a>
+            <a href="Terms-Conditions.html" class="text-white-50 me-3">Terms of Service</a>
+            <a href="cookiesPolicy.html" class="text-white-50">Cookie Policy</a>
+            </div>
+        </div>
+        </div>
+        <style>
+            footer {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+        
+        footer a {
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: var(--secondary-color) !important;
+        }
+        </style>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS animation library
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+        
+        // Duration selection functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const durationCards = document.querySelectorAll('.duration-card');
+            
+            durationCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove selected class from all cards
+                    durationCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Add selected class to clicked card
+                    this.classList.add('selected');
+                    
+                    // Update pricing based on selection (in a real app, this would update the prices)
+                    const duration = this.getAttribute('data-duration');
+                    console.log(`Selected duration: ${duration}`);
+                });
+            });
+            
+            // FAQ toggle functionality
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function() {
+                    const target = this.getAttribute('data-bs-target');
+                    const answer = document.querySelector(target);
+                    
+                    // Toggle active class for animation
+                    if (answer.classList.contains('show')) {
+                        answer.classList.remove('active');
+                    } else {
+                        // Close all other open FAQs
+                        document.querySelectorAll('.faq-answer').forEach(ans => {
+                            ans.classList.remove('active');
+                        });
+                        answer.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

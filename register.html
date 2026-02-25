@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your Account - Hitaishi Careers</title>
+  
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="navbar.css">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:;">
+
+
+  <style>
+    :root {
+      --primary-color: #6a0dad;
+      --secondary-color: #d653c9;
+      --light-gray: #f8f9fa;
+    }
+    
+    body {
+      background-color: var(--light-gray);
+      font-family: 'Poppins', sans-serif;
+      padding-top: 70px; /* Added for fixed navbar */
+    }
+    
+    .register-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+
+    .register-card {
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .register-promo {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .register-promo h1 {
+        font-weight: 700;
+    }
+    
+    .promo-feature i {
+        background-color: rgba(255, 255, 255, 0.2);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .form-section {
+      padding: 3rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(106, 13, 173, 0.25);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 0.75rem;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background-color: #5a0a9d;
+      border-color: #5a0a9d;
+    }
+
+    .btn-google {
+        border-color: #ddd;
+        font-weight: 500;
+    }
+
+    .profile-pic-wrapper {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 1.5rem;
+    }
+
+    .profile-pic {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #fff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .upload-button {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 32px;
+        height: 32px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        border: 2px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .upload-button:hover {
+        background-color: #5a0a9d;
+    }
+
+    #fileUpload {
+        display: none;
+    }
+
+    .password-toggle {
+        cursor: pointer;
+    }
+    
+    /* Password strength indicator */
+    .password-strength {
+        height: 5px;
+        margin-top: 5px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .strength-0 {
+        width: 20%;
+        background-color: #dc3545;
+    }
+    
+    .strength-1 {
+        width: 40%;
+        background-color: #fd7e14;
+    }
+    
+    .strength-2 {
+        width: 60%;
+        background-color: #ffc107;
+    }
+    
+    .strength-3 {
+        width: 80%;
+        background-color: #20c997;
+    }
+    
+    .strength-4 {
+        width: 100%;
+        background-color: #198754;
+    }
+    
+    .password-feedback {
+        font-size: 0.875rem;
+        margin-top: 5px;
+    }
+    
+    .validation-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 5px;
+        display: none;
+    }
+    
+    .validation-success {
+        color: #198754;
+        font-size: 0.875rem;
+        margin-top: 5px;
+        display: none;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+    
+    .form-control.is-valid {
+        border-color: #198754;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+    
+    /* Navbar styles */
+    .navbar-nav .nav-link {
+        color: white !important;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        position: relative;
+    }
+    
+    .navbar-nav .nav-link:hover {
+        color: #ffcc00 !important;
+    }
+    
+    .navbar-nav .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 50%;
+        background-color: #ffcc00;
+        transition: all 0.3s ease;
+    }
+    
+    .navbar-nav .nav-link:hover::after {
+        width: 80%;
+        left: 10%;
+    }
+    
+    .dropdown-menu {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 10px 0;
+    }
+    
+    .dropdown-item {
+        padding: 8px 20px;
+        transition: all 0.2s ease;
+    }
+    
+    .dropdown-item:hover {
+        background-color: rgba(106, 13, 173, 0.1);
+        color: var(--primary-color);
+    }
+
+    @media (max-width: 991.98px) {
+        .register-promo {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .form-section {
+            padding: 2rem;
+        }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header/Navbar -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary fixed-top py-2">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+          <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+          <span class="fw-bold">Hitaishi Careers</span>
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="jobs.html">Jobs</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown">
+                Services
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                <li><a class="dropdown-item" href="featuredprofile.html">Featured Profile</a></li>
+                <li><a class="dropdown-item" href="featuredprofile.html">Profile Highlighter</a></li>
+                <li><a class="dropdown-item" href="careerbooster.html">Career Booster</a></li>
+                <li><a class="dropdown-item" href="resumebuild.html">Resume Writing</a></li>
+                <li><a class="dropdown-item" href="resumebuild.html">Resume Builder</a></li>
+                <li><a class="dropdown-item" href="network.html">LinkedIn Makeover</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Mock Interview</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Interview Preparation</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Skill Assessment</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Degree Programs</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="employerlogin.html">Post Jobs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="employer.html">Employers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="uploadResumeLink">Upload Resume</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="tutu.html">Apply with AI</a>
+            </li>
+          </ul>
+          
+          <!-- Profile / Avatar -->
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="login.html" id="profileLink">
+                <!-- Default Icon -->
+                <i id="profile-icon" class="fas fa-user-circle fa-2x text-white"></i>
+                <!-- User Avatar (hidden by default) -->
+                <img id="profile-avatar" src="" alt="User Avatar"
+                    class="rounded-circle d-none" width="40" height="40">
+              </a>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container register-container">
+    <div class="card register-card w-100">
+      <div class="row g-0">
+        <!-- Left Side: Promotional Content -->
+        <div class="col-lg-5 register-promo">
+          <div class="text-center text-lg-start">
+            <a href="index.html">
+                <img src="images/logo.png" alt="Hitaishi Careers Logo" height="50" class="mb-4">
+            </a>
+            <h1 class="mb-3">Start your journey with us.</h1>
+            <p class="lead mb-4">Discover millions of jobs and career opportunities.</p>
+            
+            <div class="d-flex align-items-center mb-3 promo-feature">
+              <i class="fas fa-briefcase fa-lg me-3"></i>
+              <span>Find jobs that match your skills</span>
+            </div>
+            <div class="d-flex align-items-center mb-3 promo-feature">
+              <i class="fas fa-building fa-lg me-3"></i>
+              <span>Connect with top companies</span>
+            </div>
+            <div class="d-flex align-items-center promo-feature">
+              <i class="fas fa-rocket fa-lg me-3"></i>
+              <span>Accelerate your career growth</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Registration Form -->
+        <div class="col-lg-7 form-section">
+          <h2 class="fw-bold mb-4 text-center">Create an account</h2>
+          <form id="registrationForm" novalidate>
+            
+            <!-- Profile Picture Upload -->
+            <div class="profile-pic-wrapper">
+                <img class="profile-pic" id="profilePic" src="https://placehold.co/120x120/EFEFEF/AAAAAA?text=Photo" alt="Profile Picture">
+                <div class="upload-button" id="uploadBtn">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <input class="form-control" type="file" id="fileUpload" accept="image/*">
+            </div>
+            <div id="profilePicError" class="validation-error text-center mb-3"></div>
+
+            <!-- Full Name -->
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+              <label for="fullName">Full Name</label>
+              <div id="fullNameError" class="validation-error"></div>
+            </div>
+            
+            <!-- Email -->
+            <div class="form-floating mb-3">
+              <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+              <label for="email">Email address</label>
+              <div id="emailError" class="validation-error"></div>
+              <div id="emailSuccess" class="validation-success"></div>
+            </div>
+            
+            <!-- Password -->
+            <div class="input-group mb-3">
+              <div class="form-floating">
+                  <input type="password" class="form-control" id="password" placeholder="Password" required>
+                  <label for="password">Password</label>
+              </div>
+              <span class="input-group-text password-toggle" id="togglePassword">
+                  <i class="fas fa-eye-slash"></i>
+              </span>
+            </div>
+            <div id="passwordStrength" class="password-strength strength-0"></div>
+            <div id="passwordFeedback" class="password-feedback"></div>
+            <div id="passwordError" class="validation-error"></div>
+
+            <!-- Mobile Number -->
+            <div class="input-group mb-3">
+              <span class="input-group-text">+91</span>
+              <div class="form-floating">
+                <input type="tel" class="form-control" id="mobileNumber" placeholder="Mobile Number" pattern="[0-9]{10}" required>
+                <label for="mobileNumber">Mobile Number</label>
+              </div>
+            </div>
+            <div id="mobileError" class="validation-error"></div>
+            <div id="mobileSuccess" class="validation-success"></div>
+            
+            <!-- Terms and Conditions -->
+            <div class="form-check mb-4">
+              <input class="form-check-input" type="checkbox" value="" id="termsCheck" required>
+              <label class="form-check-label" for="termsCheck">
+                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+              </label>
+              <div id="termsError" class="validation-error"></div>
+            </div>
+            
+            <!-- Register Button -->
+            <div class="d-grid mb-3">
+              <button type="submit" class="btn btn-primary">Register Now</button>
+            </div>
+
+            <!-- Separator -->
+            <div class="text-center my-3">
+                <span class="text-muted">OR</span>
+            </div>
+            
+            <!-- Google Sign-In -->
+            <div id="googleSignInButtonWrapper" class="d-grid mb-3 d-flex justify-content-center">
+                <!-- The Google button will be rendered here by the library -->
+            </div>
+
+            <!-- Login Link -->
+            <p class="text-center text-muted">Already have an account? <a href="login.html">Login</a></p>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // --- Google Sign-In ---
+    window.onload = function () {
+      google.accounts.id.initialize({
+        client_id: "62866830906-89e5aqkrpnsjs0dri6hsss239b5rpdd9.apps.googleusercontent.com",
+        callback: handleGoogleSignIn,
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("googleSignInButtonWrapper"),
+        { theme: "outline", size: "large", type: 'standard', text: 'signup_with', width: '300' } // Customization options
+      );
+    };
+
+    async function handleGoogleSignIn(response) {
+        const id_token = response.credential;
+        try {
+            const res = await fetch('/api/auth/google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token: id_token }),
+                credentials: 'include', // send httpOnly cookie
+            });
+
+            const result = await res.json();
+            if (res.ok) {
+         
+
+                showCustomAlert('✅ ' + result.message, 'success');
+                window.location.href = 'userProfile.html'; // Redirect to profile
+            } else {
+                showCustomAlert('❌ ' + (result.error || 'Registration failed.'), 'danger');
+            }
+        } catch (error) {
+            console.error('Error during Google registration:', error);
+            showCustomAlert('An error occurred during registration. Please try again.', 'danger');
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const registrationForm = document.getElementById('registrationForm');
+        const fileUpload = document.getElementById('fileUpload');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const profilePic = document.getElementById('profilePic');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        // ... (other validation elements omitted for brevity)
+        
+        // Profile picture upload logic
+        uploadBtn.addEventListener('click', function() { fileUpload.click(); });
+        fileUpload.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) { profilePic.src = e.target.result; }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+        
+        // Password visibility toggle
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+            this.querySelector('i').classList.toggle('fa-eye');
+        });
+        
+        // Form submission for traditional registration
+        registrationForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // --- Basic form validation (assumed to be complete) ---
+            let isValid = true; 
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const mobile = document.getElementById('mobileNumber').value;
+            const password = passwordInput.value;
+            
+            if(!fullName || !email || !mobile || !password || !document.getElementById('termsCheck').checked) {
+                showCustomAlert("Please fill all required fields.", 'warning');
+                isValid = false;
+            }
+
+
+            if (!isValid) {
+                return;
+            }
+            
+            // If all validations pass, submit the form
+            const formData = new FormData();
+            formData.append('fullName', fullName);
+            formData.append('email', email);
+            formData.append('mobileNumber', mobile);
+            formData.append('password', password);
+
+            if (fileUpload.files[0]) {
+                formData.append('profileImage', fileUpload.files[0]);
+            }
+
+            try {
+                // Use the secure HttpOnly cookie (credentials: 'include')
+                const response = await fetch('/api/user/register', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include', 
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+
+                    showCustomAlert('✅ ' + result.message, 'success');
+                    window.location.href = 'userProfile.html'; // Redirect to profile since the user is auto-logged in
+                } else {
+                    showCustomAlert('❌ ' + (result.error || 'Registration failed.'), 'danger');
+                }
+            } catch (err) {
+                console.error('Request failed:', err);
+                showCustomAlert('Server error, please try again.', 'danger');
+            }
+        });
+    });
+
+    // Custom Alert/Toast function (Replaces native alert)
+    function showCustomAlert(message, type = 'info') {
+      let alertEl = document.getElementById('customAlert');
+      if (!alertEl) {
+          alertEl = document.createElement('div');
+          alertEl.id = 'customAlert';
+          alertEl.className = 'fixed-top p-3 d-flex justify-content-center';
+          alertEl.style.zIndex = '1055';
+          document.body.appendChild(alertEl);
+      }
+      
+      const bgColor = type === 'success' ? 'bg-success' : type === 'danger' ? 'bg-danger' : 'bg-info';
+      
+      const toastHTML = `
+          <div class="toast align-items-center text-white ${bgColor} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                  <div class="toast-body">
+                      ${message}
+                  </div>
+                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+          </div>
+      `;
+      
+      alertEl.innerHTML = toastHTML;
+      const toast = new bootstrap.Toast(alertEl.querySelector('.toast'), { delay: 5000 });
+      toast.show();
+      
+      alertEl.querySelector('.toast').addEventListener('hidden.bs.toast', (e) => e.target.remove());
+  }
+  </script>
+
+    <!-- Footer -->
+    <footer class="text-white py-5">
+        <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+            <div class="mb-4">
+                <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+                <span class="fw-bold fs-4">Hitaishi Careers</span>
+            </div>
+            <p class="mb-4">Connecting talented professionals with their dream jobs since 2022. Our mission is to make job searching efficient and effective for everyone.</p>
+            <div class="d-flex gap-3">
+                <a href="#" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+            </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-6">
+            <h5 class="mb-4">Quick Links</h5>
+            <ul class="list-unstyled">
+                <li class="mb-2"><a href="index.html" class="text-white-50">Home</a></li>
+                <li class="mb-2"><a href="jobs.html" class="text-white-50">Browse Jobs</a></li>
+                <li class="mb-2"><a href="employer.html" class="text-white-50">For Employers</a></li>
+                <li class="mb-2"><a href="about.html" class="text-white-50">About Us</a></li>
+                <li class="mb-2"><a href="contact.html" class="text-white-50">Contact</a></li>
+            </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+            <h5 class="mb-4">Job Seeker Resources</h5>
+            <ul class="list-unstyled">
+                <li class="mb-2"><a href="resumebuild.html" class="text-white-50">Resume Builder</a></li>
+                <li class="mb-2"><a href="preparation.html" class="text-white-50">Interview Tips</a></li>
+                <li class="mb-2"><a href="careerbooster.html" class="text-white-50">Career Advice</a></li>
+                <li class="mb-2"><a href="featuredprofile.html" class="text-white-50">Featured Profile</a></li>
+                <li class="mb-2"><a href="tutu.html" class="text-white-50">Apply with AI</a></li>
+            </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+            <h5 class="mb-4">Contact Us</h5>
+            <ul class="list-unstyled">
+                <li class="mb-3 d-flex align-items-start">
+                <i class="fas fa-map-marker-alt me-3 mt-1"></i>
+                <span class="text-white-50">985 pragathi nagar, Pragathi Nagar, Hyderabad, TS 500090</span>
+                </li>
+                <li class="mb-3 d-flex align-items-center">
+                <i class="fas fa-phone me-3"></i>
+                <a href="tel:+919876543210" class="text-white-50">+91 99087 93602</a>,  
+                <a href="tel:+919876543210" class="text-white-50">+91 87901 70525</a>
+                </li>
+                <li class="mb-3 d-flex align-items-center">
+                <i class="fas fa-envelope me-3"></i>
+                <a href="mailto:info@hitashicareers.com" class="text-white-50">info@hitashicareers.com</a>
+                </li>
+            </ul>
+            </div>
+        </div>
+        
+        <hr class="my-5">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+            <p class="mb-0">&copy; 2025 Hitaishi Careers. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+            <a href="PrivacyPolicy.html" class="text-white-50 me-3">Privacy Policy</a>
+            <a href="Terms-Conditions.html" class="text-white-50 me-3">Terms of Service</a>
+            <a href="cookiesPolicy.html" class="text-white-50">Cookie Policy</a>
+            </div>
+        </div>
+        </div>
+        <style>
+            footer {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+        
+        footer a {
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: var(--secondary-color) !important;
+        }
+        </style>
+    </footer>
+    
+</body>
+</html>

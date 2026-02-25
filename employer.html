@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+
+    <style>
+        /* Base & Layout */
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 260px; background-color: #fff; border-right: 1px solid #dee2e6; padding: 1.5rem; display: flex; flex-direction: column; z-index: 1000; }
+        .sidebar-header .logo { font-size: 1.8rem; font-weight: 700; color: #0d6efd; }
+        .sidebar-header .company-name { font-weight: 600; color: #343a40; }
+        .nav-buttons .nav-btn { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem; border-radius: 0.5rem; color: #495057; font-weight: 500; transition: all 0.2s ease; }
+        .nav-buttons .nav-btn i { font-size: 1.1rem; width: 20px; }
+        .nav-buttons .nav-btn:hover, .nav-buttons .nav-btn.active { background-color: #e9ecef; color: #0d6efd; }
+        .main-content { margin-left: 260px; padding: 2rem; }
+        .content-section { display: none; animation: fadeIn 0.4s ease-out; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .card { border: none; border-radius: 0.75rem; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.07); }
+        .placeholder-text { color: #6c757d; text-align: center; padding: 3rem; }
+        input:read-only { background-color: #e9ecef; cursor: not-allowed; }
+        
+        /* Toast Notifications */
+        #toastContainer { position: fixed; top: 20px; right: 20px; z-index: 1055; display: flex; flex-direction: column; gap: 10px; }
+        .toast-notification { padding: 1rem 1.5rem; border-radius: 0.5rem; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 1rem; opacity: 0; transform: translateX(100%); animation: slideIn 0.5s forwards, fadeOut 0.5s 4.5s forwards; }
+        .toast-notification.success { background-color: #28a745; }
+        .toast-notification.error { background-color: #dc3545; }
+        .toast-notification.warning { background-color: #ffc107; color: #212529;}
+        .toast-notification i { font-size: 1.2rem; }
+        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateX(100%);} }
+
+        /* Skills Input Tags */
+        .skills-input-container { position: relative; }
+        .skills-input-wrapper { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 0.375rem; }
+        .skill-tag { display: flex; align-items: center; background-color: #e9ecef; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.9rem; }
+        .skill-tag .remove-skill { margin-left: 0.5rem; cursor: pointer; border: none; background: none; font-size: 1rem; color: #6c757d; }
+        .skills-input-wrapper input { flex-grow: 1; border: none; outline: none; padding: 0.25rem; }
+        .suggestions-list { position: absolute; top: 100%; left: 0; right: 0; background-color: #fff; border: 1px solid #ced4da; border-top: none; border-radius: 0 0 0.375rem 0.375rem; z-index: 100; max-height: 200px; overflow-y: auto; }
+        .suggestion-item { padding: 0.5rem 1rem; cursor: pointer; }
+        .suggestion-item:hover { background-color: #f1f3f5; }
+
+        /* Applicant Details Layout */
+        .card-header[aria-expanded="true"] .fa-chevron-down { transform: rotate(180deg); }
+        .fa-chevron-down { transition: transform 0.2s ease-in-out; }
+        .border-start-lg { border-left: 1px solid #dee2e6; }
+        @media (max-width: 991.98px) {
+            .border-start-lg { border-left: none; border-top: 1px solid #dee2e6; padding-top: 1.5rem; margin-top: 1.5rem; }
+        }
+        
+        /* Review Section Styling */
+        .review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem 2rem; }
+        .review-item strong { color: #495057; }
+        .review-section-title { font-weight: 600; color: #0d6efd; border-bottom: 2px solid #e9ecef; padding-bottom: 0.5rem; margin-top: 1.5rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div id="toastContainer"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header text-center mb-5">
+            <div class="logo mb-3">WinJob</div>
+            <!-- Logo URL includes a timestamp to force refresh after upload -->
+            <img id="sidebarLogo" src="https://placehold.co/80x80/EFEFEF/AAAAAA&text=Logo" alt="Logo" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover; margin: 0 auto;">
+            <div class="company-name mt-2" id="sidebarCompanyName">Loading...</div>
+        </div>
+        <div class="nav-buttons d-flex flex-column gap-2 flex-grow-1">
+            <button class="nav-btn active" data-section="postJobSection"><i class="fas fa-plus-circle"></i><span>Post a Job</span></button>
+            <button class="nav-btn" data-section="myJobsSection"><i class="fas fa-briefcase"></i><span>My Jobs</span></button>
+            <button class="nav-btn" data-section="applicantsSection"><i class="fas fa-users"></i><span><a href="jobseekers.html" style="text-decoration: none;">Job Seekers</a></span></button>
+            <button class="nav-btn" data-section="updateProfileSection"><i class="fas fa-user-edit"></i><span>Update Profile</span></button>
+        </div>
+        <div class="mt-auto">
+            <button class="nav-btn w-100" id="logoutButton"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <!-- Section for posting a new job -->
+        <section id="postJobSection" class="content-section active">
+            <div class="card">
+                <div class="card-header bg-white py-3"><h5 class="mb-0">Post a New Job Opening</h5></div>
+                <div class="card-body p-4">
+                    <form id="postJobForm">
+                        <div class="row g-3">
+                            <div class="col-md-3"><label for="country" class="form-label">Country</label><input type="text" class="form-control" id="country"></div>
+                            <div class="col-md-3"><label for="state" class="form-label">State</label><input type="text" class="form-control" id="state"></div>
+                            <div class="col-md-3"><label for="city" class="form-label">City</label><input type="text" class="form-control" id="city"></div>
+                            <div class="col-md-3"><label for="zipCode" class="form-label">Zip Code</label><input type="text" class="form-control" id="zipCode"></div>
+                            <hr class="my-3">
+                            <div class="col-md-6"><label for="postJobCompanyName" class="form-label">Company Name</label><input type="text" class="form-control" id="postJobCompanyName" readonly></div>
+                            <div class="col-md-6"><label for="jobTitle" class="form-label">Job Title</label><input type="text" class="form-control" id="jobTitle" required></div>
+                            <div class="col-md-6"><label for="industry" class="form-label">Industry</label><select id="industry" class="form-select" required></select></div>
+                            <div class="col-md-6"><label for="requiredExperience" class="form-label">Required Experience</label><input type="text" class="form-control" id="requiredExperience" placeholder="e.g., 2+ Years"></div>
+                            
+                            <div class="col-md-6"><label for="jobType" class="form-label">Job Type</label><select id="jobType" class="form-select"><option value="Full-time" selected>Full-time</option><option value="Part-time">Part-time</option><option value="Contract">Contract</option><option value="Internship">Internship</option></select></div>
+                            <div class="col-md-6"><label for="workLocation" class="form-label">Work Location</label><select id="workLocation" class="form-select"><option value="In-office">In-office</option><option value="Remote">Remote</option><option value="Hybrid">Hybrid</option></select></div>
+                            
+                            <div class="col-md-3"><label for="salaryMin" class="form-label">Salary Minimum</label><input type="number" class="form-control" id="salaryMin" placeholder="e.g., 80000"></div>
+                            <div class="col-md-3"><label for="salaryMax" class="form-label">Salary Maximum</label><input type="number" class="form-control" id="salaryMax" placeholder="e.g., 120000"></div>
+                            <div class="col-md-2"><label for="salaryCurrency" class="form-label">Currency</label><select id="salaryCurrency" class="form-select"><option value="INR">₹ INR</option><option value="USD">$ USD</option><option value="EUR">€ EUR</option><option value="GBP">£ GBP</option><option value="AED">د.إ AED</option><option value="CAD">C$ CAD</option><option value="AUD">A$ AUD</option></select></div>
+                            <div class="col-md-2"><label for="salaryPeriod" class="form-label">Period</label><select id="salaryPeriod" class="form-select"><option value="Hourly">Hourly</option><option value="Monthly">Monthly</option><option value="Yearly" selected>Yearly</option></select></div>
+                            <div class="col-md-2"><label for="salaryPeriodCount" class="form-label" id="salaryPeriodCountLabel">No. of Years</label><div class="input-group"><button class="btn btn-outline-secondary" type="button" id="decrementPeriodCount">-</button><input type="number" class="form-control text-center" id="salaryPeriodCount" value="1" min="1"><button class="btn btn-outline-secondary" type="button" id="incrementPeriodCount">+</button></div></div>
+                            <hr class="my-3">
+                            <div class="col-md-4"><label for="postedByName" class="form-label">Contact Person</label><input type="text" class="form-control" id="postedByName" required></div>
+                            <div class="col-md-4"><label for="postedByEmail" class="form-label">Contact Email</label><input type="email" class="form-control" id="postedByEmail" required></div>
+                            <div class="col-md-4"><label for="postedByPhone" class="form-label">Contact Mobile</label><input type="tel" class="form-control" id="postedByPhone" readonly></div>
+                            <div class="col-12"><label for="jobDescription" class="form-label">Job Description</label><textarea class="form-control" id="jobDescription" rows="5" required></textarea></div>
+                            <div class="col-12"><label for="responsibilities" class="form-label">Responsibilities</label><textarea class="form-control" id="responsibilities" rows="5" placeholder="List each responsibility on a new line..."></textarea></div>
+                            <div class="col-12"><label class="form-label">Primary Skills</label><div id="requiredSkills" class="skills-input-container"></div></div>
+                            <div class="col-12"><label class="form-label">Secondary Skills</label><div id="additionalSkills" class="skills-input-container"></div></div>
+                        </div>
+                        <div class="mt-4 text-end"><button type="submit" class="btn btn-primary px-4">Review Job</button></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section for reviewing the job before posting -->
+        <section id="reviewJobSection" class="content-section">
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Review Your Job Posting</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div id="reviewContent">
+                        <!-- Job details will be injected here by JS -->
+                    </div>
+                    <div class="mt-4 text-end">
+                        <button type="button" class="btn btn-secondary px-4 me-2" id="editJobBtn">Edit Details</button>
+                        <button type="button" class="btn btn-success px-4" id="confirmPostBtn">Confirm & Post Job</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section for viewing posted jobs -->
+        <section id="myJobsSection" class="content-section">
+            <h3 class="mb-4">My Posted Jobs</h3>
+            <div id="jobsContainer"><p class="placeholder-text">Loading jobs...</p></div>
+        </section>
+
+        <!-- Section for viewing applicants for a job -->
+        <section id="applicantsSection" class="content-section">
+            <button id="backToJobsBtn" class="btn btn-outline-secondary mb-3"><i class="fas fa-arrow-left me-2"></i>Back to Jobs</button>
+            <h3 class="mb-4">Applicants for: <span id="applicantJobTitle" class="text-primary"></span></h3>
+            <div id="applicantsContainer"><p class="placeholder-text">Loading applicants...</p></div>
+        </section>
+
+        <!-- Section for updating company profile -->
+        <section id="updateProfileSection" class="content-section">
+            <div class="card">
+                <div class="card-header bg-white py-3"><h5 class="mb-0">Update Company Profile</h5></div>
+                <div class="card-body p-4">
+                    <form id="updateProfileForm">
+                        <div class="row g-3">
+                            <div class="col-12"><label class="form-label">Company Logo</label><div class="d-flex align-items-center"><img id="logoPreview" src="https://placehold.co/100x100/EFEFEF/AAAAAA&text=Logo" alt="Company Logo" class="me-3 rounded" style="width: 100px; height: 100px; object-fit: cover;"><input type="file" class="form-control" id="companyLogo" accept="image/*"></div></div>
+                            <div class="col-md-6"><label for="companyName" class="form-label">Company Name</label><input type="text" class="form-control" id="companyName" required></div>
+                            <div class="col-md-6"><label for="companyWebsite" class="form-label">Website</label><input type="url" class="form-control" id="companyWebsite"></div>
+                            <div class="col-md-6"><label for="companyEmail" class="form-label">Email</label><input type="email" class="form-control" id="companyEmail" required readonly></div>
+                            <div class="col-md-6"><label for="personName" class="form-label">Contact Person</label><input type="text" class="form-control" id="personName"></div>
+                            <div class="col-md-6"><label for="phoneNumber" class="form-label">Phone Number</label><input type="tel" class="form-control" id="phoneNumber"></div>
+                            <div class="col-md-6"><label for="address" class="form-label">Address</label><input type="text" class="form-control" id="address"></div>
+                            <div class="col-12"><label for="companyDescription" class="form-label">Description</label><textarea class="form-control" id="companyDescription" rows="4"></textarea></div>
+                        </div>
+                        <div class="mt-4 text-end"><button type="submit" class="btn btn-primary px-4">Save Changes</button></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bootstrap JS Bundle for collapse functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 🚨 Check for token on load. If missing, redirect immediately.
+            const token = sessionStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = 'employerlogin.html';
+                return;
+            }
+
+            let currentCompanyProfile = null;
+            let jobDataForReview = null;
+
+            // --- Populate Industry Dropdown ---
+            const industryDropdown = document.getElementById('industry');
+            const industries = [
+                "Information Technology (IT)", "Manufacturing", "Banking", "Healthcare", "Education",
+                "Retail", "Media", "Telecommunications", "Energy", "Real Estate", "Transportation",
+                "Tourism", "Food Industry", "Compliance", "Public Sector", "Recruitment",
+                "Research", "Fitness", "Social Enterprises"
+            ];
+            industryDropdown.innerHTML = '<option value="" selected disabled>Select an Industry</option>' + 
+                industries.map(i => `<option value="${i}">${i}</option>`).join('');
+
+
+            const toastContainer = document.getElementById('toastContainer');
+            const showToast = (message, type = 'success') => {
+                const toast = document.createElement('div');
+                toast.className = `toast-notification ${type}`;
+                let iconClass = 'fas fa-check-circle';
+                if (type === 'error') iconClass = 'fas fa-times-circle';
+                if (type === 'warning') iconClass = 'fas fa-exclamation-triangle';
+                toast.innerHTML = `<i class="${iconClass}"></i><span>${message}</span>`;
+                toastContainer.appendChild(toast);
+                setTimeout(() => { toast.remove(); }, 5000);
+            };
+
+            // 🚨 SECURE DATA FETCHING FUNCTION
+            const fetchData = async (url, options = {}) => {
+                try {
+                    const defaultHeaders = { 
+                        'Authorization': `Bearer ${token}` 
+                    };
+
+                    // Only set Content-Type for JSON if not sending FormData (for file uploads)
+                    if (!(options.body instanceof FormData)) {
+                        defaultHeaders['Content-Type'] = 'application/json';
+                        if (options.body && typeof options.body !== 'string') {
+                            options.body = JSON.stringify(options.body);
+                        }
+                    }
+                    
+                    const response = await fetch(url, { 
+                        ...options, 
+                        headers: { ...defaultHeaders, ...options.headers } 
+                    });
+                    
+                    // 🚨 Critical Security Check: If 401/403, clear token and redirect
+                    if (response.status === 401 || response.status === 403) {
+                        sessionStorage.removeItem('authToken'); // Clear invalid token
+                        showToast("Session expired. Please log in again.", 'error');
+                        setTimeout(() => { window.location.href = 'employerlogin.html'; }, 1000);
+                        return null; 
+                    }
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || errorData.error || `Error: ${response.status}`);
+                    }
+                    
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.indexOf("application/json") !== -1) {
+                         return await response.json();
+                    }
+                    return null;
+                } catch (error) {
+                    console.error('API call failed:', error);
+                    showToast(error.message, 'error');
+                    return null;
+                }
+            };
+            
+            // --- Skills Input Component (Gemini Integration) ---
+            class SkillsInput {
+                constructor(containerId) {
+                    this.container = document.getElementById(containerId);
+                    this.skills = new Set();
+                    this.apiKey = ""; // Empty key, Canvas will inject it
+                    this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${this.apiKey}`;
+                    this._render();
+                }
+                _render() {
+                    this.container.innerHTML = `<div class="skills-input-wrapper">${[...this.skills].map(skill => `<div class="skill-tag">${skill}<button class="remove-skill" data-skill="${skill}">&times;</button></div>`).join('')}<input type="text" placeholder="Add a skill..."></div><div class="suggestions-list" style="display: none;"></div>`;
+                    this._addEventListeners();
+                }
+                _addEventListeners() {
+                    const input = this.container.querySelector('input');
+                    this.container.addEventListener('click', e => { if (e.target.classList.contains('remove-skill')) { this.removeSkill(e.target.dataset.skill); } });
+                    input.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); const skill = input.value.trim(); if (skill) { this.addSkill(skill); input.value = ''; } } });
+                    input.addEventListener('input', e => this.getSuggestions(e.target.value));
+                }
+                async getSuggestions(query) {
+                    const suggestionsList = this.container.querySelector('.suggestions-list');
+                    if (query.length < 2) { suggestionsList.style.display = 'none'; return; }
+                    
+                    suggestionsList.innerHTML = `<div class="suggestion-item text-center text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading...</div>`;
+                    suggestionsList.style.display = 'block';
+
+                    try {
+                        const payload = { contents: [{ parts: [{ text: `Generate a list of 5 technical skills related to "${query}". Return only a comma-separated list.` }] }] };
+                        const response = await fetch(this.apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        const data = await response.json();
+                        
+                        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (!text) { suggestionsList.style.display = 'none'; return; }
+
+                        const suggestions = text.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                        suggestionsList.innerHTML = suggestions.map(s => `<div class="suggestion-item">${s}</div>`).join('');
+                        
+                        suggestionsList.querySelectorAll('.suggestion-item').forEach(item => { 
+                            item.addEventListener('click', () => { 
+                                this.addSkill(item.textContent); 
+                                this.container.querySelector('input').value = ''; 
+                                suggestionsList.style.display = 'none'; 
+                            }); 
+                        });
+                    } catch (error) { 
+                        suggestionsList.style.display = 'none';
+                    }
+                }
+                addSkill(skill) { this.skills.add(skill); this._render(); }
+                removeSkill(skill) { this.skills.delete(skill); this._render(); }
+                getSkills() { return [...this.skills]; }
+                reset() { this.skills.clear(); this._render(); }
+                setSkills(skillsArray) { this.skills = new Set(skillsArray); this._render(); }
+            }
+
+            const requiredSkillsInput = new SkillsInput('requiredSkills');
+            const additionalSkillsInput = new SkillsInput('additionalSkills');
+
+            // --- API Calls ---
+            const fetchCompanyProfile = async () => {
+                const profile = await fetchData(`/api/company/profile`);
+                if (profile) { currentCompanyProfile = profile; renderCompanyProfile(profile); }
+            };
+
+            const fetchJobs = async () => {
+                if (!currentCompanyProfile || !currentCompanyProfile.id) return;
+                const data = await fetchData(`/api/jobs/company/${currentCompanyProfile.id}`);
+                if (data && data.jobs) renderJobs(data.jobs);
+            };
+
+            const renderCompanyProfile = (profile) => {
+                const timestamp = '?t=' + new Date().getTime(); // Force logo refresh
+                const logoUrl = profile.logo_url || 'https://placehold.co/80x80/EFEFEF/AAAAAA&text=Logo';
+                
+                document.getElementById('sidebarCompanyName').textContent = profile.company_name;
+                document.getElementById('sidebarLogo').src = logoUrl + timestamp;
+                document.getElementById('logoPreview').src = logoUrl + timestamp;
+                
+                document.getElementById('companyName').value = profile.company_name || '';
+                document.getElementById('postJobCompanyName').value = profile.company_name || '';
+
+                document.getElementById('companyWebsite').value = profile.website || '';
+                document.getElementById('companyEmail').value = profile.user_email || '';
+                document.getElementById('personName').value = profile.contact_person || '';
+                document.getElementById('phoneNumber').value = profile.contact_phone || '';
+                document.getElementById('address').value = profile.address || '';
+                document.getElementById('companyDescription').value = profile.description || '';
+                
+                document.getElementById('postedByName').value = profile.contact_person || '';
+                document.getElementById('postedByEmail').value = profile.user_email || '';
+                document.getElementById('postedByPhone').value = profile.contact_phone || '';
+            };
+
+            // --- Job Listing Rendering ---
+            const renderJobs = (jobs) => {
+                const container = document.getElementById('jobsContainer');
+                 if (jobs.length === 0) {
+                    container.innerHTML = '<p class="placeholder-text">You have not posted any jobs yet.</p>';
+                    return;
+                }
+                container.innerHTML = jobs.map(job => {
+                    let salaryInfo = '';
+                    if (job.salary_min && job.salary_max) {
+                        const periodCount = job.salary_period_count || 1;
+                        const period = job.salary_period || 'Year';
+                        let periodText = period;
+                        if (periodCount > 1) { periodText = `${periodCount} ${period.replace('ly','s')}`; }
+                        salaryInfo = `<div class="text-success fw-bold mt-1"><small>${job.salary_currency} ${job.salary_min.toLocaleString()} - ${job.salary_max.toLocaleString()} per ${periodText}</small></div>`;
+                    }
+                    
+                    let skills = job.required_skills;
+                    try { if (typeof skills === 'string') skills = JSON.parse(skills); } catch (e) { skills = []; }
+                    const skillsHtml = (skills && Array.isArray(skills)) ? skills.map(skill => `<span class="badge bg-secondary me-1">${skill}</span>`).join('') : '';
+
+                    return `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                           <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title mb-1">${job.job_title}</h5>
+                                    <h6 class="card-subtitle text-muted"><i class="fas fa-map-marker-alt fa-fw me-1"></i>${job.city || 'N/A'}, ${job.country || ''}</h6>
+                                    <p class="mt-2"><strong>${job.job_type} | ${job.work_location}</strong></p>
+                                    <div>${skillsHtml}</div>
+                                    ${salaryInfo}
+                                </div>
+                                <span class="badge bg-${job.status === 'active' ? 'success' : 'secondary'}">${job.status}</span>
+                           </div>
+                        </div>
+                        <div class="card-footer bg-white text-end">
+                            <button class="btn btn-sm btn-primary view-applications-btn" data-job-id="${job.id}" data-job-title="${job.job_title}">
+                                <i class="fas fa-users me-1"></i>View Applications
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+            };
+
+            // --- Applicant Details Rendering (FINAL FIXES) ---
+            const renderApplicants = (applicants) => {
+                const container = document.getElementById('applicantsContainer');
+                if (!applicants || applicants.length === 0) {
+                    container.innerHTML = '<div class="card"><div class="card-body text-center placeholder-text">No applications received for this job yet.</div></div>';
+                    return;
+                }
+
+                const createDetailSection = (title, content) => {
+                    // Check if content is non-empty before rendering section
+                    const hasContent = content && (
+                        (Array.isArray(content) && content.length > 0) || 
+                        (typeof content === 'string' && content.trim() !== '' && content.trim() !== 'Not specified' && content.trim().toLowerCase() !== 'n/a')
+                    );
+                    if (!hasContent) {
+                        return '';
+                    }
+                    return `
+                        <div class="mt-4">
+                            <h6 class="small fw-bold text-uppercase text-muted pb-1 mb-2 border-bottom">${title}</h6>
+                            <div class="ps-1 small">${content}</div>
+                        </div>`;
+                };
+                
+                // Helper to safely format array data - UPDATED TO FILTER OUT NULL/EMPTY OBJECTS
+                const formatArrayData = (arr, renderFn) => {
+                    let safeArr = arr;
+                    if (typeof arr === 'string') {
+                         try { safeArr = JSON.parse(arr); } catch (e) { safeArr = []; }
+                    }
+                    
+                    // Filter out nulls, undefineds, and empty objects/strings
+                    if (Array.isArray(safeArr)) {
+                        safeArr = safeArr.filter(item => {
+                            if (item === null || typeof item === 'undefined') return false;
+                            if (typeof item === 'string' && item.trim() === '') return false;
+                            if (typeof item === 'object' && Object.keys(item).length === 0) return false;
+                            return true;
+                        });
+                    }
+
+                    if (!Array.isArray(safeArr) || safeArr.length === 0) {
+                        return '<span class="text-muted">Not specified.</span>';
+                    }
+                    return safeArr.map(renderFn).join('');
+                };
+
+                container.innerHTML = applicants.map((application, index) => {
+                    // Assuming application contains the full profile data, possibly under 'user_profile_snapshot' as a string
+                    let profile = application.user_profile_snapshot;
+                    
+                    if (typeof profile === 'string') {
+                         try {
+                            profile = JSON.parse(profile);
+                         } catch (e) {
+                            console.error("Failed to parse user_profile_snapshot:", e);
+                            profile = application;
+                         }
+                    } else if (typeof profile !== 'object' || profile === null || !profile.education) {
+                        profile = application; // Fallback to the application object itself
+                    }
+
+                    if (!profile) return '';
+
+                    const personal = profile.personalDetails || {};
+                    const ctc = profile.ctc || {};
+                    const resumeUrl = personal.resumeUrl || profile.resumeUrl; // Check both locations
+                    const uniqueId = `applicant-details-${index}`;
+                    
+                    // --- Fix 1: Experience Level ---
+                    let experienceDisplay = personal.experienceLevel;
+                    // Try to find a meaningful number first
+                    const totalYears = profile.total_experience || personal.total_experience;
+                    if (totalYears && typeof totalYears === 'number' && totalYears > 0) {
+                         experienceDisplay = `${totalYears} Years`;
+                    } else if (personal.experienceLevel && personal.experienceLevel.toLowerCase() !== 'experienced') {
+                         experienceDisplay = personal.experienceLevel;
+                    } else {
+                        experienceDisplay = 'Not specified';
+                    }
+
+                    
+                    const skillsHtml = formatArrayData(profile.skills, skill => {
+                        // Use skillName or name
+                        const name = skill.skillName || skill.name || skill;
+                        return `<span class="badge bg-primary bg-opacity-10 text-primary fw-normal me-1 mb-1">${name}</span>`;
+                    });
+
+                    // Check for multiple date/role/company keys
+                    const professionalHtml = formatArrayData(profile.professionalDetails, job => {
+                        const role = job.roles || job.title || 'N/A';
+                        const company = job.companyName || job.company || 'N/A';
+                        const startDate = job.startDate || job.fromDate || '';
+                        const endDate = job.endDate || job.toDate || 'Present';
+                        
+                        // Check if this specific work experience item is empty
+                        if (role === 'N/A' && company === 'N/A') return ''; 
+
+                        return `
+                            <div class="mb-3">
+                                <div class="fw-bold">${role}</div>
+                                <div>${company}</div>
+                                <div class="text-muted">${startDate} to ${endDate}</div>
+                            </div>`;
+                    });
+
+                    const educationHtml = formatArrayData(profile.education, edu => `
+                        <div class="mb-3">
+                            <div class="fw-bold">${edu.degree || 'N/A'}</div>
+                            <div>${edu.institution || 'N/A'}</div>
+                            <div class="text-muted">${edu.startDate || ''} - ${edu.endDate || 'Present'}</div>
+                        </div>`);
+                        
+                    // Check for multiple name/description keys
+                    const projectsHtml = formatArrayData(profile.projects, proj => {
+                        const name = proj.projectTitle || proj.projectName || 'N/A';
+                        const description = proj.description || proj.projectDescription || '';
+
+                        // Check if this specific project item is empty
+                        if (name === 'N/A' && description.trim() === '') return '';
+
+                        return `
+                            <div class="mb-3">
+                                <div class="fw-bold">${name}</div>
+                                <p class="mb-0 small">${description}</p>
+                            </div>`;
+                    });
+
+                    // Fix Certifications Issuer
+                    const certificationsHtml = formatArrayData(profile.certifications, cert => {
+                         const certName = cert.certificationName || cert.name || 'N/A';
+                         // Added extra key checks for issuer
+                         const certIssuer = cert.certificationInstitution || cert.issuer || cert.issuingOrganization || 'N/A';
+                         const certUrl = cert.certificationLink || cert.certUrl;
+
+                         // Check if this specific certification item is empty
+                         if (certName === 'N/A' && certIssuer === 'N/A') return '';
+                         
+                         let certContent = `<div>${certIssuer}</div>`;
+                         
+                         // Only link if a URL is present
+                         if (certUrl && certUrl !== 'N/A') {
+                             certContent = `<div><a href="${certUrl}" target="_blank" class="text-decoration-underline">${certIssuer}</a></div>`;
+                         }
+                         
+                         return `<div class="mb-3"><div class="fw-bold">${certName}</div>${certContent}</div>`;
+                    });
+
+                    // Fix language name
+                    const languagesHtml = formatArrayData(profile.languages, lang => {
+                        const langName = lang.languageName || lang.name || 'N/A';
+                        const proficiency = lang.proficiency || 'Not specified';
+                        return `<span class="d-inline-block me-4">${langName} <span class="text-muted">(${proficiency})</span></span>`;
+                    });
+
+                    // Fix Expected CTC Format
+                    let expectedCtcText = 'Not specified';
+                    if (ctc.expected && !isNaN(parseFloat(ctc.expected))) {
+                        // Assuming INR is the default currency if none is specified, or using the stored currency if available.
+                        const currency = ctc.currency || 'INR'; 
+                        expectedCtcText = parseFloat(ctc.expected).toLocaleString('en-IN', { style: 'currency', currency: currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }); // Removed decimal places for large numbers
+                    }
+                    
+                    return `
+                    <div class="card mb-2 shadow-sm">
+                        <div class="card-header bg-white p-3" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#${uniqueId}" aria-expanded="false" aria-controls="${uniqueId}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <img src="${personal.profilePhoto || 'https://placehold.co/60x60/EFEFEF/AAAAAA&text=NA'}" class="rounded-circle me-3" width="50" height="50" alt="Applicant Photo" style="object-fit:cover;">
+                                    <div>
+                                        <h6 class="mb-0">${personal.fullName || 'N/A'}</h6>
+                                        <small class="text-muted">
+                                            <i class="fas fa-briefcase fa-fw me-1"></i> ${experienceDisplay}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    ${resumeUrl ? `<a href="${resumeUrl}" target="_blank" class="btn btn-sm btn-outline-primary me-2" onclick="event.stopPropagation();"><i class="fas fa-file-alt me-1"></i> Resume</a>` : ''}
+                                    <span class="text-muted">
+                                        <i class="fas fa-chevron-down fa-fw transition-transform"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse" id="${uniqueId}">
+                            <div class="card-body p-4 bg-light">
+                                <div class="row">
+                                    <div class="col-lg-5">
+                                        ${createDetailSection('Contact Information', `
+                                            <p class="mb-1"><i class="fas fa-envelope fa-fw me-2 text-muted"></i>${personal.email || 'N/A'}</p>
+                                            <p class="mb-0"><i class="fas fa-phone fa-fw me-2 text-muted"></i>${personal.phone || 'N/A'}</p>
+                                        `)}
+                                        ${createDetailSection('Salary & Availability', `
+                                            <p class="mb-1"><strong>Expected CTC:</strong> ${expectedCtcText}</p>
+                                            <p class="mb-0"><strong>Notice Period:</strong> ${profile.noticePeriod || 'Not specified'}</p>
+                                        `)}
+                                        ${createDetailSection('Skills', skillsHtml)}
+                                        ${createDetailSection('Languages', languagesHtml)}
+                                    </div>
+                                    <div class="col-lg-7 border-start-lg">
+                                        ${createDetailSection('Work Experience', professionalHtml)}
+                                        ${createDetailSection('Education', educationHtml)}
+                                        ${createDetailSection('Projects', projectsHtml)}
+                                        ${createDetailSection('Certifications', certificationsHtml)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            };
+
+            // --- Job Posting Form Handlers ---
+            document.getElementById('postJobForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Data collection is robust for all fields
+                jobDataForReview = {
+                    job_title: document.getElementById('jobTitle').value, required_experience: document.getElementById('requiredExperience').value,
+                    industry: document.getElementById('industry').value,
+                    job_type: document.getElementById('jobType').value, work_location: document.getElementById('workLocation').value,
+                    salary_min: document.getElementById('salaryMin').value || null, salary_max: document.getElementById('salaryMax').value || null,
+                    salary_currency: document.getElementById('salaryCurrency').value, salary_period: document.getElementById('salaryPeriod').value,
+                    salary_period_count: document.getElementById('salaryPeriodCount').value, posted_by_name: document.getElementById('postedByName').value,
+                    posted_by_email: document.getElementById('postedByEmail').value, country: document.getElementById('country').value,
+                    state: document.getElementById('state').value, city: document.getElementById('city').value,
+                    zip_code: document.getElementById('zipCode').value, job_description: document.getElementById('jobDescription').value,
+                    responsibilities: document.getElementById('responsibilities').value, required_skills: requiredSkillsInput.getSkills(),
+                    additional_skills: additionalSkillsInput.getSkills(),
+                };
+                renderReviewContent(jobDataForReview);
+                showSection('reviewJobSection');
+            });
+            
+            function renderReviewContent(data) {
+                const reviewContainer = document.getElementById('reviewContent');
+                const formatText = text => text ? text.replace(/\n/g, '<br>') : 'N/A';
+                const formatSkills = skills => skills.length > 0 ? skills.map(s => `<span class="badge bg-secondary me-1 mb-1">${s}</span>`).join('') : 'None';
+                 
+                let salaryInfo = 'N/A';
+                if (data.salary_min && data.salary_max) {
+                    const periodCount = data.salary_period_count || 1;
+                    const period = data.salary_period || 'Year';
+                    let periodText = period;
+                    if (periodCount > 1) { periodText = `${periodCount} ${period.replace('ly','s')}`; }
+                    salaryInfo = `${data.salary_currency} ${Number(data.salary_min).toLocaleString()} - ${Number(data.salary_max).toLocaleString()} per ${periodText}`;
+                }
+
+                reviewContainer.innerHTML = `
+                    <h5 class="review-section-title">Job Overview</h5>
+                    <div class="review-grid">
+                        <div class="review-item"><strong>Job Title:</strong> <span>${data.job_title}</span></div>
+                        <div class="review-item"><strong>Company:</strong> <span>${currentCompanyProfile.company_name}</span></div>
+                        <div class="review-item"><strong>Industry:</strong> <span>${data.industry}</span></div>
+                        <div class="review-item"><strong>Experience:</strong> <span>${data.required_experience}</span></div>
+                        <div class="review-item"><strong>Job Type:</strong> <span>${data.job_type}</span></div>
+                        <div class="review-item"><strong>Work Location:</strong> <span>${data.work_location}</span></div>
+                        <div class="review-item"><strong>Salary:</strong> <span>${salaryInfo}</span></div>
+                    </div>
+
+                    <h5 class="review-section-title">Location & Contact</h5>
+                     <div class="review-grid">
+                        <div class="review-item"><strong>Location:</strong> <span>${data.city}, ${data.state}, ${data.country} ${data.zip_code}</span></div>
+                        <div class="review-item"><strong>Contact Person:</strong> <span>${data.posted_by_name}</span></div>
+                        <div class="review-item"><strong>Contact Email:</strong> <span>${data.posted_by_email}</span></div>
+                    </div>
+
+                    <h5 class="review-section-title">Skills</h5>
+                    <p><strong>Primary Skills:</strong><br>${formatSkills(data.required_skills)}</p>
+                    <p><strong>Secondary Skills:</strong><br>${formatSkills(data.additional_skills)}</p>
+
+                    <h5 class="review-section-title">Job Details</h5>
+                    <h6>Description</h6>
+                    <p class="small bg-light p-2 rounded">${formatText(data.job_description)}</p>
+                    <h6>Responsibilities</h6>
+                    <p class="small bg-light p-2 rounded">${formatText(data.responsibilities)}</p>
+                `;
+            }
+            
+            document.getElementById('editJobBtn').addEventListener('click', () => {
+                showSection('postJobSection');
+            });
+
+            document.getElementById('confirmPostBtn').addEventListener('click', async () => {
+                if (!jobDataForReview) {
+                    showToast('No job data to post. Please review first.', 'error');
+                    return;
+                }
+                // Post data is sent as JSON
+                const result = await fetchData('/api/jobs/post', { method: 'POST', body: jobDataForReview });
+                if (result && result.success) {
+                    showToast('Job posted successfully!');
+                    document.getElementById('postJobForm').reset();
+                    requiredSkillsInput.reset();
+                    additionalSkillsInput.reset();
+                    jobDataForReview = null;
+                    // Reset contact info in form
+                    document.getElementById('postedByName').value = currentCompanyProfile.contact_person || '';
+                    document.getElementById('postedByEmail').value = currentCompanyProfile.user_email || '';
+                    document.getElementById('postedByPhone').value = currentCompanyProfile.contact_phone || '';
+                    document.getElementById('postJobCompanyName').value = currentCompanyProfile.company_name || '';
+                    await fetchJobs(); 
+                    showSection('myJobsSection');
+                }
+            });
+
+            // --- Profile Update Handler ---
+            document.getElementById('updateProfileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData();
+                formData.append('company_name', document.getElementById('companyName').value);
+                formData.append('website', document.getElementById('companyWebsite').value);
+                formData.append('contact_person', document.getElementById('personName').value);
+                formData.append('contact_phone', document.getElementById('phoneNumber').value);
+                formData.append('address', document.getElementById('address').value);
+                formData.append('description', document.getElementById('companyDescription').value);
+                const logoFile = document.getElementById('companyLogo').files[0];
+                if (logoFile) { formData.append('logo', logoFile); }
+                
+                // Use PATCH for profile update, sending FormData
+                const result = await fetchData(`/api/company/profile`, { method: 'PATCH', body: formData });
+                
+                if (result && result.success) { 
+                    showToast(result.message || 'Profile updated successfully!'); 
+                    // Refetch profile to update sidebar/forms 
+                    fetchCompanyProfile();
+                }
+            });
+            
+            // --- UI/Helper Logic ---
+            const jobTypeSelect = document.getElementById('jobType');
+            const salaryPeriodSelect = document.getElementById('salaryPeriod');
+            const salaryPeriodCountLabel = document.getElementById('salaryPeriodCountLabel');
+            
+            const updateCountLabel = () => {
+                const selectedPeriod = salaryPeriodSelect.value;
+                switch (selectedPeriod) {
+                    case 'Hourly': salaryPeriodCountLabel.textContent = 'No. of Hours'; break;
+                    case 'Monthly': salaryPeriodCountLabel.textContent = 'No. of Months'; break;
+                    case 'Yearly': salaryPeriodCountLabel.textContent = 'No. of Years'; break;
+                    default: salaryPeriodCountLabel.textContent = 'Count';
+                }
+            };
+            jobTypeSelect.addEventListener('change', () => {
+                const selectedJobType = jobTypeSelect.value;
+                switch (selectedJobType) {
+                    case 'Contract': salaryPeriodSelect.value = 'Hourly'; break;
+                    case 'Part-time': case 'Internship': salaryPeriodSelect.value = 'Monthly'; break;
+                    case 'Full-time': salaryPeriodSelect.value = 'Yearly'; break;
+                }
+                salaryPeriodSelect.dispatchEvent(new Event('change'));
+            });
+            salaryPeriodSelect.addEventListener('change', updateCountLabel);
+            
+            const countryToCurrency = { 'india': 'INR', 'united states': 'USD', 'united kingdom': 'GBP', 'germany': 'EUR', 'united arab emirates': 'AED', 'canada': 'CAD', 'australia': 'AUD' };
+            const countryInput = document.getElementById('country');
+            const currencySelect = document.getElementById('salaryCurrency');
+            countryInput.addEventListener('input', () => { 
+                const countryName = countryInput.value.trim().toLowerCase(); 
+                const currency = Object.keys(countryToCurrency).find(key => countryName.includes(key)); 
+                if (currency && countryToCurrency[currency]) { currencySelect.value = countryToCurrency[currency]; } 
+            });
+            
+            const decrementBtn = document.getElementById('decrementPeriodCount');
+            const incrementBtn = document.getElementById('incrementPeriodCount');
+            const countInput = document.getElementById('salaryPeriodCount');
+            decrementBtn.addEventListener('click', () => { let currentValue = parseInt(countInput.value, 10); if (currentValue > 1) { countInput.value = currentValue - 1; } });
+            incrementBtn.addEventListener('click', () => { let currentValue = parseInt(countInput.value, 10) || 0; countInput.value = currentValue + 1; });
+
+            const navButtons = document.querySelectorAll('.nav-btn[data-section]');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            const showSection = (sectionIdToShow) => {
+                contentSections.forEach(section => {
+                    section.classList.toggle('active', section.id === sectionIdToShow);
+                });
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                
+                let activeNavId = sectionIdToShow;
+                if (sectionIdToShow === 'applicantsSection') activeNavId = 'myJobsSection';
+                if (sectionIdToShow === 'reviewJobSection') activeNavId = 'postJobSection';
+
+                const activeButton = document.querySelector(`.nav-btn[data-section="${activeNavId}"]`);
+                if (activeButton) activeButton.classList.add('active');
+            };
+            
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => showSection(button.dataset.section));
+            });
+
+            document.getElementById('jobsContainer').addEventListener('click', async (e) => {
+                const button = e.target.closest('.view-applications-btn');
+                if (button) {
+                    const jobId = button.dataset.jobId;
+                    const jobTitle = button.dataset.jobTitle;
+                    document.getElementById('applicantJobTitle').textContent = jobTitle;
+                    document.getElementById('applicantsContainer').innerHTML = '<p class="placeholder-text">Loading applicants...</p>';
+                    showSection('applicantsSection');
+
+                    const data = await fetchData(`/api/applicant/${jobId}`);
+                    if (data && data.success) {
+                        renderApplicants(data.applicants);
+                    } else {
+                        document.getElementById('applicantsContainer').innerHTML = '<p class="placeholder-text text-danger">Could not load applicants.</p>';
+                    }
+                }
+            });
+
+            document.getElementById('backToJobsBtn').addEventListener('click', () => {
+                showSection('myJobsSection');
+            });
+
+
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                sessionStorage.removeItem('authToken');
+                window.location.href = 'employerlogin.html';
+            });
+
+            const initializeDashboard = async () => {
+                await fetchCompanyProfile();
+                fetchJobs();
+                jobTypeSelect.dispatchEvent(new Event('change'));
+            };
+            initializeDashboard();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Portal - Profile</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Simplified and necessary CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:;">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="navbar.css">
+    <style>
+        :root {
+            --primary-color: #6a0dad;
+            --secondary-color: #d653c9;
+            --accent-color: #ff6b00;
+            --light-bg: #f9f7ff;
+            --dark-text: #333333;
+            --light-text: #6c757d;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --hover-shadow: 0 15px 40px rgba(106, 13, 173, 0.15);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f9f7ff 0%, #ffffff 100%);
+            color: var(--dark-text);
+            padding-top: 70px;
+            min-height: 100vh;
+        }
+
+        /* ... (rest of the style remains the same for aesthetics) ... */
+
+        .navbar-brand {
+            font-weight: 700;
+        }
+        
+        .navbar-nav .nav-link {
+            color: white !important;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: #ffcc00 !important;
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #ffcc00;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+        
+        .dropdown-menu {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 10px 0;
+        }
+        
+        .dropdown-item {
+            padding: 8px 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(106, 13, 173, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .profile-sidebar {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: sticky;
+            top: 90px;
+        }
+        
+        .profile-sidebar:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-5px);
+        }
+        
+        .profile-sidebar .card-body {
+            padding: 25px;
+        }
+        
+        .profile-sidebar .nav-link {
+            color: var(--dark-text) !important;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-sidebar .nav-link:hover {
+            background-color: rgba(106, 13, 173, 0.08);
+            color: var(--primary-color) !important;
+            transform: translateX(5px);
+        }
+        
+        .profile-sidebar .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white !important;
+            box-shadow: 0 5px 15px rgba(106, 13, 173, 0.3);
+        }
+        
+        .profile-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-content:hover {
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .profile-content .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 25px;
+            border-bottom: none;
+        }
+        
+        .profile-content .card-body {
+            padding: 30px;
+        }
+        
+        .section-content {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .section-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        
+        .section-header h2 {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+            position: relative;
+        }
+        
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            bottom: -15px;
+            left: 0;
+            border-radius: 2px;
+        }
+        
+        .edit-btn {
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .profile-photo-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .profile-photo-preview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .dynamic-section, .view-section {
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            background-color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+        }
+        
+        .dynamic-section:hover, .view-section:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transform: translateY(-3px);
+        }
+        
+        .remove-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #000000;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .remove-btn:hover {
+            background: #ff0000;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .skill-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .skill-rating input {
+            flex: 1;
+        }
+        
+        .resume-preview {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .resume-preview:hover {
+            background-color: #e9ecef;
+            transform: translateY(-3px);
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1055;
+        }
+        
+        /* UPDATED: Skill Tags */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.875rem;
+            border: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(106, 13, 173, 0.3);
+        }
+        
+        .tag-remove {
+            cursor: pointer;
+            margin-left: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            opacity: 0.8;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .tag-remove:hover {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Skill Input Styling */
+        #skillInputGroup {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        #skillInput {
+            border-radius: 12px 0 0 12px !important;
+        }
+        #addSkillBtn {
+            border-radius: 0 12px 12px 0 !important;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            transition: background 0.3s ease;
+        }
+        #addSkillBtn:hover {
+            background: #5a0a9d;
+        }
+        
+        .action-buttons {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 13, 173, 0.3);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 13, 173, 0.3);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 12px;
+            padding: 12px 15px;
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(106, 13, 173, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--dark-text);
+        }
+        
+        .input-group .btn {
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .input-group .form-control {
+            border-radius: 12px 0 0 12px;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+        }
+        
+        .floating-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .floating-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .profile-completion {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .completion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .completion-percentage {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .completion-text {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        .completion-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .completion-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .completion-section:hover {
+            background: #e9ecef;
+            transform: translateY(-3px);
+        }
+        
+        .completion-section.completed {
+            background: rgba(40, 167, 69, 0.1);
+        }
+        
+        .completion-section.completed .section-status {
+            color: #28a745;
+        }
+        
+        .section-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+        
+        .section-status.completed {
+            background: #28a745;
+            color: white;
+        }
+        
+        @media (max-width: 991px) {
+            .profile-sidebar {
+                position: static;
+                margin-bottom: 20px;
+            }
+            
+            .nav-pills {
+                flex-direction: row;
+                overflow-x: auto;
+                white-space: nowrap;
+                flex-wrap: nowrap;
+                padding-bottom: 10px;
+            }
+            
+            .nav-pills .nav-link {
+                display: inline-block;
+                width: auto;
+                min-width: 150px;
+            }
+        }
+        
+        /* Animation for form elements */
+        .form-group {
+            animation: slideInUp 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Stagger animation for form groups */
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        .form-group:nth-child(6) { animation-delay: 0.6s; }
+        
+        /* Pulse animation for save buttons */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .btn-primary:focus {
+            animation: pulse 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+  <!-- Header/Navbar -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary fixed-top py-2">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+          <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+          <span class="fw-bold">Hitaishi Careers</span>
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="jobs.html">Jobs</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown">
+                Services
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                <li><a class="dropdown-item" href="featuredprofile.html">Featured Profile</a></li>
+                <li><a class="dropdown-item" href="featuredprofile.html">Profile Highlighter</a></li>
+                <li><a class="dropdown-item" href="careerbooster.html">Career Booster</a></li>
+                <li><a class="dropdown-item" href="resumebuild.html">Resume Writing</a></li>
+                <li><a class="dropdown-item" href="resumebuild.html">Resume Builder</a></li>
+                <li><a class="dropdown-item" href="network.html">LinkedIn Makeover</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Mock Interview</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Interview Preparation</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Skill Assessment</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Degree Programs</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="employerlogin.html">Post Jobs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="employers.html">Employers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="tutu.html">Apply with AI</a>
+            </li>
+          </ul>
+          
+          <!-- Profile / Avatar -->
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="login.html" id="profileLink">
+                <!-- Default Icon -->
+                <i id="profile-icon" class="fas fa-user-circle fa-2x text-white"></i>
+                <!-- User Avatar (hidden by default) -->
+                <img id="profile-avatar" src="" alt="User Avatar"
+                    class="rounded-circle d-none" width="40" height="40">
+              </a>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+    <script>
+      async function checkAuthAndUpdateNavbar() {
+        try {
+          // --- SECURITY: Rely entirely on HttpOnly cookie ---
+          // Use the secure HttpOnly cookie for the actual profile data fetch
+          const res = await fetch('/api/profile/full', { credentials: 'include' }); 
+          if (!res.ok) {
+            // If the HttpOnly cookie is invalid/missing, clear client-side token (if it exists) and redirect
+            localStorage.removeItem('jwt'); // Clean up redundant local storage token (if user somehow has one)
+            sessionStorage.clear(); // Clear session data (only email is currently stored here)
+            if (window.location.pathname.includes('userProfile.html')) {
+                 window.location.href = 'login.html';
+            }
+            return;
+          }
+          const data = await res.json();
+          // Store email in sessionStorage for client-side display convenience only.
+          sessionStorage.setItem("email", data.personalDetails.email); 
+          
+          const profilePhoto = data.personalDetails?.profilePhoto;
+          if (profilePhoto) {
+            document.getElementById("profile-icon").classList.add("d-none");
+            const avatar = document.getElementById("profile-avatar");
+            // XSS Safety: URL is considered safe as it comes from the server/file upload process
+            avatar.src = profilePhoto; 
+            avatar.classList.remove("d-none");
+          }
+          document.getElementById('profileLink').href = 'userProfile.html';
+        } catch (err) {
+          console.error("Auth check failed.", err);
+           if (window.location.pathname.includes('userProfile.html')) {
+                 window.location.href = 'login.html';
+            }
+        }
+      }
+      document.addEventListener("DOMContentLoaded", checkAuthAndUpdateNavbar);
+    </script>
+  </header>
+
+    <!-- Profile Completion Indicator -->
+    <div class="profile-container">
+        <div class="profile-completion">
+            <div class="completion-header">
+                <div>
+                    <h4 class="mb-1">Profile Completion</h4>
+                    <p class="completion-text mb-0">Complete your profile to increase visibility to employers</p>
+                </div>
+                <div class="completion-percentage">0%</div>
+            </div>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="completion-sections">
+                <div class="completion-section">
+                    <div class="section-status"><i class="fas fa-times"></i></div>
+                    <div>Personal Details</div>
+                </div>
+                <div class="completion-section">
+                    <div class="section-status"><i class="fas fa-times"></i></div>
+                    <div>Professional</div>
+                </div>
+                <div class="completion-section">
+                    <div class="section-status"><i class="fas fa-times"></i></div>
+                    <div>Projects</div>
+                </div>
+                <div class="completion-section">
+                    <div class="section-status"><i class="fas fa-times"></i></div>
+                    <div>Resume</div>
+                </div>
+                <div class="completion-section">
+                    <div class="section-status"><i class="fas fa-times"></i></div>
+                    <div>Skills</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3 mb-4">
+                <div class="profile-sidebar">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Profile Sections</h5>
+                        <nav class="nav nav-pills flex-column" id="profileNav">
+                            <a class="nav-link active" href="#" data-section="personalDetails"><i class="bi bi-person me-2"></i>Personal Details</a>
+                            <a class="nav-link" href="#" data-section="professionalDetails"><i class="bi bi-briefcase me-2"></i>Professional</a>
+                            <a class="nav-link" href="#" data-section="projects"><i class="bi bi-folder me-2"></i>Projects</a>
+                            <a class="nav-link" href="#" data-section="resume"><i class="bi bi-file-earmark me-2"></i>Resume</a>
+                            <a class="nav-link" href="#" data-section="skills"><i class="bi bi-tools me-2"></i>Skills</a>
+                            <a class="nav-link" href="#" data-section="education"><i class="bi bi-book me-2"></i>Education</a>
+                            <a class="nav-link" href="#" data-section="certifications"><i class="bi bi-award me-2"></i>Certifications</a>
+                            <a class="nav-link" href="#" data-section="languages"><i class="bi bi-translate me-2"></i>Languages</a>
+                            <a class="nav-link" href="#" data-section="password"><i class="bi bi-shield-lock me-2"></i>Password</a>
+                            <!-- *** ADDED LOGOUT BUTTON *** -->
+                            <a class="nav-link" href="#" id="logoutButton"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="col-lg-9">
+                <div class="profile-content">
+                    <div class="card-header">
+                        <h1 class="mb-0 h4"><i class="fas fa-user-circle me-2"></i>My Profile</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- Toast Container for Notifications -->
+                        <div class="toast-container"></div>
+                        
+                        <!-- Personal Details Section -->
+                        <div class="section-content active" id="personalDetails">
+                            <div class="section-header">
+                                <h2 class="h5 mb-0">Personal Details</h2>
+                                <button type="button" class="btn btn-outline-primary btn-sm edit-btn" onclick="toggleEdit('personalDetails', true)"><i class="bi bi-pencil me-1"></i> Edit</button>
+                            </div>
+                            <div id="personalDetailsView"></div>
+                            <form id="personalDetailsForm" class="d-none">
+                                <div id="personalDetailsEntries">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="fullName" class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="fullName" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" required readonly disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="phone" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="phone">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="gender" class="form-label">Gender</label>
+                                        <select class="form-select" id="gender">
+                                            <option value="">Select Gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Experience Level</label>
+                                        <div>
+                                            <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="experienceLevel" id="fresher" value="fresher"><label class="form-check-label" for="fresher">Fresher</label></div>
+                                            <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="experienceLevel" id="experienced" value="experienced"><label class="form-check-label" for="experienced">Experienced</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="ctcExpected" class="form-label">CTC Expected (in LPA)</label>
+                                        <input type="number" class="form-control" id="ctcExpected" min="0" step="0.1">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="profilePhoto" class="form-label">Profile Photo</label>
+                                    <input type="file" class="form-control" id="profilePhoto" accept="image/*">
+                                    <div class="mt-2">
+                                        <img id="profilePhotoPreview" src="https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo" alt="Profile Photo Preview" class="profile-photo-preview">
+                                    </div>
+                                </div>
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-primary" onclick="savePersonalDetails()">Save</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="toggleEdit('personalDetails', false)">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Dynamic Sections (will be populated by JS) -->
+                        <div class="section-content" id="professionalDetails"></div>
+                        <div class="section-content" id="projects"></div>
+                        <div class="section-content" id="resume"></div>
+                        <div class="section-content" id="skills"></div>
+                        <div class="section-content" id="education"></div>
+                        <div class="section-content" id="certifications"></div>
+                        <div class="section-content" id="languages"></div>
+
+                        <!-- Change Password Section -->
+                        <div class="section-content" id="password">
+                            <div class="section-header"><h2 class="h5 mb-0">Change Password</h2></div>
+                            <form id="changePasswordForm" onsubmit="event.preventDefault(); updatePassword();">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="newPassword" class="form-label">New Password</label>
+                                        <input type="password" id="newPassword" class="form-control" minlength="6" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                        <input type="password" id="confirmPassword" class="form-control" minlength="6" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary">Update Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Notification -->
+    <div class="floating-notification" id="floatingNotification">
+        <i class="fas fa-check-circle text-success"></i>
+        <span>Profile updated successfully!</span>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+<script>
+    // === XSS SAFETY: HTML Escaping Function ===
+    function escapeHTML(str) {
+        if (typeof str !== 'string' || str === null) return '';
+        // Replaces HTML special characters with their entity equivalents
+        return str.replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;')
+                  .replace(/'/g, '&#039;');
+    }
+    
+    // === GLOBAL STATE ===
+    let nextEntryId = 1;
+    let profileData = {
+        personalDetails: {},
+        professionalDetails: [],
+        projects: [],
+        resume: null,
+        skills: [],
+        education: [],
+        certifications: [],
+        languages: []
+    };
+
+    // === INITIALIZATION ===
+    document.addEventListener('DOMContentLoaded', async function() {
+        setupNavigation();
+        setupEventListeners();
+        await loadProfileData();
+    });
+
+    // === NAVIGATION HANDLER ===
+    function setupNavigation() {
+        document.querySelectorAll('#profileNav .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (this.id === 'logoutButton') return; // skip logout
+
+                document.querySelectorAll('#profileNav .nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelectorAll('.section-content').forEach(section => section.classList.remove('active'));
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+    }
+
+    // === EVENT LISTENERS ===
+    function setupEventListeners() {
+        // Profile photo preview
+        const photoInput = document.getElementById('profilePhoto');
+        if (photoInput) {
+            photoInput.addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = e => document.getElementById('profilePhotoPreview').src = e.target.result;
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Logout button
+        const logoutBtn = document.getElementById('logoutButton');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async e => {
+                e.preventDefault();
+                await logout();
+            });
+        }
+    }
+
+    // === LOGOUT ===
+    async function logout() {
+        try {
+            // Send logout request to clear HttpOnly cookie
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            
+            // Always clear client-side storage (Cleanup)
+            localStorage.removeItem('jwt'); // No longer used, but good practice to clear just in case
+            sessionStorage.clear();
+
+            if (response.ok) {
+                window.location.href = 'login.html';
+            } else {
+                // If server response is not ok but we cleared client state, still redirect
+                showToast('Logged out, redirecting...', 'info');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+            // On network error, clear client state and redirect anyway
+            localStorage.removeItem('jwt'); 
+            sessionStorage.clear();
+            showToast('An error occurred during logout. Redirecting...', 'danger');
+            setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+        }
+    }
+
+    // === LOAD PROFILE DATA ===
+    async function loadProfileData() {
+        try {
+            // Rely on the secure HttpOnly cookie (credentials: 'include')
+            const response = await fetch('/api/profile/full', { credentials: 'include' });
+            
+            if (response.status === 401) {
+                // If the server rejects the cookie, redirect
+                localStorage.removeItem('jwt');
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+                return;
+            }
+            if (!response.ok) throw new Error('Failed to fetch profile data.');
+
+            profileData = await response.json();
+            populateAllSections();
+            updateProfileCompletion();
+        } catch (error) {
+            console.error('Error loading profile data:', error);
+            showToast('Error loading your profile. Please try refreshing.', 'danger');
+        }
+    }
+
+    // === POPULATE PROFILE SECTIONS ===
+    function populateAllSections() {
+        populatePersonalDetails();
+        // The following functions (render...View) must use escapeHTML for dynamic content
+        renderDynamicSection('professionalDetails', 'Professional Details', profileData.professionalDetails, renderProfessionalView, 'addProfessionalEntry', 'saveProfessionalDetails', populateProfessionalForm);
+        renderDynamicSection('projects', 'Projects', profileData.projects, renderProjectView, 'addProjectEntry', 'saveProjects', populateProjectsForm);
+        renderDynamicSection('skills', 'Skills', profileData.skills, renderSkillView, 'addSkillEntry', 'saveSkills', populateSkillsForm);
+        renderDynamicSection('education', 'Education', profileData.education, renderEducationView, 'addEducationEntry', 'saveEducation', populateEducationForm);
+        renderDynamicSection('certifications', 'Certifications', profileData.certifications, renderCertificationView, 'addCertificationEntry', 'saveCertifications', populateCertificationsForm);
+        renderDynamicSection('languages', 'Languages', profileData.languages, renderLanguageView, 'addLanguageEntry', 'saveLanguages', populateLanguagesForm);
+        renderResumeSection();
+    }
+
+    // === PERSONAL DETAILS (Updated with XSS Safety) ===
+    function populatePersonalDetails() {
+        const pd = profileData.personalDetails || {};
+        const na = '<span class="text-muted">N/A</span>';
+        const viewContainer = document.getElementById('personalDetailsView');
+        if (!viewContainer) return;
+
+        // XSS Safety applied to all dynamic data inside innerHTML
+        const safeFullName = escapeHTML(pd.fullName) || na;
+        const safeEmail = escapeHTML(pd.email) || na;
+        const safePhone = escapeHTML(pd.phone) || na;
+        const safeGender = pd.gender ? escapeHTML(pd.gender[0].toUpperCase() + pd.gender.slice(1)) : na;
+        const safeExperience = pd.experienceLevel ? escapeHTML(pd.experienceLevel[0].toUpperCase() + pd.experienceLevel.slice(1)) : na;
+        const safeCtc = pd.ctcExpected ? `${escapeHTML(pd.ctcExpected.toString())} LPA` : na;
+
+        viewContainer.innerHTML = `
+            <div class="row">
+                <div class="col-md-3 text-center mb-3">
+                    <img src="${pd.profilePhoto || 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo'}" class="profile-photo-preview" alt="Profile Photo">
+                </div>
+                <div class="col-md-9">
+                    <p><strong>Full Name:</strong> ${safeFullName}</p>
+                    <p><strong>Email:</strong> ${safeEmail}</p>
+                    <p><strong>Phone:</strong> ${safePhone}</p>
+                    <p><strong>Gender:</strong> ${safeGender}</p>
+                    <p><strong>Experience:</strong> ${safeExperience}</p>
+                    <p><strong>Expected CTC:</strong> ${safeCtc}</p>
+                </div>
+            </div>`;
+
+        // Input values use textContent, which is safe
+        document.getElementById('fullName').value = pd.fullName || '';
+        document.getElementById('email').value = pd.email || '';
+        document.getElementById('phone').value = pd.phone || '';
+        document.getElementById('gender').value = pd.gender || '';
+        document.getElementById('ctcExpected').value = pd.ctcExpected || '';
+        document.getElementById('profilePhotoPreview').src = pd.profilePhoto || 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo';
+
+        const expEl = document.querySelector(`input[name="experienceLevel"][value="${pd.experienceLevel || ''}"]`);
+        if (expEl) expEl.checked = true;
+    }
+
+    // === GENERIC RENDER/EDIT FUNCTIONS ===
+    
+    // Renders the section content (view mode)
+    function renderDynamicSection(id, title, data, renderViewFn, addFn, saveFn, populateFormFn) {
+        const container = document.getElementById(id);
+        // Special case for skills: Render view directly inside the container
+        const itemsHTML = data?.length ? data.map(renderViewFn).join('') : '<p class="text-muted">No information added yet.</p>';
+        
+        container.innerHTML = `
+            <div class="section-header">
+                <h2 class="h5 mb-0">${title}</h2>
+                <button type="button" class="btn btn-outline-primary btn-sm edit-btn" onclick="toggleEdit('${id}', true)">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                </button>
+            </div>
+            <div id="${id}View">${itemsHTML}</div>
+            <form id="${id}Form" class="d-none" onsubmit="event.preventDefault(); ${saveFn}();">
+                <div id="${id}Entries"></div>
+                ${id !== 'skills' ? `
+                    <button type="button" class="btn btn-outline-primary mb-3" onclick="${addFn}()">
+                        <i class="bi bi-plus"></i> Add Entry
+                    </button>
+                ` : ''}
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="toggleEdit('${id}', false)">Cancel</button>
+                </div>
+            </form>`;
+    }
+
+    // Toggles between view and edit mode
+    function toggleEdit(id, show) {
+        const view = document.getElementById(id + 'View');
+        const form = document.getElementById(id + 'Form');
+        const editBtn = document.querySelector(`#${id} .edit-btn`);
+        
+        if (!view || !form) return;
+
+        if (show) {
+            view.classList.add('d-none');
+            form.classList.remove('d-none');
+            if (editBtn) editBtn.classList.add('d-none');
+            
+            // Populate form content only when entering edit mode
+            if (typeof window['populate' + id.charAt(0).toUpperCase() + id.slice(1) + 'Form'] === 'function') {
+                window['populate' + id.charAt(0).toUpperCase() + id.slice(1) + 'Form']();
+            }
+        } else {
+            view.classList.remove('d-none');
+            form.classList.add('d-none');
+            if (editBtn) editBtn.classList.remove('d-none');
+        }
+    }
+
+
+    // === PROFILE COMPLETION ===
+    function updateProfileCompletion() {
+        const checks = [
+            profileData.personalDetails?.fullName,
+            profileData.professionalDetails?.length,
+            profileData.projects?.length,
+            profileData.resume,
+            profileData.skills?.length
+        ];
+        const completed = checks.filter(Boolean).length;
+        const percentage = Math.round((completed / 5) * 100);
+        
+        document.querySelector('.progress-bar').style.width = percentage + '%';
+        document.querySelector('.completion-percentage').textContent = percentage + '%';
+        
+        // Update completion status in sections
+        const sections = ['Personal Details', 'Professional', 'Projects', 'Resume', 'Skills'];
+        document.querySelectorAll('.completion-section').forEach((el, index) => {
+            const statusEl = el.querySelector('.section-status');
+            if (checks[index]) {
+                el.classList.add('completed');
+                statusEl.classList.add('completed');
+                statusEl.innerHTML = '<i class="fas fa-check"></i>';
+            } else {
+                el.classList.remove('completed');
+                statusEl.classList.remove('completed');
+                statusEl.innerHTML = '<i class="fas fa-times"></i>';
+            }
+        });
+    }
+
+    // === SAVE HELPERS (XSS consideration: Data sent to server is client-side escaped before submission) ===
+    async function saveData(endpoint, payload) {
+        const isFormData = payload instanceof FormData;
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                // Use default Content-Type for FormData, explicitly set for JSON
+                headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+                body: isFormData ? payload : JSON.stringify(payload),
+                credentials: 'include' // Always include cookie for primary auth
+            });
+
+            if (response.status === 401) {
+                // If unauthorized mid-session, clear state and redirect
+                localStorage.removeItem('jwt');
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+                return null;
+            }
+            if (!response.ok) {
+                 // Throwing the error here will catch the 413 error message from the proxy.
+                 if (response.status === 413) {
+                    throw new Error("File upload failed. The maximum allowed file size is 20MB. Please check your file size.");
+                 }
+                 const errorBody = await response.json();
+                 throw new Error(errorBody.error || 'Failed to save data. Check server logs.');
+            }
+
+            const data = await response.json();
+            await loadProfileData();
+            return data;
+        } catch (err) {
+            showToast(err.message, 'danger');
+            console.error('Save Data Error:', err);
+            return null;
+        }
+    }
+    
+    // Function to ensure JSON data going to the server is client-side escaped
+    function sanitizeDataForSubmission(data) {
+        if (typeof data === 'string') {
+            return escapeHTML(data);
+        }
+        if (Array.isArray(data)) {
+            return data.map(sanitizeDataForSubmission);
+        }
+        if (typeof data === 'object' && data !== null) {
+            const newObject = {};
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    newObject[key] = sanitizeDataForSubmission(data[key]);
+                }
+            }
+            return newObject;
+        }
+        return data;
+    }
+
+    // === PERSONAL DETAILS SAVE (UPDATED: Removed client-side size check) ===
+    async function savePersonalDetails() {
+        const formData = new FormData();
+        const photoInput = document.getElementById('profilePhoto');
+        const photo = photoInput.files[0];
+        
+        let shouldClearFileInput = false;
+
+        // --- Now relies completely on server-side Multer limit (20MB) ---
+        if (photo) {
+            formData.append('profilePhoto', photo);
+            shouldClearFileInput = true;
+        }
+
+        // Always append textual fields
+        formData.append('fullName', document.getElementById('fullName').value);
+        formData.append('phone', document.getElementById('phone').value);
+        formData.append('gender', document.getElementById('gender').value);
+        const exp = document.querySelector('input[name="experienceLevel"]:checked');
+        formData.append('experienceLevel', exp ? exp.value : '');
+        formData.append('ctcExpected', document.getElementById('ctcExpected').value);
+
+        const res = await saveData('/api/profile/update', formData);
+        if (res) {
+            showToast('Personal details updated!', 'success');
+            toggleEdit('personalDetails', false);
+            
+            // Clear the file input reference after a successful save
+            if (shouldClearFileInput) {
+                photoInput.value = null;
+                document.getElementById('profilePhotoPreview').src = profileData.personalDetails.profilePhoto || 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo';
+            }
+        }
+    }
+
+    // ---------------------------------------------
+    // --- 1. PROFESSIONAL DETAILS IMPLEMENTATION ---
+    // ---------------------------------------------
+    // ... (Professional Details functions remain unchanged) ...
+
+    function renderProfessionalView(item) {
+        const safeItem = sanitizeDataForSubmission(item);
+        const descriptionHtml = safeItem.description ? `<p class="mt-2 text-muted">${safeItem.description.replace(/\n/g, '<br>')}</p>` : '';
+        return `
+            <div class="view-section">
+                <h4 class="mb-1">${safeItem.title} at ${safeItem.company}</h4>
+                <p class="text-secondary mb-1">${safeItem.startDate} - ${safeItem.isCurrent ? 'Present' : safeItem.endDate}</p>
+                ${descriptionHtml}
+            </div>`;
+    }
+
+    function getProfessionalEntryHtml(item = {}, index) {
+        const safeItem = sanitizeDataForSubmission(item);
+        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+        return `
+            <div class="dynamic-section" data-id="${itemId}" data-type="professionalDetails">
+                <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Job Title</label>
+                        <input type="text" class="form-control" name="title" value="${safeItem.title || ''}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Company</label>
+                        <input type="text" class="form-control" name="company" value="${safeItem.company || ''}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="month" class="form-control" name="startDate" value="${safeItem.startDate || ''}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="month" class="form-control" name="endDate" value="${safeItem.endDate || ''}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="isCurrent" id="isCurrent-${itemId}" ${safeItem.isCurrent ? 'checked' : ''}>
+                        <label class="form-check-label" for="isCurrent-${itemId}">Currently working here</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description / Achievements</label>
+                    <textarea class="form-control" name="description" rows="3">${safeItem.description || ''}</textarea>
+                </div>
+            </div>`;
+    }
+
+    function populateProfessionalForm() {
+        const entriesContainer = document.getElementById('professionalDetailsEntries');
+        entriesContainer.innerHTML = '';
+        profileData.professionalDetails.forEach((item, index) => {
+            entriesContainer.insertAdjacentHTML('beforeend', getProfessionalEntryHtml(item, index));
+        });
+        // Add one empty entry if none exists
+        if (profileData.professionalDetails.length === 0) {
+            addProfessionalEntry();
+        }
+    }
+
+    function addProfessionalEntry() {
+        const entriesContainer = document.getElementById('professionalDetailsEntries');
+        entriesContainer.insertAdjacentHTML('beforeend', getProfessionalEntryHtml({}));
+    }
+    
+    function getProfessionalDataFromForm() {
+        const entries = document.querySelectorAll('#professionalDetailsEntries .dynamic-section');
+        const data = [];
+        entries.forEach(entry => {
+            const title = entry.querySelector('[name="title"]').value.trim();
+            const company = entry.querySelector('[name="company"]').value.trim();
+            if (title && company) {
+                data.push({
+                    title: title,
+                    company: company,
+                    startDate: entry.querySelector('[name="startDate"]').value,
+                    endDate: entry.querySelector('[name="endDate"]').value,
+                    isCurrent: entry.querySelector('[name="isCurrent"]').checked,
+                    description: entry.querySelector('[name="description"]').value.trim()
+                });
+            }
+        });
+        return data;
+    }
+
+    async function saveProfessionalDetails() {
+        const data = getProfessionalDataFromForm();
+        const safeData = sanitizeDataForSubmission(data);
+        const res = await saveData('/api/profile/update', { professionalDetails: safeData });
+        if (res) {
+            showToast('Professional details updated!', 'success');
+            toggleEdit('professionalDetails', false);
+        }
+    }
+
+
+    // -------------------------------------
+    // --- 2. PROJECTS IMPLEMENTATION ---
+    // ... (Projects functions remain unchanged) ...
+
+    function renderProjectView(item) {
+        const safeItem = sanitizeDataForSubmission(item);
+        const linkHtml = safeItem.link ? `<a href="${safeItem.link}" target="_blank" class="text-primary d-block mb-1"><i class="bi bi-link me-1"></i>View Project</a>` : '';
+        return `
+            <div class="view-section">
+                <h4 class="mb-1">${safeItem.name}</h4>
+                ${linkHtml}
+                <p class="mt-2 text-muted">${safeItem.description.replace(/\n/g, '<br>')}</p>
+            </div>`;
+    }
+
+    function getProjectEntryHtml(item = {}, index) {
+        const safeItem = sanitizeDataForSubmission(item);
+        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+        return `
+            <div class="dynamic-section" data-id="${itemId}" data-type="projects">
+                <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                <div class="mb-3">
+                    <label class="form-label">Project Name</label>
+                    <input type="text" class="form-control" name="name" value="${safeItem.name || ''}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Project Link (URL)</label>
+                    <input type="url" class="form-control" name="link" value="${safeItem.link || ''}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description / Details</label>
+                    <textarea class="form-control" name="description" rows="4">${safeItem.description || ''}</textarea>
+                </div>
+            </div>`;
+    }
+
+    function populateProjectsForm() {
+        const entriesContainer = document.getElementById('projectsEntries');
+        entriesContainer.innerHTML = '';
+        profileData.projects.forEach((item, index) => {
+            entriesContainer.insertAdjacentHTML('beforeend', getProjectEntryHtml(item, index));
+        });
+        if (profileData.projects.length === 0) addProjectEntry();
+    }
+    
+    function addProjectEntry(item = {}) {
+        const entriesContainer = document.getElementById('projectsEntries');
+        entriesContainer.insertAdjacentHTML('beforeend', getProjectEntryHtml(item));
+    }
+    
+    function getProjectDataFromForm() {
+        const entries = document.querySelectorAll('#projectsEntries .dynamic-section');
+        const data = [];
+        entries.forEach(entry => {
+            const name = entry.querySelector('[name="name"]').value.trim();
+            if (name) {
+                data.push({
+                    name: name,
+                    link: entry.querySelector('[name="link"]').value.trim(),
+                    description: entry.querySelector('[name="description"]').value.trim()
+                });
+            }
+        });
+        return data;
+    }
+
+    async function saveProjects() {
+        const data = getProjectDataFromForm();
+        const safeData = sanitizeDataForSubmission(data);
+        const res = await saveData('/api/profile/update', { projects: safeData });
+        if (res) {
+            showToast('Projects updated!', 'success');
+            toggleEdit('projects', false);
+        }
+    }
+    
+    // -------------------------------------
+    // --- 3. EDUCATION IMPLEMENTATION ---
+    // ... (Education functions remain unchanged) ...
+
+    function renderEducationView(item) {
+        const safeItem = sanitizeDataForSubmission(item);
+        return `
+            <div class="view-section">
+                <h4 class="mb-1">${safeItem.degree} - ${safeItem.field}</h4>
+                <p class="text-secondary mb-1">${safeItem.institution}</p>
+                <p class="text-muted mb-0">${safeItem.startDate} - ${safeItem.endDate || 'Present'}</p>
+            </div>`;
+    }
+
+    function getEducationEntryHtml(item = {}, index) {
+        const safeItem = sanitizeDataForSubmission(item);
+        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+        return `
+            <div class="dynamic-section" data-id="${itemId}" data-type="education">
+                <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Degree/Course</label>
+                        <input type="text" class="form-control" name="degree" value="${safeItem.degree || ''}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Field of Study</label>
+                        <input type="text" class="form-control" name="field" value="${safeItem.field || ''}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Institution/School</label>
+                    <input type="text" class="form-control" name="institution" value="${safeItem.institution || ''}" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="month" class="form-control" name="startDate" value="${safeItem.startDate || ''}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">End Date (or expected)</label>
+                        <input type="month" class="form-control" name="endDate" value="${safeItem.endDate || ''}">
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function populateEducationForm() {
+        const entriesContainer = document.getElementById('educationEntries');
+        entriesContainer.innerHTML = '';
+        profileData.education.forEach((item, index) => {
+            entriesContainer.insertAdjacentHTML('beforeend', getEducationEntryHtml(item, index));
+        });
+        if (profileData.education.length === 0) addEducationEntry();
+    }
+    
+    function addEducationEntry(item = {}) {
+        const entriesContainer = document.getElementById('educationEntries');
+        entriesContainer.insertAdjacentHTML('beforeend', getEducationEntryHtml(item));
+    }
+    
+    function getEducationDataFromForm() {
+        const entries = document.querySelectorAll('#educationEntries .dynamic-section');
+        const data = [];
+        entries.forEach(entry => {
+            const degree = entry.querySelector('[name="degree"]').value.trim();
+            const institution = entry.querySelector('[name="institution"]').value.trim();
+            if (degree && institution) {
+                data.push({
+                    degree: degree,
+                    field: entry.querySelector('[name="field"]').value.trim(),
+                    institution: institution,
+                    startDate: entry.querySelector('[name="startDate"]').value,
+                    endDate: entry.querySelector('[name="endDate"]').value
+                });
+            }
+        });
+        return data;
+    }
+
+    async function saveEducation() {
+        const data = getEducationDataFromForm();
+        const safeData = sanitizeDataForSubmission(data);
+        const res = await saveData('/api/profile/update', { education: safeData });
+        if (res) {
+            showToast('Education updated!', 'success');
+            toggleEdit('education', false);
+        }
+    }
+
+
+    // ------------------------------------------
+    // --- 4. CERTIFICATIONS IMPLEMENTATION ---
+    // ... (Certifications functions remain unchanged) ...
+
+    function renderCertificationView(item) {
+        const safeItem = sanitizeDataForSubmission(item);
+        return `
+            <div class="view-section">
+                <h4 class="mb-1">${safeItem.name}</h4>
+                <p class="text-secondary mb-1">Issued by: ${safeItem.issuer}</p>
+                <p class="text-muted mb-0">Issued: ${safeItem.issueDate}</p>
+            </div>`;
+    }
+
+    function getCertificationEntryHtml(item = {}, index) {
+        const safeItem = sanitizeDataForSubmission(item);
+        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+        return `
+            <div class="dynamic-section" data-id="${itemId}" data-type="certifications">
+                <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                <div class="mb-3">
+                    <label class="form-label">Certification Name</label>
+                    <input type="text" class="form-control" name="name" value="${safeItem.name || ''}" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Issuing Organization</label>
+                        <input type="text" class="form-control" name="issuer" value="${safeItem.issuer || ''}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Issue Date</label>
+                        <input type="month" class="form-control" name="issueDate" value="${safeItem.issueDate || ''}" required>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function populateCertificationsForm() {
+        const entriesContainer = document.getElementById('certificationsEntries');
+        entriesContainer.innerHTML = '';
+        profileData.certifications.forEach((item, index) => {
+            entriesContainer.insertAdjacentHTML('beforeend', getCertificationEntryHtml(item, index));
+        });
+        if (profileData.certifications.length === 0) addCertificationEntry();
+    }
+    
+    function addCertificationEntry(item = {}) {
+        const entriesContainer = document.getElementById('certificationsEntries');
+        entriesContainer.insertAdjacentHTML('beforeend', getCertificationEntryHtml(item));
+    }
+    
+    function getCertificationDataFromForm() {
+        const entries = document.querySelectorAll('#certificationsEntries .dynamic-section');
+        const data = [];
+        entries.forEach(entry => {
+            const name = entry.querySelector('[name="name"]').value.trim();
+            const issuer = entry.querySelector('[name="issuer"]').value.trim();
+            if (name && issuer) {
+                data.push({
+                    name: name,
+                    issuer: issuer,
+                    issueDate: entry.querySelector('[name="issueDate"]').value
+                });
+            }
+        });
+        return data;
+    }
+
+    async function saveCertifications() {
+        const data = getCertificationDataFromForm();
+        const safeData = sanitizeDataForSubmission(data);
+        const res = await saveData('/api/profile/update', { certifications: safeData });
+        if (res) {
+            showToast('Certifications updated!', 'success');
+            toggleEdit('certifications', false);
+        }
+    }
+
+
+    // ------------------------------------
+    // --- 5. LANGUAGES IMPLEMENTATION ---
+    // ... (Languages functions remain unchanged) ...
+
+    function renderLanguageView(item) {
+        const safeItem = sanitizeDataForSubmission(item);
+        // Languages are displayed as tags, not view-sections
+        const proficiencyColor = {
+            'basic': 'info',
+            'conversational': 'warning',
+            'fluent': 'success',
+            'native': 'primary'
+        }[safeItem.proficiency.toLowerCase()] || 'secondary';
+
+        return `<span class="tag text-capitalize bg-${proficiencyColor}">${safeItem.name} (${safeItem.proficiency})</span>`;
+    }
+
+    function getLanguageEntryHtml(item = {}, index) {
+        const safeItem = sanitizeDataForSubmission(item);
+        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+        return `
+            <div class="dynamic-section row g-2 align-items-end" data-id="${itemId}" data-type="languages">
+                <div class="col-6 mb-3">
+                    <label class="form-label">Language</label>
+                    <input type="text" class="form-control" name="name" value="${safeItem.name || ''}" required>
+                </div>
+                <div class="col-4 mb-3">
+                    <label class="form-label">Proficiency</label>
+                    <select class="form-select" name="proficiency" required>
+                        <option value="">Select Level</option>
+                        <option value="Basic" ${safeItem.proficiency === 'Basic' ? 'selected' : ''}>Basic</option>
+                        <option value="Conversational" ${safeItem.proficiency === 'Conversational' ? 'selected' : ''}>Conversational</option>
+                        <option value="Fluent" ${safeItem.proficiency === 'Fluent' ? 'selected' : ''}>Fluent</option>
+                        <option value="Native" ${safeItem.proficiency === 'Native' ? 'selected' : ''}>Native</option>
+                    </select>
+                </div>
+                <div class="col-2 mb-3 text-end">
+                    <button type="button" class="btn btn-sm btn-danger remove-btn me-0 mt-0" style="position: static;" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                </div>
+            </div>`;
+    }
+
+    function populateLanguagesForm() {
+        const entriesContainer = document.getElementById('languagesEntries');
+        entriesContainer.innerHTML = '';
+        profileData.languages.forEach((item, index) => {
+            entriesContainer.insertAdjacentHTML('beforeend', getLanguageEntryHtml(item, index));
+        });
+        if (profileData.languages.length === 0) addLanguageEntry();
+    }
+    
+    function addLanguageEntry(item = {}) {
+        const entriesContainer = document.getElementById('languagesEntries');
+        entriesContainer.insertAdjacentHTML('beforeend', getLanguageEntryHtml(item));
+    }
+    
+    function getLanguageDataFromForm() {
+        const entries = document.querySelectorAll('#languagesEntries .dynamic-section');
+        const data = [];
+        entries.forEach(entry => {
+            const name = entry.querySelector('[name="name"]').value.trim();
+            const proficiency = entry.querySelector('[name="proficiency"]').value;
+            if (name && proficiency) {
+                data.push({
+                    name: name,
+                    proficiency: proficiency
+                });
+            }
+        });
+        return data;
+    }
+
+    async function saveLanguages() {
+        const data = getLanguageDataFromForm();
+        const safeData = sanitizeDataForSubmission(data);
+        const res = await saveData('/api/profile/update', { languages: safeData });
+        if (res) {
+            showToast('Languages updated!', 'success');
+            toggleEdit('languages', false);
+        }
+    }
+
+
+    // ---------------------------------
+    // --- 6. SKILLS IMPLEMENTATION ---
+    // ---------------------------------
+
+    function renderSkillView(item) {
+        const safeItem = sanitizeDataForSubmission(item);
+        // Render each skill as a clickable tag
+        return `<span class="tag">${safeItem.name}</span>`;
+    }
+    
+    // Renders the interactive tag input area
+    function populateSkillsForm() {
+        const entriesContainer = document.getElementById('skillsEntries');
+        entriesContainer.innerHTML = `
+            <div class="mb-3">
+                <label class="form-label">Skills</label>
+                <div id="skillTagsContainer" class="d-flex flex-wrap p-2 border rounded-3 mb-3">
+                    <!-- Existing skills will be added here -->
+                </div>
+                <div class="input-group" id="skillInputGroup">
+                    <input type="text" class="form-control" id="skillInput" placeholder="Enter a skill and press Enter or +">
+                    <button type="button" class="btn btn-primary" id="addSkillBtn">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        const tagsContainer = document.getElementById('skillTagsContainer');
+        
+        // Populate existing skills
+        profileData.skills.forEach(skill => {
+            if (skill.name) {
+                tagsContainer.insertAdjacentHTML('beforeend', createSkillTagHtml(skill.name));
+            }
+        });
+
+        const inputEl = document.getElementById('skillInput');
+        
+        // Add event listeners for the new elements
+        document.getElementById('addSkillBtn').addEventListener('click', () => addSkillTag(inputEl));
+        
+        inputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent form submission
+                addSkillTag(inputEl);
+            }
+        });
+    }
+
+    // Helper to create the HTML for a single skill tag
+    function createSkillTagHtml(name) {
+        const safeName = escapeHTML(name);
+        return `
+            <span class="tag" data-skill="${safeName}">
+                ${safeName}
+                <span class="tag-remove" onclick="removeSkillTag(this)"><i class="fas fa-times"></i></span>
+            </span>
+        `;
+    }
+    
+    // Function to add a new skill tag
+    function addSkillTag(inputEl) {
+        const skillName = inputEl.value.trim();
+        const tagsContainer = document.getElementById('skillTagsContainer');
+        
+        if (skillName) {
+            const existingTags = Array.from(tagsContainer.querySelectorAll('.tag')).map(tag => tag.dataset.skill.toLowerCase());
+            
+            if (!existingTags.includes(skillName.toLowerCase())) {
+                tagsContainer.insertAdjacentHTML('beforeend', createSkillTagHtml(skillName));
+            } else {
+                showToast(`Skill "${skillName}" is already listed.`, 'warning');
+            }
+            inputEl.value = ''; // Clear input field
+        }
+    }
+    
+    // Function to remove a skill tag
+    function removeSkillTag(buttonElement) {
+        buttonElement.closest('.tag').remove();
+    }
+
+    // Not used for this format
+    function addSkillEntry() {} 
+
+    // Collects all current tags from the container
+    function getSkillDataFromForm() {
+        const tagsContainer = document.getElementById('skillTagsContainer');
+        const tags = tagsContainer ? tagsContainer.querySelectorAll('.tag') : [];
+        const data = [];
+        tags.forEach(tag => {
+            const skillName = tag.dataset.skill.trim();
+            if (skillName) {
+                // The database expects an array of objects: [{name: 'Skill1'}, {name: 'Skill2'}]
+                data.push({ name: skillName });
+            }
+        });
+        return data;
+    }
+
+    async function saveSkills() {
+        const data = getSkillDataFromForm();
+        const safeData = sanitizeDataForSubmission(data);
+        const res = await saveData('/api/profile/update', { skills: safeData }); 
+        if (res) {
+            showToast('Skills updated!', 'success');
+            toggleEdit('skills', false);
+        }
+    }
+
+
+    // ---------------------------------
+    // --- 7. RESUME IMPLEMENTATION ---
+    // ... (Resume functions remain unchanged) ...
+
+    function renderResumeSection() {
+        const container = document.getElementById('resume');
+        const resume = profileData.resume;
+        const resumeUrl = resume?.url || '';
+        const resumeName = resume?.name || 'No file uploaded';
+        const na = '<span class="text-muted">N/A</span>';
+        
+        const viewHTML = `
+            <div class="resume-preview">
+                <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                <div>
+                    <p class="mb-0 fw-bold">${resumeName}</p>
+                    <small class="text-muted">${resume ? 'File size: Unknown' : 'Upload your professional resume.'}</small>
+                </div>
+                ${resume ? `<a href="${resumeUrl}" target="_blank" class="btn btn-sm btn-outline-primary ms-auto">View</a>` : ''}
+            </div>`;
+            
+        const formHTML = `
+            <form id="resumeForm" class="d-none">
+                <div class="mb-3">
+                    <label for="resumeFile" class="form-label">Upload New Resume (PDF or DOCX)</label>
+                    <input type="file" class="form-control" id="resumeFile" name="resume" accept=".pdf,.doc,.docx" required>
+                </div>
+                <p class="text-muted">Current File: ${resumeName}</p>
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-primary" onclick="saveResume()">Upload & Save</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="toggleEdit('resume', false)">Cancel</button>
+                </div>
+            </form>`;
+
+        container.innerHTML = `
+            <div class="section-header">
+                <h2 class="h5 mb-0">Resume / Documents</h2>
+                <button type="button" class="btn btn-outline-primary btn-sm edit-btn" onclick="toggleEdit('resume', true)">
+                    <i class="bi bi-cloud-upload me-1"></i> Upload
+                </button>
+            </div>
+            <div id="resumeView">${viewHTML}</div>
+            ${formHTML}`;
+    }
+
+    async function saveResume() {
+        const fileInput = document.getElementById('resumeFile');
+        const file = fileInput.files[0];
+        if (!file) {
+            showToast('Please select a file to upload.', 'warning');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('resume', file);
+        
+        const res = await saveData('/api/profile/upload-resume', formData);
+        if (res) {
+            showToast('Resume uploaded successfully!', 'success');
+            toggleEdit('resume', false);
+        }
+    }
+
+
+    // -----------------------------------
+    // --- 8. PASSWORD IMPLEMENTATION ---
+    // ... (Password functions remain unchanged) ...
+
+    async function updatePassword() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (newPassword.length < 6) {
+            showToast('Password must be at least 6 characters long.', 'danger');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            showToast('New password and confirmation password do not match.', 'danger');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/user/update-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newPassword }),
+                credentials: 'include'
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                showToast(result.message, 'success');
+                // Clear fields on success
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            } else {
+                showToast(result.error || 'Failed to update password.', 'danger');
+            }
+        } catch (error) {
+            console.error('Password update failed:', error);
+            showToast('Server error while updating password.', 'danger');
+        }
+    }
+
+
+    // ------------------------------------
+    // --- 9. GENERIC UTILITY FUNCTIONS ---
+    // ... (Utility functions remain unchanged) ...
+
+    // Helper to remove an entry from a dynamic form section
+    function removeEntry(buttonElement) {
+        const entry = buttonElement.closest('.dynamic-section');
+        if (entry) {
+            entry.remove();
+        }
+    }
+
+    // TOAST (Replaces alert, now more secure)
+    function showToast(message, type = 'info') {
+        const toastContainer = document.querySelector('.toast-container');
+        const id = 'toast-' + Date.now();
+        // XSS Safety: The message content is passed directly into a text node (toast-body) 
+        // and doesn't contain user-generated HTML, so this is safe.
+        const toastHTML = `
+            <div id="${id}" class="toast text-white bg-${type}" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">${escapeHTML(message)}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>`;
+
+        toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+        const toast = new bootstrap.Toast(document.getElementById(id), { delay: 4000 });
+        toast.show();
+        document.getElementById(id).addEventListener('hidden.bs.toast', e => e.target.remove());
+    }
+    
+    // --- Stubs for unused functions (to prevent reference errors if any old code calls them) ---
+    function renderProfessionalView(item) {
+        const safeItem = sanitizeDataForSubmission(item);
+        const descriptionHtml = safeItem.description ? `<p class="mt-2 text-muted">${safeItem.description.replace(/\n/g, '<br>')}</p>` : '';
+        return `<div class="view-section"><h4>${safeItem.title} at ${safeItem.company}</h4><p class="text-secondary mb-1">${safeItem.startDate} - ${safeItem.isCurrent ? 'Present' : safeItem.endDate}</p>${descriptionHtml}</div>`;
+    }
+</script>
+
+
+</body>
+</html>

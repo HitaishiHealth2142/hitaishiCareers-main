@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Login | Hitaishi Careers</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <style>
+        /* --- Base & Navbar Styles --- */
+        :root {
+            --primary-color: #6a0dad;
+            --secondary-color: #d653c9;
+            --bs-primary: #6a0dad;
+            --bs-primary-rgb: 106, 13, 173;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3e8f0 100%);
+            padding-top: 70px; /* Space for fixed navbar */
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+        }
+
+        .main-container {
+            min-height: calc(100vh - 70px);
+        }
+
+        /* --- Login Page Specific Styles --- */
+        .login-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-card {
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        
+        .floating-label {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .floating-input {
+            width: 100%;
+            padding: 1rem 0.75rem 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            background: transparent;
+            transition: all 0.2s ease;
+        }
+
+        .floating-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+        }
+
+        .floating-label-text {
+            position: absolute;
+            top: 50%;
+            left: 0.75rem;
+            transform: translateY(-50%);
+            color: #6b7280;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+
+        .floating-input:focus + .floating-label-text,
+        .floating-input:not(:placeholder-shown) + .floating-label-text {
+            top: 0.35rem;
+            transform: translateY(0);
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            background-color: white;
+            padding: 0 0.25rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #5a0a9d;
+            border-color: #5a0a9d;
+        }
+
+        .alert {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Copied Header/Navbar from index.html -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary fixed-top py-2">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2" onerror="this.style.display='none'">
+                    <span class="fw-bold">Hitaishi Careers</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="jobs.html">Jobs</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown">Services</a>
+                            <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                                <li><a class="dropdown-item" href="featuredprofile.html">Featured Profile</a></li>
+                                <li><a class="dropdown-item" href="careerbooster.html">Career Booster</a></li>
+                                <li><a class="dropdown-item" href="resumebuild.html">Resume Writing</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link active" href="employerlogin.html">Post Jobs</a></li>
+                        <li class="nav-item"><a class="nav-link" href="employers.html">Employers</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" id="uploadResumeLink">Upload Resume</a></li>
+                        <li class="nav-item"><a class="nav-link" href="tutu.html">Apply with AI</a></li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="login.html" id="profileLink">
+                                <i id="profile-icon" class="fas fa-user-circle fa-2x text-white"></i>
+                                <img id="profile-avatar" src="" alt="User Avatar" class="rounded-circle d-none" width="40" height="40">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container main-container">
+        <div class="row min-vh-100 align-items-center justify-content-center">
+            <!-- Left side - Features -->
+            <div class="col-lg-6 col-md-10 mb-5 mb-lg-0">
+                <h1 class="display-5 fw-bold text-dark mb-3">Unlock Top Talent</h1>
+                <p class="lead text-secondary mb-4">Access your employer dashboard to manage job postings, review applications, and connect with the best professionals.</p>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="feature-card p-3 rounded-3 shadow-sm border-start border-4 border-primary">
+                            <h5 class="fw-semibold mb-1"><i class="fas fa-users me-2 text-primary"></i>Find Talent</h5>
+                            <p class="text-muted small mb-0">Search our extensive database of skilled candidates.</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="feature-card p-3 rounded-3 shadow-sm border-start border-4 border-success">
+                            <h5 class="fw-semibold mb-1"><i class="fas fa-bullhorn me-2 text-success"></i>Post Jobs</h5>
+                            <p class="text-muted small mb-0">Create and publish listings to attract the right people.</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="feature-card p-3 rounded-3 shadow-sm border-start border-4 border-info">
+                            <h5 class="fw-semibold mb-1"><i class="fas fa-chart-line me-2 text-info"></i>Track Analytics</h5>
+                            <p class="text-muted small mb-0">Monitor your job postings' performance and reach.</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                         <div class="feature-card p-3 rounded-3 shadow-sm border-start border-4 border-warning">
+                            <h5 class="fw-semibold mb-1"><i class="fas fa-file-alt me-2 text-warning"></i>Manage Apps</h5>
+                            <p class="text-muted small mb-0">Streamline your hiring process in one dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right side - Login Form -->
+            <div class="col-lg-5 col-md-8 offset-lg-1">
+                <div class="login-card p-4 p-sm-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">Employer Login</h2>
+                        <p class="text-muted">Sign in to your account</p>
+                    </div>
+                    <div id="message-container"></div>
+                    <form id="login-form">
+                        <div class="floating-label">
+                            <input type="email" id="email" name="email" class="floating-input" placeholder=" " required>
+                            <label for="email" class="floating-label-text"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                        </div>
+                        <div class="floating-label">
+                            <input type="password" id="password" name="password" class="floating-input" placeholder=" " required>
+                            <label for="password" class="floating-label-text"><i class="fas fa-lock me-2"></i>Password</label>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="remember">
+                                <label class="form-check-label small" for="remember">Remember me</label>
+                            </div>
+                            <a href="#" class="small text-decoration-none" style="color: var(--primary-color);">Forgot password?</a>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" id="submit-button" class="btn btn-primary btn-lg fw-semibold">Login to Dashboard</button>
+                        </div>
+                        <div class="text-center mt-4">
+                            <p class="text-muted small">Don't have an account? 
+                                <a href="employerRegistration.html" class="fw-semibold text-decoration-none" style="color: var(--primary-color);">Register here</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Login script -->
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const messageContainer = document.getElementById('message-container');
+            const submitButton = document.getElementById('submit-button');
+            messageContainer.innerHTML = '';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Logging in...';
+
+            try {
+                // The /api/company/login endpoint must be UNPROTECTED in routes/company.js
+                const response = await fetch('/api/company/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success && result.token) {
+                    // Store the JWT in sessionStorage for subsequent authorized requests
+                    sessionStorage.setItem('authToken', result.token); 
+                    window.location.href = 'employer.html';
+                } else {
+                    showMessage(result.error || `Error ${response.status}: Login failed.`);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('An unexpected network error occurred. Please try again.');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Login to Dashboard';
+            }
+        });
+
+        function showMessage(message) {
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.innerHTML = `<div class="alert alert-danger" role="alert">${message}</div>`;
+        }
+    </script>
+
+
+    <!-- Footer -->
+    <footer class="text-white py-5">
+        <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+            <div class="mb-4">
+                <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+                <span class="fw-bold fs-4">Hitaishi Careers</span>
+            </div>
+            <p class="mb-4">Connecting talented professionals with their dream jobs since 2022. Our mission is to make job searching efficient and effective for everyone.</p>
+            <div class="d-flex gap-3">
+                <a href="#" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+            </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-6">
+            <h5 class="mb-4">Quick Links</h5>
+            <ul class="list-unstyled">
+                <li class="mb-2"><a href="index.html" class="text-white-50">Home</a></li>
+                <li class="mb-2"><a href="jobs.html" class="text-white-50">Browse Jobs</a></li>
+                <li class="mb-2"><a href="employer.html" class="text-white-50">For Employers</a></li>
+                <li class="mb-2"><a href="about.html" class="text-white-50">About Us</a></li>
+                <li class="mb-2"><a href="contact.html" class="text-white-50">Contact</a></li>
+            </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+            <h5 class="mb-4">Job Seeker Resources</h5>
+            <ul class="list-unstyled">
+                <li class="mb-2"><a href="resumebuild.html" class="text-white-50">Resume Builder</a></li>
+                <li class="mb-2"><a href="preparation.html" class="text-white-50">Interview Tips</a></li>
+                <li class="mb-2"><a href="careerbooster.html" class="text-white-50">Career Advice</a></li>
+                <li class="mb-2"><a href="featuredprofile.html" class="text-white-50">Featured Profile</a></li>
+                <li class="mb-2"><a href="tutu.html" class="text-white-50">Apply with AI</a></li>
+            </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+            <h5 class="mb-4">Contact Us</h5>
+            <ul class="list-unstyled">
+                <li class="mb-3 d-flex align-items-start">
+                <i class="fas fa-map-marker-alt me-3 mt-1"></i>
+                <span class="text-white-50">985 pragathi nagar, Pragathi Nagar, Hyderabad, TS 500090</span>
+                </li>
+                <li class="mb-3 d-flex align-items-center">
+                <i class="fas fa-phone me-3"></i>
+                <a href="tel:+919876543210" class="text-white-50">+91 99087 93602</a>,  
+                <a href="tel:+919876543210" class="text-white-50">+91 87901 70525</a>
+                </li>
+                <li class="mb-3 d-flex align-items-center">
+                <i class="fas fa-envelope me-3"></i>
+                <a href="mailto:info@hitashicareers.com" class="text-white-50">info@hitashicareers.com</a>
+                </li>
+            </ul>
+            </div>
+        </div>
+        
+        <hr class="my-5">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+            <p class="mb-0">&copy; 2025 Hitaishi Careers. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+            <a href="PrivacyPolicy.html" class="text-white-50 me-3">Privacy Policy</a>
+            <a href="Terms-Conditions.html" class="text-white-50 me-3">Terms of Service</a>
+            <a href="cookiesPolicy.html" class="text-white-50">Cookie Policy</a>
+            </div>
+        </div>
+        </div>
+        <style>
+            footer {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+        
+        footer a {
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: var(--secondary-color) !important;
+        }
+        </style>
+    </footer>
+
+</body>
+</html>

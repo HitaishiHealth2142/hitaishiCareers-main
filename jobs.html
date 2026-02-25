@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Dream Job</title>
+      <!-- Favicon -->
+  <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+ 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="navbar.css">
+
+    <style>
+        body {
+            background-color: #f4f7fc;
+            font-family: 'Poppins', sans-serif;
+        }
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .main-container {
+            display: flex;
+            width: 90%;
+            max-width: 1400px;
+            margin: 20px auto;
+            gap: 20px;
+        }
+        .filter-container {
+            width: 25%;
+            min-width: 280px;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            align-self: flex-start;
+        }
+        .job-listings-container {
+            width: 75%;
+        }
+        .filter-section {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 20px;
+        }
+        .filter-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .filter-section h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #343a40;
+        }
+        .form-check-label {
+            font-size: 0.9rem;
+            color: #495057;
+        }
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .job-card {
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .job-card .company-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        .job-card .job-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #212529;
+        }
+        .job-card .company-name {
+            font-weight: 500;
+            color: #495057;
+        }
+        .job-card .job-location {
+            color: #6c757d;
+        }
+        .job-card .job-details-pills span {
+            background-color: #e9ecef;
+            color: #495057;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .job-card .job-salary {
+            font-weight: 600;
+            color: #28a745;
+        }
+        .job-card .post-time {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        .skill-badge {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        #no-jobs-message {
+            text-align: center;
+            padding: 50px;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+        .search-bar {
+            background: linear-gradient(90deg, rgb(190 205 231) 0%, rgb(123 132 147) 100%);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        #industry-filter-options {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .filter-container, .job-listings-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+  <!-- Header/Navbar -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary fixed-top py-2">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+          <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+          <span class="fw-bold">Hitaishi Careers</span>
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="jobs.html">Jobs</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown">
+                Services
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                <li><a class="dropdown-item" href="featuredprofile.html">Featured Profile</a></li>
+                <li><a class="dropdown-item" href="featuredprofile.html">Profile Highlighter</a></li>
+                <li><a class="dropdown-item" href="careerbooster.html">Career Booster</a></li>
+                <li><a class="dropdown-item" href="resumebuild.html">Resume Writing</a></li>
+                <li><a class="dropdown-item" href="resumebuild.html">Resume Builder</a></li>
+                <li><a class="dropdown-item" href="network.html">LinkedIn Makeover</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Mock Interview</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Interview Preparation</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Skill Assessment</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Degree Programs</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="employerlogin.html">Post Jobs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="employers.html">Employers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="tutu.html">Apply with AI</a>
+            </li>
+          </ul>
+          
+          <!-- Profile / Avatar -->
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="login.html" id="profileLink">
+                <!-- Default Icon -->
+                <i id="profile-icon" class="fas fa-user-circle fa-2x text-white"></i>
+                <!-- User Avatar (hidden by default) -->
+                <img id="profile-avatar" src="" alt="User Avatar"
+                    class="rounded-circle d-none" width="40" height="40">
+              </a>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+    <script>
+      async function loadNavbarProfile() {
+        const email = sessionStorage.getItem("email");
+        if (!email) {
+          console.log("User not logged in → showing default icon.");
+          return;
+        }
+
+        try {
+          const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+          if (!res.ok) {
+            console.error("Failed to fetch profile:", res.status);
+            return;
+          }
+
+          const data = await res.json();
+          const profilePhoto = data.personalDetails?.profilePhoto;
+
+          if (profilePhoto) {
+            document.getElementById("profile-icon").classList.add("d-none");
+            const avatar = document.getElementById("profile-avatar");
+            avatar.src = profilePhoto;
+            avatar.classList.remove("d-none");
+          }
+        } catch (err) {
+          console.error("Error loading navbar profile:", err);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadNavbarProfile);
+    </script>
+  </header>
+    
+<main class="container" style="padding-top: 80px;">
+    <!-- Search bar -->
+    <div class="search-bar mb-4">
+        <div class="row g-2">
+            <div class="col-md-5">
+                <input type="text" id="searchInput" class="form-control form-control-lg" placeholder="Job title, skills, or company">
+            </div>
+            <div class="col-md-5">
+                <input type="text" id="locationInput" class="form-control form-control-lg" placeholder="City, state, or country">
+            </div>
+            <div class="col-md-2">
+                <button id="searchButton" class="btn btn-light btn-lg w-100">
+                    <i class="fas fa-search me-2"></i>Search
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- Left Side: Filters -->
+        <div class="filter-container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0 fs-5 fw-bold">Filters</h4>
+                <button class="btn btn-sm btn-outline-secondary" id="resetFilters">Reset</button>
+            </div>
+
+            <div class="filter-section">
+                <h5>Posted Date</h5>
+                <div class="form-check"><input class="form-check-input" type="radio" name="posted-date" id="any-date" value="any-date" checked><label class="form-check-label" for="any-date">Any Date</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="posted-date" id="today" value="today"><label class="form-check-label" for="today">Today</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="posted-date" id="last-3-days" value="last-3-days"><label class="form-check-label" for="last-3-days">Last 3 Days</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="posted-date" id="last-7-days" value="last-7-days"><label class="form-check-label" for="last-7-days">Last 7 Days</label></div>
+            </div>
+
+            <div class="filter-section">
+                <h5>Employment Type</h5>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="employment-type" id="full-time" value="Full-time"><label class="form-check-label" for="full-time">Full-time</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="employment-type" id="part-time" value="Part-time"><label class="form-check-label" for="part-time">Part-time</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="employment-type" id="contract" value="Contract"><label class="form-check-label" for="contract">Contract</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="employment-type" id="internship" value="Internship"><label class="form-check-label" for="internship">Internship</label></div>
+            </div>
+
+            <div class="filter-section">
+                <h5>Work Setting</h5>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="work-setting" id="in-office" value="In-office"><label class="form-check-label" for="in-office">In-office</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="work-setting" id="hybrid" value="Hybrid"><label class="form-check-label" for="hybrid">Hybrid</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="work-setting" id="remote" value="Remote"><label class="form-check-label" for="remote">Remote</label></div>
+            </div>
+            
+            <div class="filter-section">
+                <h5>Industry</h5>
+                <div id="industry-filter-options">
+                    <!-- Industry checkboxes will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Job Listings -->
+        <div class="job-listings-container">
+            <div id="job-list-container">
+                <!-- Job cards will be dynamically inserted here -->
+            </div>
+            <div id="no-jobs-message" style="display: none;">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4 class="fw-bold">No Jobs Found</h4>
+                <p class="text-muted">Try adjusting your search or filter criteria.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let allJobs = [];
+        const jobListContainer = document.getElementById("job-list-container");
+        const noJobsMessage = document.getElementById("no-jobs-message");
+        const searchInput = document.getElementById('searchInput');
+        const locationInput = document.getElementById('locationInput');
+        const searchButton = document.getElementById('searchButton');
+        const resetFiltersButton = document.getElementById('resetFilters');
+        const industryFilterContainer = document.getElementById('industry-filter-options');
+
+        // --- Read search parameters from URL ---
+        const urlParams = new URLSearchParams(window.location.search);
+        searchInput.value = urlParams.get('q') || '';
+        locationInput.value = urlParams.get('location') || '';
+
+        // --- Helper Functions ---
+        const timeAgo = (dateString) => {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const seconds = Math.floor((new Date() - date) / 1000);
+            let interval = seconds / 31536000; if (interval > 1) return Math.floor(interval) + " years ago";
+            interval = seconds / 2592000; if (interval > 1) return Math.floor(interval) + " months ago";
+            interval = seconds / 86400; if (interval > 1) return Math.floor(interval) + " days ago";
+            interval = seconds / 3600; if (interval > 1) return Math.floor(interval) + " hours ago";
+            interval = seconds / 60; if (interval > 1) return Math.floor(interval) + " minutes ago";
+            return "Just now";
+        };
+
+        const formatSalary = (job) => {
+            if (job.salary_min && job.salary_max) {
+                return `${job.salary_currency} ${job.salary_min.toLocaleString()} - ${job.salary_max.toLocaleString()} ${job.salary_period}`;
+            }
+            return 'Not Disclosed';
+        };
+
+        const renderSkills = (skills) => {
+            try {
+                const skillArray = typeof skills === 'string' ? JSON.parse(skills) : skills;
+                if (!Array.isArray(skillArray) || skillArray.length === 0) return '';
+                return skillArray.slice(0, 5).map(skill => `<span class="badge rounded-pill bg-primary bg-opacity-10 text-primary skill-badge me-1">${skill}</span>`).join('');
+            } catch (e) { return ''; }
+        };
+        
+        // --- Core Functions ---
+        const fetchJobs = async () => {
+            try {
+                jobListContainer.innerHTML = `<div class="text-center p-5"><div class="spinner-border text-primary"></div><p class="mt-2">Loading jobs...</p></div>`;
+                const response = await fetch('/api/jobs/active');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                allJobs = data.jobs || [];
+                
+                populateIndustryFilter();
+                
+                handleIncomingFilters();
+
+                applyFilters();
+
+            } catch (error) {
+                console.error("Failed to fetch jobs:", error);
+                jobListContainer.innerHTML = `<div class="alert alert-danger">Failed to load jobs. Please try again later.</div>`;
+            }
+        };
+
+        const populateIndustryFilter = () => {
+            const industries = [...new Set(allJobs.map(job => job.industry).filter(Boolean))].sort();
+            industryFilterContainer.innerHTML = '';
+            industries.forEach(industry => {
+                const div = document.createElement('div');
+                div.className = 'form-check';
+                div.innerHTML = `
+                    <input class="form-check-input" type="checkbox" name="industry" value="${industry}" id="industry-${industry.replace(/\s+/g, '-')}">
+                    <label class="form-check-label" for="industry-${industry.replace(/\s+/g, '-')}">${industry}</label>
+                `;
+                industryFilterContainer.appendChild(div);
+            });
+        };
+
+        const handleIncomingFilters = () => {
+            // Check for filter from "Popular Industries"
+            const industryFromHome = sessionStorage.getItem('selectedIndustry');
+            if (industryFromHome) {
+                const industryCheckbox = document.querySelector(`input[name="industry"][value="${industryFromHome}"]`);
+                if (industryCheckbox) {
+                    industryCheckbox.checked = true;
+                }
+                sessionStorage.removeItem('selectedIndustry');
+                return; // Prioritize this filter
+            }
+            
+            // Check for filters from "Browse By" section
+            const browseType = sessionStorage.getItem('browseType');
+            const browseValue = sessionStorage.getItem('browseValue');
+            if (browseType && browseValue) {
+                switch(browseType) {
+                    case 'industry':
+                        const industryCheckbox = document.querySelector(`input[name="industry"][value="${browseValue}"]`);
+                        if (industryCheckbox) {
+                            industryCheckbox.checked = true;
+                        }
+                        break;
+                    case 'location':
+                        locationInput.value = browseValue;
+                        break;
+                    case 'skill':
+                    case 'company':
+                    case 'role':
+                    case 'function':
+                        searchInput.value = browseValue;
+                        break;
+                }
+                sessionStorage.removeItem('browseType');
+                sessionStorage.removeItem('browseValue');
+            }
+        };
+
+        const renderJobs = (jobs) => {
+            jobListContainer.innerHTML = '';
+            if (jobs.length === 0) {
+                noJobsMessage.style.display = 'block';
+            } else {
+                noJobsMessage.style.display = 'none';
+                jobs.forEach(job => {
+                    const jobCard = document.createElement('div');
+                    jobCard.className = 'job-card';
+                    jobCard.innerHTML = `
+                        <div class="row">
+                            <div class="col-auto">
+                                <img src="${job.logo_url || 'https://placehold.co/60x60/EFEFEF/AAAAAA&text=Logo'}" alt="${job.company_name} Logo" class="company-logo">
+                            </div>
+                            <div class="col">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="job-title mb-1">${job.job_title}</h5>
+                                        <p class="company-name mb-1">${job.company_name}</p>
+                                        <p class="job-location small"><i class="fas fa-map-marker-alt me-1"></i>${job.city || 'N/A'}, ${job.country || ''}</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <p class="job-salary mb-1">${formatSalary(job)}</p>
+                                        <p class="post-time mb-0">${timeAgo(job.created_at)}</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2 my-2 job-details-pills">
+                                    <span class="badge rounded-pill"><i class="fas fa-briefcase me-1"></i>${job.job_type || 'N/A'}</span>
+                                    <span class="badge rounded-pill"><i class="fas fa-laptop me-1"></i>${job.work_location || 'N/A'}</span>
+                                    ${job.required_experience ? `<span class="badge rounded-pill"><i class="fas fa-chart-line me-1"></i>${job.required_experience}</span>` : ''}
+                                </div>
+                                <div class="mt-2">${renderSkills(job.required_skills)}</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-3 border-top pt-3">
+                            <a href="jobApplication.html?jobId=${job.id}" class="btn btn-primary apply-now-btn" data-job-id="${job.id}">Apply Now</a>
+                        </div>
+                    `;
+                    jobListContainer.appendChild(jobCard);
+                });
+            }
+        };
+        
+        const applyFilters = () => {
+            let filteredJobs = [...allJobs];
+            const searchTerm = searchInput.value.toLowerCase();
+            const locationTerm = locationInput.value.toLowerCase();
+
+            if (searchTerm) {
+                filteredJobs = filteredJobs.filter(job => 
+                    job.job_title.toLowerCase().includes(searchTerm) ||
+                    job.company_name.toLowerCase().includes(searchTerm) ||
+                    (job.required_skills && JSON.stringify(job.required_skills).toLowerCase().includes(searchTerm))
+                );
+            }
+            if (locationTerm) {
+                filteredJobs = filteredJobs.filter(job =>
+                    (job.city && job.city.toLowerCase().includes(locationTerm)) ||
+                    (job.state && job.state.toLowerCase().includes(locationTerm)) ||
+                    (job.country && job.country.toLowerCase().includes(locationTerm))
+                );
+            }
+            
+            const postedDateFilter = document.querySelector('input[name="posted-date"]:checked').value;
+            if (postedDateFilter !== 'any-date') {
+                const now = new Date();
+                let days;
+                if (postedDateFilter === 'today') days = 1;
+                if (postedDateFilter === 'last-3-days') days = 3;
+                if (postedDateFilter === 'last-7-days') days = 7;
+                const cutoffDate = new Date().setDate(new Date().getDate() - days);
+                filteredJobs = filteredJobs.filter(job => new Date(job.created_at) >= cutoffDate);
+            }
+            
+            const selectedEmpTypes = [...document.querySelectorAll('input[name="employment-type"]:checked')].map(cb => cb.value);
+            if (selectedEmpTypes.length > 0) {
+                filteredJobs = filteredJobs.filter(job => selectedEmpTypes.includes(job.job_type));
+            }
+
+            const selectedWorkSettings = [...document.querySelectorAll('input[name="work-setting"]:checked')].map(cb => cb.value);
+            if (selectedWorkSettings.length > 0) {
+                filteredJobs = filteredJobs.filter(job => selectedWorkSettings.includes(job.work_location));
+            }
+            
+            const selectedIndustries = [...document.querySelectorAll('input[name="industry"]:checked')].map(cb => cb.value);
+            if (selectedIndustries.length > 0) {
+                filteredJobs = filteredJobs.filter(job => selectedIndustries.includes(job.industry));
+            }
+            
+            renderJobs(filteredJobs);
+        };
+
+        const resetFilters = () => {
+            document.getElementById('any-date').checked = true;
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            searchInput.value = '';
+            locationInput.value = '';
+            applyFilters();
+        };
+
+        // --- Event Listeners ---
+        jobListContainer.addEventListener('click', (e) => {
+            const applyButton = e.target.closest('.apply-now-btn');
+            if (applyButton) {
+                e.preventDefault();
+                if (sessionStorage.getItem('email')) {
+                    window.location.href = applyButton.href;
+                } else {
+                    alert('Please login to apply for this job.');
+                    window.location.href = 'login.html';
+                }
+            }
+        });
+
+        document.querySelectorAll('input[name="posted-date"], input[name="employment-type"], input[name="work-setting"]').forEach(el => {
+            el.addEventListener('change', applyFilters);
+        });
+        industryFilterContainer.addEventListener('change', (e) => {
+            if(e.target.name === 'industry') applyFilters();
+        });
+
+        searchButton.addEventListener('click', applyFilters);
+        searchInput.addEventListener('keyup', (e) => { if(e.key === 'Enter') applyFilters(); });
+        locationInput.addEventListener('keyup', (e) => { if(e.key === 'Enter') applyFilters(); });
+        resetFiltersButton.addEventListener('click', resetFilters);
+
+        fetchJobs();
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Footer -->
+ <footer class="text-white py-5" style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d);">
+    <div class="container">
+    <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+        <div class="mb-4">
+            <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+            <span class="fw-bold fs-4">Hitaishi Careers</span>
+        </div>
+        <p class="mb-4">Connecting talented professionals with their dream jobs since 2022. Our mission is to make job searching efficient and effective for everyone.</p>
+        <div class="d-flex gap-3">
+            <a href="#" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+        </div>
+        </div>
+        <div class="col-lg-2 col-md-6">
+        <h5 class="mb-4">Quick Links</h5>
+        <ul class="list-unstyled">
+            <li class="mb-2"><a href="index.html" class="text-white-50">Home</a></li>
+            <li class="mb-2"><a href="jobs.html" class="text-white-50">Browse Jobs</a></li>
+            <li class="mb-2"><a href="employer.html" class="text-white-50">For Employers</a></li>
+            <li class="mb-2"><a href="about.html" class="text-white-50">About Us</a></li>
+            <li class="mb-2"><a href="contact.html" class="text-white-50">Contact</a></li>
+        </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+        <h5 class="mb-4">Job Seeker Resources</h5>
+        <ul class="list-unstyled">
+            <li class="mb-2"><a href="resumebuild.html" class="text-white-50">Resume Builder</a></li>
+            <li class="mb-2"><a href="preparation.html" class="text-white-50">Interview Tips</a></li>
+            <li class="mb-2"><a href="careerbooster.html" class="text-white-50">Career Advice</a></li>
+            <li class="mb-2"><a href="featuredprofile.html" class="text-white-50">Featured Profile</a></li>
+            <li class="mb-2"><a href="tutu.html" class="text-white-50">Apply with AI</a></li>
+        </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+        <h5 class="mb-4">Contact Us</h5>
+        <ul class="list-unstyled">
+            <li class="mb-3 d-flex align-items-start"><i class="fas fa-map-marker-alt me-3 mt-1"></i><span class="text-white-50">985 pragathi nagar, Pragathi Nagar, Hyderabad, TS 500090</span></li>
+            <li class="mb-3 d-flex align-items-center"><i class="fas fa-phone me-3"></i><span><a href="tel:+919908793602" class="text-white-50">+91 99087 93602</a>, <a href="tel:+918790170525" class="text-white-50">+91 87901 70525</a></span></li>
+            <li class="mb-3 d-flex align-items-center"><i class="fas fa-envelope me-3"></i><a href="mailto:info@hitashicareers.com" class="text-white-50">info@hitashicareers.com</a></li>
+        </ul>
+        </div>
+    </div>
+    <hr class="my-5">
+    <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start"><p class="mb-0">&copy; 2025 Hitaishi Careers. All rights reserved.</p></div>
+        <div class="col-md-6 text-center text-md-end">
+            <a href="PrivacyPolicy.html" class="text-white-50 me-3">Privacy Policy</a>
+            <a href="Terms-Conditions.html" class="text-white-50 me-3">Terms of Service</a>
+            <a href="cookiesPolicy.html" class="text-white-50">Cookie Policy</a>
+        </div>
+    </div>
+    </div>
+</footer>
+    
+</body>
+</html>

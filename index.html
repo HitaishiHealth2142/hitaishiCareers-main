@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="ecK9HDw6S5jsd7eJqgOV2nZxTFDyixUowUjAVTJ0_tU" />
+
+  <meta name="description" content="Hitaishi Careers - Find your dream job with our comprehensive job portal.">
+  <meta name="keywords" content="jobs, career, employment, hiring, job search, Hitaishi Careers">
+  <title>Hitaishi Careers - Find Your Dream Job</title>
+  
+  <!-- Open Graph / Facebook -->
+  <meta name="author" content="Hitaishi Careers">
+  <meta property="og:title" content="Hitaishi Careers - WinJob.in">
+  <meta property="og:description" content="Find your dream job on WinJob.in - Hitaishi Careers.">
+  <meta property="og:url" content="https://www.winjob.in">
+  <meta property="og:site_name" content="WinJob">
+  <meta property="og:image" content="https://winjob.in/images/logo.png">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="WinJob | Hitaishi Careers - Find Jobs & Get Hired">
+  <meta name="twitter:description" content="Search and apply for jobs with WinJob by Hitaishi Careers. Find your dream job today.">
+  <meta name="twitter:image" content="https://winjob.in/images/Logo1.png">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://winjob.in">
+
+  <!-- Favicon -->
+  <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Structured Data / Schema.org -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "WinJob - Hitaishi Careers",
+      "url": "https://winjob.in",
+      "logo": "https://winjob.in/images/logo.png",
+      "sameAs": [
+        "https://www.facebook.com/YourPage",
+        "https://www.linkedin.com/company/YourPage",
+        "https://twitter.com/YourPage",
+        "https://instagram.com/YourPage"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-XXXXXXXXXX",
+        "contactType": "Customer Support",
+        "areaServed": "IN",
+        "availableLanguage": "en"
+      }
+    }
+  </script>
+  
+  <!-- Custom CSS -->
+  <style>
+      :root {
+        --primary-color: #6a0dad;
+        --secondary-color: #d653c9;
+        --accent-color: #ff6b00;
+        --light-bg: #f9f7ff;
+        --dark-text: #333333;
+        --light-text: #6c757d;
+      }
+      
+      body {
+        font-family: 'Poppins', sans-serif;
+        color: var(--dark-text);
+        /* Added padding to prevent content from being hidden by the fixed navbar */
+        padding-top: 70px; 
+      }
+      
+      .bg-gradient-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+      }
+      
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        font-weight: 500;
+        padding: 10px 24px;
+      }
+      
+      .btn-primary:hover {
+        background-color: #5a0a9d;
+        border-color: #5a0a9d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(106, 13, 173, 0.3);
+      }
+      
+      .btn-accent {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+        font-weight: 500;
+      }
+      
+      .btn-accent:hover {
+        background-color: #e05a00;
+        border-color: #e05a00;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 107, 0, 0.3);
+      }
+      
+      .category-box, .skill-box, .location-box, 
+      .industry-box, .function-box, .role-box, 
+      .company-box {
+        transition: all 0.3s ease;
+        border-radius: 10px;
+      }
+      
+      .category-box:hover, .skill-box:hover, .location-box:hover, 
+      .industry-box:hover, .function-box:hover, .role-box:hover, 
+      .company-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      }
+      
+      .navbar-nav .nav-link {
+        color: white !important;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        position: relative;
+      }
+      
+      .navbar-nav .nav-link:hover {
+        color: #ffcc00 !important;
+      }
+      
+      .navbar-nav .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 50%;
+        background-color: #ffcc00;
+        transition: all 0.3s ease;
+      }
+      
+      .navbar-nav .nav-link:hover::after {
+        width: 80%;
+        left: 10%;
+      }
+      
+      .dropdown-menu {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 10px 0;
+      }
+      
+      .dropdown-item {
+        padding: 8px 20px;
+        transition: all 0.2s ease;
+      }
+      
+      .dropdown-item:hover {
+        background-color: rgba(106, 13, 173, 0.1);
+        color: var(--primary-color);
+      }
+      
+      .service-card {
+        transition: transform 0.3s ease;
+        height: 100%;
+        border-radius: 15px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      }
+      
+      .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      }
+      
+      .service-card .card-body {
+        padding: 30px 20px;
+      }
+      
+      .job-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border-radius: 12px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        height: 100%;
+      }
+      
+      .job-card:hover {
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+      }
+      
+      .job-card .card-body {
+        padding: 25px;
+      }
+      
+      .job-card .badge {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+      }
+      
+      .marquee-container {
+        overflow: hidden;
+        position: relative;
+      }
+      
+      .marquee-content {
+        display: flex;
+        animation: marquee 30s linear infinite;
+        white-space: nowrap;
+      }
+      
+      @keyframes marquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+      }
+      
+      .company-logo-scroll {
+        animation: scrollLogos 45s linear infinite;
+        display: flex;
+        align-items: center;
+      }
+      
+      @keyframes scrollLogos {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+      }
+      
+      footer {
+        background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+      }
+      
+      footer a {
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      
+      footer a:hover {
+        color: var(--secondary-color) !important;
+      }
+      
+      /* Animation for category boxes */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .animate-fade-in-up {
+        animation: fadeInUp 0.5s ease forwards;
+      }
+      
+      /* Hero Section Styles */
+      .hero-section {
+        background: linear-gradient(135deg, var(--light-bg) 0%, #ffffff 100%);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .hero-section::before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: rgba(106, 13, 173, 0.05);
+        top: -150px;
+        right: -150px;
+      }
+      
+      .hero-section::after {
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255, 107, 0, 0.05);
+        bottom: -100px;
+        left: -100px;
+      }
+      
+      .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+      }
+      
+      .search-form-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        padding: 15px;
+        margin-top: 30px;
+      }
+      
+      .search-form-card .form-control, 
+      .search-form-card .form-select {
+        border: none;
+        background: transparent;
+        padding-left: 0;
+      }
+      
+      .search-form-card .form-control:focus, 
+      .search-form-card .form-select:focus {
+        box-shadow: none;
+      }
+      
+      .divider {
+        width: 1px;
+        height: 40px;
+        background: #e0e0e0;
+      }
+      
+      /* Section Headings */
+      .section-heading {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        position: relative;
+      }
+      
+      .section-heading::after {
+        content: '';
+        position: absolute;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+      }
+      
+      /* Tab Styles */
+      .nav-pills .nav-link {
+        color: var(--dark-text);
+        border-radius: 30px;
+        padding: 10px 20px;
+        margin: 0 5px;
+        transition: all 0.3s ease;
+      }
+      
+      .nav-pills .nav-link.active {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+      }
+      
+      .nav-pills .nav-link:not(.active):hover {
+        background-color: rgba(106, 13, 173, 0.1);
+      }
+      
+      /* Stats Section */
+      .stats-section {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+      }
+      
+      .stat-item {
+        text-align: center;
+      }
+      
+      .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+      
+      .stat-label {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+      
+      /* Responsive Adjustments */
+      @media (max-width: 768px) {
+        body {
+            padding-top: 60px; /* Adjust navbar padding for smaller screens */
+        }
+        .hero-title {
+          font-size: 2.5rem;
+        }
+        
+        .section-heading {
+          font-size: 2rem;
+        }
+        
+        .search-form-card {
+          border-radius: 15px;
+          padding: 10px;
+        }
+        
+        .divider {
+          display: none;
+        }
+      }
+
+      /* Styles for the "Continue with Google" popup */
+      #google-auth-popup {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 1050;
+          width: 90%;
+          max-width: 400px;
+          background-color: white;
+          border-radius: 15px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+          padding: 30px;
+          display: none;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          animation: slideIn 0.5s ease-out;
+      }
+
+      @keyframes slideIn {
+          from {
+              opacity: 0;
+              transform: translate(-50%, -60%);
+          }
+          to {
+              opacity: 1;
+              transform: translate(-50%, -50%);
+          }
+      }
+
+      #google-auth-popup.show {
+          display: flex;
+      }
+      
+      #popup-close-btn {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          color: #9ca3af;
+          cursor: pointer;
+          transition: color 0.3s ease;
+      }
+      
+      #popup-close-btn:hover {
+          color: var(--dark-text);
+      }
+      
+      /* Backdrop for popup */
+      .popup-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 1040;
+          display: none;
+      }
+      
+      .popup-backdrop.show {
+          display: block;
+      }
+  </style>
+
+</head>
+
+<body>
+  <!-- Backdrop for popup -->
+  <div class="popup-backdrop" id="popupBackdrop"></div>
+
+  <!-- "Continue with Google" Popup -->
+  <div id="google-auth-popup">
+      <button id="popup-close-btn">&times;</button>
+      <div class="mb-4">
+        <img src="images/logo.png" alt="Hitaishi Careers" height="50">
+      </div>
+      <h3 class="fw-bold mb-3 text-dark">Sign in to Hitaishi Careers</h3>
+      <p class="text-muted mb-4">Continue with your Google account to get started.</p>
+      
+      <!-- Button for returning users -->
+      <button id="continueAsButton" class="btn btn-primary w-100 d-none mb-3">
+          <!-- Content will be populated by JS -->
+      </button>
+
+      <!-- Generic sign-in button -->
+      <button id="googleSignInButton" class="btn btn-outline-secondary w-100">
+          <i class="fab fa-google me-2"></i>Sign in with Google
+      </button>
+      
+      <p class="text-muted mt-3 small">By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+  </div>
+
+  <!-- Header/Navbar -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary fixed-top py-2">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+          <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+          <span class="fw-bold">Hitaishi Careers</span>
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="jobs.html">Jobs</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown">
+                Services
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                <li><a class="dropdown-item" href="featuredprofile.html">Featured Profile</a></li>
+                <li><a class="dropdown-item" href="placementassistant.html">Placement Assistant</a></li>
+                <li><a class="dropdown-item" href="placementguarantee.html">Placement Guarantee</a></li>
+                <li><a class="dropdown-item" href="featuredprofile.html">Profile Highlighter</a></li>
+                <li><a class="dropdown-item" href="careerbooster.html">Career Booster</a></li>
+                <li><a class="dropdown-item" href="resumebuild.html">Resume Writing</a></li>
+                <li><a class="dropdown-item" href="resumebuild.html">Resume Builder</a></li>
+                <li><a class="dropdown-item" href="network.html">LinkedIn Makeover</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Mock Interview</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Interview Preparation</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Skill Assessment</a></li>
+                <li><a class="dropdown-item" href="preparation.html">Degree Programs</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="employerlogin.html">Post Jobs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="employers.html">Employers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="tutu.html">Apply with AI</a>
+            </li>
+          </ul>
+          
+          <!-- Profile / Avatar -->
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="login.html" id="profileLink">
+                <!-- Default Icon -->
+                <i id="profile-icon" class="fas fa-user-circle fa-2x text-white"></i>
+                <!-- User Avatar (hidden by default) -->
+                <img id="profile-avatar" src="" alt="User Avatar"
+                    class="rounded-circle d-none" width="40" height="40">
+              </a>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+    <script>
+      async function loadNavbarProfile() {
+        const email = sessionStorage.getItem("email");
+        if (!email) {
+          console.log("User not logged in → showing default icon.");
+          return;
+        }
+
+        try {
+          const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+          if (!res.ok) {
+            console.error("Failed to fetch profile:", res.status);
+            return;
+          }
+
+          const data = await res.json();
+          const profilePhoto = data.personalDetails?.profilePhoto;
+
+          if (profilePhoto) {
+            // Hide the default font-awesome icon
+            document.getElementById("profile-icon").classList.add("d-none");
+
+            // Show user’s actual avatar
+            const avatar = document.getElementById("profile-avatar");
+            avatar.src = profilePhoto;
+            avatar.classList.remove("d-none");
+          }
+        } catch (err) {
+          console.error("Error loading navbar profile:", err);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadNavbarProfile);
+    </script>
+  </header>
+
+  <!-- Hero Search Section -->
+  <section class="hero-section py-5">
+    <div class="container position-relative z-1">
+      <div class="row align-items-center">
+        <!-- Left side content -->
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <h1 class="hero-title">Find Your Dream Job Today</h1>
+          <p class="lead mb-4">Discover over 800,000 job opportunities from top companies. Your perfect career match is just a search away.</p>
+          
+          <div class="d-flex flex-wrap gap-3 mb-4">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-check-circle text-success me-2"></i>
+              <span>Verified Companies</span>
+            </div>
+            <div class="d-flex align-items-center">
+              <i class="fas fa-check-circle text-success me-2"></i>
+              <span>Quick Applications</span>
+            </div>
+            <div class="d-flex align-items-center">
+              <i class="fas fa-check-circle text-success me-2"></i>
+              <span>Career Guidance</span>
+            </div>
+          </div>
+          
+          <div class="d-flex flex-wrap gap-2">
+            <a href="jobs.html" class="btn btn-primary">Browse Jobs</a>
+            <a href="employer.html" class="btn btn-outline-primary">For Employers</a>
+          </div>
+        </div>
+        
+        <!-- Right side image -->
+        <div class="col-lg-6 text-center">
+          <img src="images/bg-hero-removebg-preview.png" alt="A professional celebrating success" class="img-fluid rounded-3">
+        </div>
+      </div>
+      
+      <!-- Search Form Card -->
+      <form id="jobSearchForm" action="jobs.html" method="GET" class="row g-2 mt-5 shadow-lg rounded-3 lign-items-center">
+        <!-- Keyword Input -->
+        <div class="col-md-3">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-search text-muted ms-3 me-3"></i>
+            <input type="text" id="keywordSearch" name="q" class="form-control border-0"
+              placeholder="Skills, Company or Job Title">
+          </div>
+        </div>
+
+        <!-- Experience -->
+        <div class="col-md-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-briefcase text-muted ms-3 me-3"></i>
+            <select id="experienceSelect" name="experience" class="form-select border-0">
+              <option value="">Experience</option>
+              <option value="0-1">0-1 years</option>
+              <option value="1-3">1-3 years</option>
+              <option value="3-5">3-5 years</option>
+              <option value="5+">5+ years</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Country -->
+        <div class="col-md-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-globe text-muted ms-3 me-3"></i>
+            <select id="countrySelect" name="country" class="form-select border-0">
+              <option value="">Country</option>
+              <option value="India">India</option>
+              <option value="USA">USA</option>
+              <option value="UK">UK</option>
+              <option value="Australia">Australia</option>
+              <option value="Canada">Canada</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="col-md-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-map-marker-alt text-muted ms-3 me-3"></i>
+            <select id="locationSelect" name="location" class="form-select border-0" disabled>
+              <option value="">Location</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Search Button -->
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-primary w-100 py-3">
+            <i class="fas fa-search me-2"></i>Search
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section py-5">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-3 col-6 mb-4 mb-md-0">
+          <div class="stat-item">
+            <div class="stat-number">800K+</div>
+            <div class="stat-label">Job Openings</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4 mb-md-0">
+          <div class="stat-item">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Companies</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number">5M+</div>
+            <div class="stat-label">Job Seekers</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number">95%</div>
+            <div class="stat-label">Success Rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Job Listings Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-heading">Latest Job Openings</h2>
+      <p class="text-center text-muted mb-5">Discover new opportunities that match your skills and interests</p>
+      
+      <!-- Job Filters -->
+      <div class="row g-3 align-items-center mb-4">
+        <div class="col-md-9">
+          <div class="row g-2">
+            <div class="col-sm-6 col-md-3">
+              <select class="form-select" id="posted-date-filter">
+                <option value="">Posted Date</option>
+                <option value="today">Today</option>
+                <option value="last-3-days">Last 3 Days</option>
+                <option value="last-7-days">Last 7 Days</option>
+              </select>
+            </div>
+            
+            <div class="col-sm-6 col-md-3">
+              <select class="form-select" id="employment-type-filter">
+                <option value="">Employment Type</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Internship">Internship</option>
+              </select>
+            </div>
+            
+            <div class="col-sm-6 col-md-3">
+                <!-- This filter seems to be a duplicate or custom logic not directly in the job data. Let's keep it simple for now -->
+                 <select class="form-select" id="work-settings-filter">
+                    <option value="">Work Settings</option>
+                    <option value="In-office">In-office</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="Remote">Remote</option>
+                  </select>
+            </div>
+            
+            <div class="col-sm-6 col-md-3">
+                 <!-- This was employer-type, but work-settings is in the DB. I'll use work-settings -->
+                 <input type="text" class="form-control" id="location-filter" placeholder="Location (e.g., City)">
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          <button id="apply-filters-btn" class="btn btn-primary w-100">Apply Filters</button>
+        </div>
+      </div>
+      
+      <!-- Job Cards Container -->
+      <div id="job-list-container" class="row g-4">
+          <!-- Job cards will be dynamically inserted here -->
+      </div>
+
+       <!-- Placeholder Message -->
+      <p id="placeholder-message" class="text-center text-muted my-5" style="display: none;"></p>
+      
+      <div class="text-center mt-5">
+        <a href="jobs.html" id="view-all-jobs-link" class="btn btn-outline-primary btn-lg">View All Jobs</a>
+      </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let allJobs = [];
+            const jobListContainer = document.getElementById('job-list-container');
+            const placeholderMessage = document.getElementById('placeholder-message');
+            const applyFiltersBtn = document.getElementById('apply-filters-btn');
+            const viewAllJobsLink = document.getElementById('view-all-jobs-link');
+
+            const postedDateFilter = document.getElementById('posted-date-filter');
+            const employmentTypeFilter = document.getElementById('employment-type-filter');
+            const workSettingsFilter = document.getElementById('work-settings-filter');
+            const locationFilterInput = document.getElementById('location-filter');
+
+            // --- Helper Functions ---
+            const timeAgo = (dateString) => {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const seconds = Math.floor((new Date() - date) / 1000);
+                let interval = seconds / 86400;
+                if (interval > 1) return Math.floor(interval) + " days ago";
+                interval = seconds / 3600;
+                if (interval > 1) return Math.floor(interval) + " hours ago";
+                return "Just now";
+            };
+
+            const formatSalary = (job) => {
+                if (job.salary_min && job.salary_max) {
+                    return `<i class="fas fa-rupee-sign me-2"></i>${job.salary_currency} ${job.salary_min.toLocaleString()} - ${job.salary_max.toLocaleString()} ${job.salary_period}`;
+                }
+                return 'Salary Not Disclosed';
+            };
+
+            const renderSkills = (skills) => {
+                 try {
+                    const skillArray = typeof skills === 'string' ? JSON.parse(skills) : skills;
+                    if (!Array.isArray(skillArray) || skillArray.length === 0) return '';
+                    return skillArray.slice(0, 3).map(skill => `<span class="badge bg-light text-dark me-1">${skill}</span>`).join('');
+                } catch (e) {
+                    return ''; 
+                }
+            };
+            
+            const createJobCard = (job) => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4';
+
+                const card = document.createElement('div');
+                card.className = 'card h-100 job-card';
+                card.setAttribute('onclick', `window.location.href='jobApplication.html?jobId=${job.id}'`);
+                card.innerHTML = `
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-start mb-3">
+                        <img src="${job.logo_url || 'https://placehold.co/50x50/EFEFEF/AAAAAA&text=Logo'}" alt="${job.company_name} logo" style="width: 50px; height: 50px; border-radius: 8px; object-fit: contain;">
+                        <button class="btn btn-sm btn-outline-primary"><i class="far fa-bookmark"></i></button>
+                      </div>
+                      <h5 class="card-title">${job.job_title}</h5>
+                      <p class="card-text text-muted"><i class="fas fa-building me-2"></i>${job.company_name}</p>
+                      <p class="card-text"><i class="fas fa-map-marker-alt me-2"></i>${job.city || 'N/A'}, ${job.country || ''}</p>
+                      <p class="card-text fw-bold text-success">${formatSalary(job)}</p>
+                      <div class="mt-3">
+                        ${renderSkills(job.required_skills)}
+                      </div>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                      <small class="text-muted">Posted ${timeAgo(job.created_at)}</small>
+                      <a href="jobApplication.html?jobId=${job.id}" class="btn btn-sm btn-primary">Apply Now</a>
+                    </div>
+                `;
+                col.appendChild(card);
+                return col;
+            };
+
+            const renderJobs = (jobs) => {
+                jobListContainer.innerHTML = '';
+                if (jobs.length === 0) {
+                    placeholderMessage.textContent = 'No jobs match your criteria. Try different filters.';
+                    placeholderMessage.style.display = 'block';
+                } else {
+                    placeholderMessage.style.display = 'none';
+                    // Display only the top 3 jobs
+                    jobs.slice(0, 3).forEach(job => {
+                        jobListContainer.appendChild(createJobCard(job));
+                    });
+                }
+            };
+            
+            const applyAllFilters = () => {
+                let filteredJobs = [...allJobs];
+                const dateFilter = postedDateFilter.value;
+                const typeFilter = employmentTypeFilter.value;
+                const settingFilter = workSettingsFilter.value;
+                const locationTerm = locationFilterInput.value.toLowerCase();
+
+                // Date filter logic
+                if (dateFilter) {
+                    const now = new Date();
+                    let days;
+                    if (dateFilter === 'today') days = 1;
+                    if (dateFilter === 'last-3-days') days = 3;
+                    if (dateFilter === 'last-7-days') days = 7;
+                    if (days) {
+                         const cutoffDate = new Date();
+                         cutoffDate.setDate(now.getDate() - days);
+                         filteredJobs = filteredJobs.filter(job => new Date(job.created_at) >= cutoffDate);
+                    }
+                }
+
+                // Other filters
+                if (typeFilter) {
+                    filteredJobs = filteredJobs.filter(job => job.job_type === typeFilter);
+                }
+                if (settingFilter) {
+                    filteredJobs = filteredJobs.filter(job => job.work_location === settingFilter);
+                }
+                if (locationTerm) {
+                    filteredJobs = filteredJobs.filter(job => 
+                        (job.city && job.city.toLowerCase().includes(locationTerm)) ||
+                        (job.country && job.country.toLowerCase().includes(locationTerm))
+                    );
+                }
+
+                renderJobs(filteredJobs);
+                updateViewAllLink();
+            };
+
+            const updateViewAllLink = () => {
+                const params = new URLSearchParams();
+                if (postedDateFilter.value) params.set('posted', postedDateFilter.value);
+                if (employmentTypeFilter.value) params.set('type', employmentTypeFilter.value);
+                if (workSettingsFilter.value) params.set('setting', workSettingsFilter.value);
+                if (locationFilterInput.value) params.set('location', locationFilterInput.value);
+
+                viewAllJobsLink.href = `jobs.html?${params.toString()}`;
+            };
+
+
+            const fetchAndDisplayJobs = async () => {
+                try {
+                    const response = await fetch('/api/jobs/active');
+                    if (!response.ok) throw new Error('Failed to fetch jobs.');
+                    const data = await response.json();
+                    allJobs = data.jobs || [];
+
+                    if (allJobs.length === 0) {
+                        placeholderMessage.textContent = 'No job openings at the moment. Please check back later!';
+                        placeholderMessage.style.display = 'block';
+                    } else {
+                        renderJobs(allJobs); // Initially render the latest 3
+                    }
+                } catch (error) {
+                    console.error('Error fetching jobs:', error);
+                    placeholderMessage.textContent = 'Could not load job listings. Please try again.';
+                    placeholderMessage.style.display = 'block';
+                }
+            };
+
+            // Event Listeners
+            applyFiltersBtn.addEventListener('click', applyAllFilters);
+
+            // Initial load
+            fetchAndDisplayJobs();
+        });
+    </script>
+  </section>
+
+
+  <!-- Find the Perfect Job for YOU Section -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-5">Find the Perfect Job for YOU</h2>
+      
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="card pj-service-card h-100 text-center">
+            <div class="card-body">
+              <img src="https://media.foundit.in/trex/public/default/images/career-services/service/boost.svg" alt="Highlight Profile" class="img-fluid mb-3" style="height: 80px;">
+              <h5 class="card-title"><a href="network.html#industry" class="text-decoration-none text-dark">Highlight</a></h5>
+              <p class="card-text">Stand out to employers with a highlighted profile</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+          <div class="card pj-service-card h-100 text-center">
+            <div class="card-body">
+              <img src="https://media.foundit.in/trex/public/default/images/career-services/service/interview-preparation.svg" alt="Interview Preparation" class="img-fluid mb-3" style="height: 80px;">
+              <h5 class="card-title"><a href="preparation.html" class="text-decoration-none text-dark">Prep</a></h5>
+              <p class="card-text">Up your interview success rate with our preparation resources</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+          <div class="card pj-service-card h-100 text-center">
+            <div class="card-body">
+              <img src="https://media.foundit.in/trex/public/default/images/career-services/service/skill-assessment.svg" alt="Learn Skills" class="img-fluid mb-3" style="height: 80px;">
+              <h5 class="card-title"><a href="preparation.html" class="text-decoration-none text-dark">Learn</a></h5>
+              <p class="card-text">Upskill to get ahead in your career</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+          <div class="card pj-service-card h-100 text-center">
+            <div class="card-body">
+              <img src="https://media.foundit.in/trex/public/default/images/career-services/service/interview-preparation.svg" alt="Network" class="img-fluid mb-3" style="height: 80px;">
+              <h5 class="card-title"><a href="network.html" class="text-decoration-none text-dark">Network</a></h5>
+              <p class="card-text">Grow with peers & mentors in your industry</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- 🌍 Popular Industries Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-5 fw-bold">Popular Industries</h2>
+
+    <div class="row g-4" id="industryContainer">
+      <!-- Industries dynamically inserted here -->
+    </div>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-primary px-4" id="toggleIndustries">View More</button>
+    </div>
+  </div>
+
+  <style>
+    /* ✨ Industry Card Styles */
+    .industry-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid #e0e0e0;
+      border-radius: 15px;
+      background-color: #fff;
+    }
+
+    .industry-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      border-color: #0d6efd;
+    }
+
+    .industry-card .card-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .industry-card img {
+      height: 50px;
+      width: 50px;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .industry-card:hover img {
+      transform: scale(1.1);
+    }
+
+    .industry-card h6 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const industries = [
+        { name: "Information Technology", icon: "https://img.icons8.com/?size=100&id=nSBfeVcn9hpX&format=png&color=000000" },
+        { name: "Manufacturing", icon: "https://img.icons8.com/?size=100&id=BmLM7L3ONdX-&format=png&color=000000" },
+        { name: "Banking", icon: "https://static.vecteezy.com/system/resources/previews/013/948/616/non_2x/bank-icon-logo-design-vector.jpg" },
+        { name: "Healthcare", icon: "https://img.icons8.com/?size=100&id=9511&format=png&color=000000" },
+        { name: "Education", icon: "https://img.icons8.com/?size=100&id=77565&format=png&color=000000" },
+        { name: "Retail", icon: "https://img.icons8.com/?size=100&id=70641&format=png" },
+        { name: "Media", icon: "https://img.icons8.com/?size=100&id=jplvES5PwQsn&format=png&color=000000" },
+        { name: "Telecommunications", icon: "https://img.icons8.com/?size=100&id=NI8rBqtPXnVf&format=png&color=000000" },
+        { name: "Energy", icon: "https://img.icons8.com/?size=100&id=45259&format=png&color=000000" },
+        { name: "Real Estate", icon: "https://img.icons8.com/?size=100&id=49636&format=png&color=000000" },
+        { name: "Transportation", icon: "https://img.icons8.com/?size=100&id=52751&format=png&color=000000" },
+        { name: "Tourism", icon: "https://img.icons8.com/?size=100&id=102202&format=png&color=000000" },
+      ];
+
+      const container = document.getElementById("industryContainer");
+      const toggleBtn = document.getElementById("toggleIndustries");
+      let showingAll = false;
+
+      // Function to render industries (6 or all)
+      function renderIndustries(limit = 6) {
+        container.innerHTML = "";
+        const visible = industries.slice(0, limit);
+        visible.forEach((industry, i) => {
+          const div = document.createElement("div");
+          div.className = "col-6 col-md-4 col-lg-2 fade-in";
+          div.style.animationDelay = `${i * 0.1}s`;
+          div.innerHTML = `
+            <div class="industry-card card h-100 text-center" onclick="alert('You selected: ${industry.name}')">
+              <div class="card-body">
+                <img src="${industry.icon}" alt="${industry.name}">
+                <h6>${industry.name}</h6>
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      // Initial render
+      renderIndustries(6);
+
+      // Toggle functionality
+      toggleBtn.addEventListener("click", function () {
+        showingAll = !showingAll;
+        renderIndustries(showingAll ? industries.length : 6);
+        toggleBtn.textContent = showingAll ? "View Less" : "View More";
+      });
+    });
+  </script>
+</section>
+
+
+<!-- Browse By Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-4">Browse Jobs By</h2>
+    
+    <ul class="nav nav-pills justify-content-center mb-4" id="browseTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="skills-tab" data-bs-toggle="pill" data-bs-target="#skills" type="button" role="tab">Skills</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="location-tab" data-bs-toggle="pill" data-bs-target="#location" type="button" role="tab">Location</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="industry-tab" data-bs-toggle="pill" data-bs-target="#industry" type="button" role="tab">Industry</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="roles-tab" data-bs-toggle="pill" data-bs-target="#roles" type="button" role="tab">Roles</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="company-tab" data-bs-toggle="pill" data-bs-target="#company" type="button" role="tab">Company</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="functions-tab" data-bs-toggle="pill" data-bs-target="#functions" type="button" role="tab">Functions</button>
+      </li>
+    </ul>
+    
+    <div class="tab-content" id="browseTabContent">
+      <div class="tab-pane fade show active" id="skills" role="tabpanel">
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            <!-- Skills will be loaded here dynamically -->
+            <p class="text-muted">Loading skills...</p>
+        </div>
+      </div>
+      
+      <div class="tab-pane fade" id="location" role="tabpanel">
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+           <!-- Locations will be loaded here dynamically -->
+           <p class="text-muted">Loading locations...</p>
+        </div>
+      </div>
+      
+      <div class="tab-pane fade" id="industry" role="tabpanel">
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+           <!-- Industries will be loaded here dynamically -->
+           <p class="text-muted">Loading industries...</p>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="roles" role="tabpanel">
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+           <!-- Roles will be loaded here dynamically -->
+           <p class="text-muted">Loading roles...</p>
+        </div>
+      </div>
+      
+      <div class="tab-pane fade" id="company" role="tabpanel">
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+           <!-- Companies will be loaded here dynamically -->
+           <p class="text-muted">Loading companies...</p>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="functions" role="tabpanel">
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            <!-- Functions are kept static as they are broad categories -->
+            <a href="javascript:void(0)" onclick="browseBy('function', 'Technology')" class="function-box btn btn-outline-secondary">Technology</a>
+            <a href="javascript:void(0)" onclick="browseBy('function', 'Sales')" class="function-box btn btn-outline-secondary">Sales</a>
+            <a href="javascript:void(0)" onclick="browseBy('function', 'Finance')" class="function-box btn btn-outline-secondary">Finance</a>
+            <a href="javascript:void(0)" onclick="browseBy('function', 'IT')" class="function-box btn btn-outline-secondary">IT</a>
+            <a href="javascript:void(0)" onclick="browseBy('function', 'Engineering')" class="function-box btn btn-outline-secondary">Engineering</a>
+            <a href="javascript:void(0)" onclick="browseBy('function', 'Marketing')" class="function-box btn btn-outline-secondary">Marketing</a>
+            <a href="javascript:void(0)" onclick="browseBy('function', 'Software Development')" class="function-box btn btn-outline-secondary">Software Development</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // This function redirects to the jobs page with the selected filter
+    function browseBy(type, value) {
+      sessionStorage.setItem('browseType', type);
+      sessionStorage.setItem('browseValue', value);
+      window.location.href = 'jobs.html';
+    }
+
+    // This script fetches data and populates the tabs
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        const response = await fetch('/api/jobs/browse-data');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        
+        // Helper function to create and append links
+        const populateTab = (containerSelector, items, type) => {
+          const container = document.querySelector(containerSelector);
+          if (!container || !items || items.length === 0) {
+            if(container) container.innerHTML = `<p class="text-muted">No data available.</p>`;
+            return;
+          }
+          
+          container.innerHTML = ''; // Clear loading message
+          items.forEach(item => {
+            const a = document.createElement('a');
+            a.href = 'javascript:void(0)';
+            a.className = `${type}-box btn btn-outline-secondary`;
+            a.textContent = item;
+            a.onclick = () => browseBy(type, item);
+            container.appendChild(a);
+          });
+        };
+        
+        // Populate all dynamic tabs
+        populateTab('#skills .d-flex', data.skills, 'skill');
+        populateTab('#location .d-flex', data.locations, 'location');
+        populateTab('#industry .d-flex', data.industries, 'industry');
+        populateTab('#roles .d-flex', data.roles, 'role');
+        populateTab('#company .d-flex', data.companies, 'company');
+
+      } catch (error) {
+        console.error('Could not load browse-by data:', error);
+        // If there's an error, show a message in all tabs
+        document.querySelectorAll('#browseTabContent .d-flex').forEach(el => {
+            if (!el.parentElement.id === 'functions') {
+                 el.innerHTML = '<p class="text-danger">Could not load data.</p>';
+            }
+        });
+      }
+    });
+  </script>
+</section>
+
+
+  <!-- Services Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-heading">Career Services</h2>
+      <p class="text-center text-muted mb-5">Enhance your job search with our comprehensive career services</p>
+      
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="card service-card h-100 text-center">
+            <div class="card-body">
+              <div class="mb-4">
+                <i class="fas fa-star fa-3x text-primary"></i>
+              </div>
+              <h5 class="card-title"><a href="network.html#industry" class="text-decoration-none text-dark">Profile Highlight</a></h5>
+              <p class="card-text">Stand out to employers with a highlighted profile that gets noticed</p>
+              <a href="featuredprofile.html" class="btn btn-sm btn-outline-primary mt-2">Learn More</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+          <div class="card service-card h-100 text-center">
+            <div class="card-body">
+              <div class="mb-4">
+                <i class="fas fa-comments fa-3x text-primary"></i>
+              </div>
+              <h5 class="card-title"><a href="preparation.html" class="text-decoration-none text-dark">Interview Prep</a></h5>
+              <p class="card-text">Up your interview success rate with our preparation resources</p>
+              <a href="preparation.html" class="btn btn-sm btn-outline-primary mt-2">Learn More</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+          <div class="card service-card h-100 text-center">
+            <div class="card-body">
+              <div class="mb-4">
+                <i class="fas fa-graduation-cap fa-3x text-primary"></i>
+              </div>
+              <h5 class="card-title"><a href="preparation.html" class="text-decoration-none text-dark">Skill Development</a></h5>
+              <p class="card-text">Upskill to get ahead in your career with our learning resources</p>
+              <a href="preparation.html" class="btn btn-sm btn-outline-primary mt-2">Learn More</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+          <div class="card service-card h-100 text-center">
+            <div class="card-body">
+              <div class="mb-4">
+                <i class="fas fa-users fa-3x text-primary"></i>
+              </div>
+              <h5 class="card-title"><a href="network.html" class="text-decoration-none text-dark">Professional Network</a></h5>
+              <p class="card-text">Grow with peers & mentors in your industry through our network</p>
+              <a href="network.html" class="btn btn-sm btn-outline-primary mt-2">Learn More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- Featured Companies Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-3">Featured Companies</h2>
+        <p class="text-center text-muted mb-5">Join thousands of job seekers who found their dream jobs at these top companies</p>
+        
+        <!-- Marquee container for scrolling logos -->
+        <div class="marquee-container border-top border-bottom py-4">
+            <div class="company-logo-scroll d-flex align-items-center">
+                <!-- Company logos will be dynamically inserted here by JavaScript -->
+                <div class="text-center w-100">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CSS for the marquee animation -->
+<style>
+    .marquee-container {
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+    }
+    .company-logo-scroll {
+        display: flex;
+        width: fit-content; /* Let the container size itself to its content */
+        /* Animation will be applied by JS after loading */
+    }
+    /* Keyframe animation for the scroll effect */
+    @keyframes scroll {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%); /* Scroll until the duplicated content starts */
+        }
+    }
+    .company-logo-scroll:hover {
+        animation-play-state: paused; /* Pause the scroll on hover */
+    }
+    /* Styling for individual logo containers */
+    .logo-item {
+        flex-shrink: 0; /* Prevent logos from shrinking */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 40px; /* Spacing between logos */
+    }
+    .logo-item img {
+        height: 40px; 
+        max-width: 150px; 
+        object-fit: contain; /* Ensure logo is scaled correctly */
+        filter: grayscale(100%); /* Make logos grayscale for a uniform look */
+        opacity: 0.8;
+        transition: all 0.3s ease;
+    }
+    .logo-item img:hover {
+        filter: grayscale(0%); /* Colorize logo on hover */
+        opacity: 1;
+        transform: scale(1.1);
+    }
+</style>
+
+<!-- JavaScript to fetch and display company logos -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const logoContainer = document.querySelector('.company-logo-scroll');
+
+        const fetchCompanyLogos = async () => {
+            try {
+                const response = await fetch('/api/company/all');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                // Ensure we have companies and they are in an array
+                if (!data || !data.success || !Array.isArray(data.companies)) {
+                     throw new Error('Invalid data format received from server.');
+                }
+
+                // Filter out companies that do not have a logo_url
+                const companiesWithLogos = data.companies.filter(company => company.logo_url);
+
+                if (companiesWithLogos.length === 0) {
+                    logoContainer.innerHTML = '<p class="text-muted text-center w-100">No featured companies available at the moment.</p>';
+                    return;
+                }
+
+                // Clear the loading spinner
+                logoContainer.innerHTML = '';
+
+                // Create HTML elements for each company logo
+                const logoElements = companiesWithLogos.map(company => {
+                    const div = document.createElement('div');
+                    div.className = 'logo-item';
+                    div.innerHTML = `<img src="${company.logo_url}" alt="${company.company_name}" title="${company.company_name}">`;
+                    return div;
+                });
+
+                // For a seamless marquee effect, we duplicate the logos.
+                // This ensures that as the first set scrolls out, the second set is ready to scroll in.
+                const duplicatedLogoElements = logoElements.map(el => el.cloneNode(true));
+
+                // Append both the original and duplicated logos to the container
+                logoContainer.append(...logoElements, ...duplicatedLogoElements);
+                
+                // Apply the animation only after the content is loaded
+                const animationDuration = companiesWithLogos.length * 5; // Adjust speed based on number of logos
+                logoContainer.style.animation = `scroll ${animationDuration}s linear infinite`;
+
+            } catch (error) {
+                console.error('Error fetching company logos:', error);
+                // Display an error message to the user
+                logoContainer.innerHTML = '<p class="text-danger text-center w-100">Could not load company logos.</p>';
+            }
+        };
+
+        // Call the function to start the process
+        fetchCompanyLogos();
+    });
+</script>
+
+
+  <!-- Testimonials Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-heading">Success Stories</h2>
+      <p class="text-center text-muted mb-5">Hear from job seekers who found their dream jobs through Hitaishi Careers</p>
+      
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="mb-3">
+                <i class="fas fa-quote-left fa-2x text-primary opacity-25"></i>
+              </div>
+              <p class="card-text mb-4">"Hitaishi Careers helped me land my dream job at a top tech company. The interview preparation resources were invaluable!"</p>
+              <div class="d-flex align-items-center justify-content-center">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya Sharma" class="rounded-circle me-3" width="50" height="50">
+                <div class="text-start">
+                  <h6 class="mb-0">Niharika Sunkara</h6>
+                  <small class="text-muted">Software Engineer at TechCorp</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="mb-3">
+                <i class="fas fa-quote-left fa-2x text-primary opacity-25"></i>
+              </div>
+              <p class="card-text mb-4">"The resume building service transformed my CV. I started getting interview calls within a week of updating my profile!"</p>
+              <div class="d-flex align-items-center justify-content-center">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Raj Patel" class="rounded-circle me-3" width="50" height="50">
+                <div class="text-start">
+                  <h6 class="mb-0">Nagaraju Pindi</h6>
+                  <small class="text-muted">Marketing Manager at Innovate Solutions</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="mb-3">
+                <i class="fas fa-quote-left fa-2x text-primary opacity-25"></i>
+              </div>
+              <p class="card-text mb-4">"As a recent graduate, I was struggling to find opportunities. Hitaishi Careers connected me with entry-level positions perfect for my skills."</p>
+              <div class="d-flex align-items-center justify-content-center">
+                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Anjali Verma" class="rounded-circle me-3" width="50" height="50">
+                <div class="text-start">
+                  <h6 class="mb-0">Fathima SK</h6>
+                  <small class="text-muted">Junior Analyst at DataPro</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-white py-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="mb-4">
+            <img src="images/logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
+            <span class="fw-bold fs-4">Hitaishi Careers</span>
+          </div>
+          <p class="mb-4">Connecting talented professionals with their dream jobs since 2022. Our mission is to make job searching efficient and effective for everyone.</p>
+          <div class="d-flex gap-3">
+            <a href="#" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+          </div>
+        </div>
+        
+        <div class="col-lg-2 col-md-6">
+          <h5 class="mb-4">Quick Links</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="index.html" class="text-white-50">Home</a></li>
+            <li class="mb-2"><a href="jobs.html" class="text-white-50">Browse Jobs</a></li>
+            <li class="mb-2"><a href="employer.html" class="text-white-50">For Employers</a></li>
+            <li class="mb-2"><a href="about.html" class="text-white-50">About Us</a></li>
+            <li class="mb-2"><a href="contact.html" class="text-white-50">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+          <h5 class="mb-4">Job Seeker Resources</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="resumebuild.html" class="text-white-50">Resume Builder</a></li>
+            <li class="mb-2"><a href="preparation.html" class="text-white-50">Interview Tips</a></li>
+            <li class="mb-2"><a href="careerbooster.html" class="text-white-50">Career Advice</a></li>
+            <li class="mb-2"><a href="featuredprofile.html" class="text-white-50">Featured Profile</a></li>
+            <li class="mb-2"><a href="tutu.html" class="text-white-50">Apply with AI</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+          <h5 class="mb-4">Contact Us</h5>
+          <ul class="list-unstyled">
+            <li class="mb-3 d-flex align-items-start">
+              <i class="fas fa-map-marker-alt me-3 mt-1"></i>
+              <span class="text-white-50">985 pragathi nagar, Pragathi Nagar, Hyderabad, TS 500090</span>
+            </li>
+            <li class="mb-3 d-flex align-items-center">
+              <i class="fas fa-phone me-3"></i>
+              <a href="tel:+919876543210" class="text-white-50">+91 99087 93602</a>,  
+              <a href="tel:+919876543210" class="text-white-50">+91 87901 70525</a>
+            </li>
+            <li class="mb-3 d-flex align-items-center">
+              <i class="fas fa-envelope me-3"></i>
+              <a href="mailto:info@hitashicareers.com" class="text-white-50">info@hitashicareers.com</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <hr class="my-5">
+      
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="mb-0">&copy; 2025 Hitaishi Careers. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <a href="PrivacyPolicy.html" class="text-white-50 me-3">Privacy Policy</a>
+          <a href="Terms-Conditions.html" class="text-white-50 me-3">Terms of Service</a>
+          <a href="cookiesPolicy.html" class="text-white-50">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Job Search Form Logic
+      const countrySelect = document.getElementById('countrySelect');
+      const locationSelect = document.getElementById('locationSelect');
+      
+      const locationData = {
+        'India': ['Hyderabad', 'Bangalore', 'Mumbai', 'Delhi', 'Chennai', 'Pune', 'Kolkata'],
+        'USA': ['New York', 'San Francisco', 'Chicago', 'Los Angeles', 'Seattle', 'Austin'],
+        'UK': ['London', 'Manchester', 'Birmingham', 'Edinburgh', 'Glasgow'],
+        'Australia': ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide'],
+        'Canada': ['Toronto', 'Vancouver', 'Montreal', 'Calgary', 'Ottawa']
+      };
+      
+      countrySelect.addEventListener('change', function() {
+        const selectedCountry = this.value;
+        
+        if (selectedCountry && locationData[selectedCountry]) {
+          locationSelect.disabled = false;
+          locationSelect.innerHTML = '<option value="">Select Location</option>';
+          
+          locationData[selectedCountry].forEach(location => {
+            const option = document.createElement('option');
+            option.value = location;
+            option.textContent = location;
+            locationSelect.appendChild(option);
+          });
+        } else {
+          locationSelect.disabled = true;
+          locationSelect.innerHTML = '<option value="">Location</option>';
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
