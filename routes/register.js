@@ -274,32 +274,32 @@ router.get('/jobseekers', async (req, res) => {
 });
 
 // --- Secure Password Update Route ---
-router.post('/user/update-password', async (req, res) => {
-  try {
-    // Note: protectRoute middleware should be applied to this route in server.js
-    // For now, let's assume req.user is populated by the middleware.
-    const email = req.user?.email;
-    const newPassword = req.body?.newPassword;
-    if (!newPassword) return res.status(400).json({ error: 'New password required' });
+// router.post('/user/update-password', async (req, res) => {
+//   try {
+//     // Note: protectRoute middleware should be applied to this route in server.js
+//     // For now, let's assume req.user is populated by the middleware.
+//     const email = req.user?.email;
+//     const newPassword = req.body?.newPassword;
+//     if (!newPassword) return res.status(400).json({ error: 'New password required' });
 
-    if (!email) return res.status(401).json({ error: 'Not authenticated' });
+//     if (!email) return res.status(401).json({ error: 'Not authenticated' });
 
-    const users = await query('SELECT * FROM users WHERE email = ?', [email]);
-    if (!users.length) return res.status(404).json({ error: 'User not found' });
+//     const users = await query('SELECT * FROM users WHERE email = ?', [email]);
+//     if (!users.length) return res.status(404).json({ error: 'User not found' });
 
-    if (users[0].auth_provider === 'google') {
-      return res.status(403).json({ error: 'Cannot change password for Google-auth accounts' });
-    }
+//     if (users[0].auth_provider === 'google') {
+//       return res.status(403).json({ error: 'Cannot change password for Google-auth accounts' });
+//     }
 
-    const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
-    await query('UPDATE users SET password_hash = ? WHERE email = ?', [newHashedPassword, email]);
+//     const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
+//     await query('UPDATE users SET password_hash = ? WHERE email = ?', [newHashedPassword, email]);
 
-    res.status(200).json({ message: 'Password updated successfully.' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred on the server.' });
-  }
-});
+//     res.status(200).json({ message: 'Password updated successfully.' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'An error occurred on the server.' });
+//   }
+// });
 
 
 // --- UPDATED Logout Route ---

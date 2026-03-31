@@ -1853,7 +1853,7 @@
         }
 
         try {
-            const response = await fetch('/api/user/update-password', {
+            const response = await fetch('/api/profile/update-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ newPassword }),

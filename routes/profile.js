@@ -5,6 +5,8 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4} = require('uuid');
 const { query } = require('../db');
+const bcrypt = require('bcryptjs');
+
 
 // --- Basic input sanitization (XSS prevention) ---
 const sanitize = (str) => {
@@ -207,5 +209,56 @@ router.post('/upload-resume', upload.single('resume'), async (req, res) => {
     }
 });
 
+
+// --- Update password ---
+router.post('/update-password', async (req, res) => {
+  try {
+    const email = req.user.email;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({
+        error: 'Password must be at least 6 characters'
+      });
+    }
+
+    const users = await query(
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    );
+
+    if (!users.length) {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+
+    const user = users[0];
+
+    if (user.auth_provider === 'google') {
+      return res.status(403).json({
+        error: 'Google login users cannot change password'
+      });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    await query(
+      'UPDATE users SET password_hash = ? WHERE email = ?',
+      [hashed, email]
+    );
+
+    res.json({
+      success: true,
+      message: 'Password updated successfully'
+    });
+
+  } catch (err) {
+    console.error('Password update error:', err);
+    res.status(500).json({
+      error: 'Server error while updating password'
+    });
+  }
+});
 
 module.exports = router;
