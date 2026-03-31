@@ -13,7 +13,7 @@ const jobsRoute = require('./routes/jobs');
 const applicantRoute = require('./routes/applicant');
 const companyRoute = require('./routes/company');
 const { protectRoute, protectEmployerRoute } = require('./middleware/authMiddleware');
-const protectRoute = require('./middleware/auth');
+
 
 const app = express();
 const PORT = process.env.PORT || 5003;
