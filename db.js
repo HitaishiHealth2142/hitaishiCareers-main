@@ -5,10 +5,10 @@ const mysql = require("mysql2");
 // It's recommended to use environment variables for these in production
 const pool = mysql.createPool({
   connectionLimit: 10,
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  host: 'localhost',
+  user: 'winjob',
+  password: 'Winjob@2142',
+  database: 'winjob'
 });
 
 

@@ -16,8 +16,52 @@ const sanitize = (str) => {
   return str.replace(/[<>\"'()]/g, ''); 
 };
 
-
 const saltRounds = 10;
+
+// --- Auto Create Users Table ---
+(async function initUsersTable() {
+  try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        mobile_number VARCHAR(20) NOT NULL,
+        password_hash VARCHAR(255) DEFAULT NULL,
+        google_id VARCHAR(255) DEFAULT NULL,
+        profile_image_url VARCHAR(500) DEFAULT NULL,
+        auth_provider ENUM('local','google') DEFAULT 'local',
+
+        gender VARCHAR(20) DEFAULT NULL,
+        experience_level VARCHAR(100) DEFAULT NULL,
+        ctc_expected VARCHAR(100) DEFAULT NULL,
+        notice_period VARCHAR(100) DEFAULT NULL,
+
+        professional_details JSON DEFAULT NULL,
+        projects JSON DEFAULT NULL,
+        skills JSON DEFAULT NULL,
+        education JSON DEFAULT NULL,
+        certifications JSON DEFAULT NULL,
+        languages JSON DEFAULT NULL,
+
+        resume_url VARCHAR(500) DEFAULT NULL,
+        profile_uuid VARCHAR(100) DEFAULT NULL,
+
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+
+    console.log("✅ users table is ready.");
+  } catch (err) {
+    console.error("❌ Error creating users table:", err.message);
+  }
+})();
+
+
+
+
 
 // --- Ensure 'uploads' directory exists ---
 const uploadDir = path.join(__dirname, '../uploads');
