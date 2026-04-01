@@ -15,6 +15,7 @@ const companyRoute = require('./routes/company');
 const { protectRoute, protectEmployerRoute } = require('./middleware/authMiddleware');
 
 
+
 const app = express();
 const PORT = process.env.PORT || 5003;
 
@@ -75,6 +76,9 @@ app.use(cookieParser());
 // --- Static Files ---\
 app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+const mentorsRotes = require('./routes/mentors');
+app.use('/api/mentors', mentorsRotes);
 
 // --- API Routes ---\
 app.use('/api', registerRoute);

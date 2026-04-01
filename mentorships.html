@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Mentors - WinJob Mentorship</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #a855f7;
+      --success: #10b981;
+      --danger: #ef4444;
+      --light-bg: #f8f9ff;
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: var(--light-bg);
+      color: #1f2937;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 20px 0;
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary) !important;
+    }
+
+    .navbar-brand i {
+      margin-right: 8px;
+    }
+
+    /* ==========================================
+       HERO SECTION
+       ========================================== */
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.95;
+      margin-bottom: 40px;
+    }
+
+    /* ==========================================
+       FILTERS SECTION
+       ========================================== */
+    .filters-section {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 40px;
+    }
+
+    .filter-group {
+      margin-bottom: 20px;
+    }
+
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-label {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .form-control, .form-select {
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 10px 15px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-filter {
+      padding: 10px 24px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border: none;
+      color: white;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-filter:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-reset {
+      padding: 10px 24px;
+      background: #f3f4f6;
+      border: none;
+      color: #6b7280;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-reset:hover {
+      background: #e5e7eb;
+    }
+
+    /* ==========================================
+       MENTORS GRID
+       ========================================== */
+    .mentors-section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: #1f2937;
+    }
+
+    .mentors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .mentor-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mentor-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .mentor-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      height: 120px;
+      position: relative;
+    }
+
+    .mentor-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid white;
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      object-fit: cover;
+      background: #e5e7eb;
+    }
+
+    .mentor-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .mentor-badge.verified {
+      background: rgba(16, 185, 129, 0.3);
+      color: var(--success);
+    }
+
+    .mentor-body {
+      padding: 60px 20px 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mentor-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    .mentor-title {
+      color: #6b7280;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .mentor-company {
+      color: var(--primary);
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .mentor-stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      border-top: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .mentor-stat {
+      flex: 1;
+    }
+
+    .mentor-stat-value {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #1f2937;
+    }
+
+    .mentor-stat-label {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 3px;
+    }
+
+    .mentor-expertise {
+      margin-bottom: 15px;
+      flex-grow: 1;
+    }
+
+    .expertise-tag {
+      display: inline-block;
+      background: var(--light-bg);
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .mentor-pricing {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      margin-bottom: 15px;
+      gap: 5px;
+    }
+
+    .mentor-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .mentor-price-label {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .mentor-bio {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+
+    .mentor-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-book {
+      flex: 1;
+      padding: 10px 15px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border: none;
+      color: white;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .btn-book:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-chat {
+      flex: 1;
+      padding: 10px 15px;
+      background: #f3f4f6;
+      border: 2px solid #e5e7eb;
+      color: #6b7280;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .btn-chat:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--light-bg);
+    }
+
+    /* ==========================================
+       PAGINATION
+       ========================================== */
+    .pagination-section {
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .pagination {
+      display: inline-flex;
+      gap: 10px;
+    }
+
+    .pagination a, .pagination span {
+      padding: 10px 15px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .pagination a:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .pagination .active {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-color: transparent;
+      color: white;
+    }
+
+    /* ==========================================
+       EMPTY STATE
+       ========================================== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #9ca3af;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    /* ==========================================
+       FEATURED SECTION
+       ========================================== */
+    .featured-section {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 15px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .featured-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .featured-mentors {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .featured-mentor {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .featured-mentor-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      border: 2px solid white;
+      object-fit: cover;
+    }
+
+    .featured-mentor-name {
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .featured-mentor-title {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+
+    .featured-mentor-rate {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* ==========================================
+       RESPONSIVE
+       ========================================== */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 1.8rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mentors-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mentor-actions {
+        flex-direction: column;
+      }
+
+      .mentor-actions button {
+        width: 100%;
+      }
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading i {
+      font-size: 2rem;
+      color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-lg">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-graduation-cap"></i>
+        WinJob Mentorship
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="mentor-login.html">Become a Mentor</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)); color: white; padding: 10px 24px; border-radius: 10px;">
+              Sign In
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="container-lg">
+      <h1 class="hero-title">Find Your Perfect Mentor</h1>
+      <p class="hero-subtitle">Learn from industry experts and advance your career</p>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <div class="container-lg" style="padding: 40px 20px;">
+    <!-- FILTERS -->
+    <div class="filters-section">
+      <h3 style="margin-bottom: 20px; font-weight: 700;">Filter Mentors</h3>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label class="filter-label">Search</label>
+          <input type="text" class="form-control" id="searchInput" placeholder="Search by name or expertise...">
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Expertise</label>
+          <select class="form-select" id="expertiseFilter">
+            <option value="">All Expertise</option>
+            <option value="Web Development">Web Development</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="React">React</option>
+            <option value="Python">Python</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="Mobile Development">Mobile Development</option>
+            <option value="DevOps">DevOps</option>
+            <option value="Career Coaching">Career Coaching</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Minimum Rating</label>
+          <select class="form-select" id="ratingFilter">
+            <option value="">All Ratings</option>
+            <option value="4.5">4.5+</option>
+            <option value="4">4.0+</option>
+            <option value="3">3.0+</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Max Hourly Rate ($)</label>
+          <input type="number" class="form-control" id="priceFilter" placeholder="e.g., 100">
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn-filter" onclick="applyFilters()">
+          <i class="fas fa-search"></i> Apply Filters
+        </button>
+        <button class="btn-reset" onclick="resetFilters()">
+          <i class="fas fa-redo"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- FEATURED MENTORS -->
+    <section class="featured-section" id="featuredSection" style="display: none;">
+      <h2 class="featured-title">✨ Featured Mentors</h2>
+      <div class="featured-mentors" id="featuredMentors">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- MENTORS GRID -->
+    <section class="mentors-section">
+      <h2 class="section-title">Available Mentors</h2>
+      
+      <div class="loading" id="loading">
+        <i class="fas fa-spinner"></i>
+      </div>
+
+      <div class="mentors-grid" id="mentorsGrid">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <i class="fas fa-search"></i>
+        <h3>No mentors found</h3>
+        <p>Try adjusting your filters</p>
+      </div>
+    </section>
+
+    <!-- PAGINATION -->
+    <div class="pagination-section" id="paginationSection" style="display: none;">
+      <div class="pagination" id="pagination">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ==========================================
+    // Global State
+    // ==========================================
+    let currentPage = 1;
+    const mentorsPerPage = 12;
+    let allMentors = [];
+    let filteredMentors = [];
+
+    // ==========================================
+    // Load Mentors on Page Load
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadMentors();
+    });
+
+    // ==========================================
+    // Load Mentors from API
+    // ==========================================
+    async function loadMentors(page = 1) {
+      try {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('mentorsGrid').innerHTML = '';
+
+        const params = new URLSearchParams({
+          page: page,
+          limit: mentorsPerPage,
+        });
+
+        const response = await fetch(`/api/mentor/all?${params}`);
+        const data = await response.json();
+
+        document.getElementById('loading').style.display = 'none';
+
+        if (data.success) {
+          allMentors = data.mentors;
+          filteredMentors = [...allMentors];
+          renderMentors(filteredMentors);
+          renderPagination(data.pagination);
+
+          // Show featured section
+          if (data.mentors.length > 0) {
+            showFeaturedMentors(data.mentors.slice(0, 3));
+          }
+        }
+      } catch (error) {
+        console.error('Error loading mentors:', error);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+      }
+    }
+
+    // ==========================================
+    // Render Mentors
+    // ==========================================
+    function renderMentors(mentors) {
+      const grid = document.getElementById('mentorsGrid');
+
+      if (mentors.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        grid.innerHTML = '';
+        return;
+      }
+
+      document.getElementById('emptyState').style.display = 'none';
+
+      grid.innerHTML = mentors.map(mentor => `
+        <div class="mentor-card">
+          <div class="mentor-header">
+            ${mentor.is_verified ? '<div class="mentor-badge verified"><i class="fas fa-check"></i> Verified</div>' : ''}
+            <img src="${mentor.profile_image_url || 'https://via.placeholder.com/100?text=' + mentor.full_name.charAt(0)}" class="mentor-avatar" alt="${mentor.full_name}">
+          </div>
+
+          <div class="mentor-body">
+            <div class="mentor-name">${mentor.full_name}</div>
+            <div class="mentor-title">${mentor.title || 'Professional'}</div>
+            <div class="mentor-company">${mentor.current_company || ''}</div>
+
+            <div class="mentor-stats">
+              <div class="mentor-stat">
+                <div class="mentor-stat-value">${mentor.total_sessions || 0}</div>
+                <div class="mentor-stat-label">Sessions</div>
+              </div>
+              <div class="mentor-stat">
+                <div class="mentor-stat-value">${(mentor.rating || 0).toFixed(1)}</div>
+                <div class="mentor-stat-label">Rating</div>
+              </div>
+              <div class="mentor-stat">
+                <div class="mentor-stat-value">${mentor.experience_years || 0}+</div>
+                <div class="mentor-stat-label">Years</div>
+              </div>
+            </div>
+
+            <div class="mentor-expertise">
+              ${(mentor.expertise || []).slice(0, 3).map(skill => 
+                `<span class="expertise-tag">${skill}</span>`
+              ).join('')}
+              ${mentor.expertise && mentor.expertise.length > 3 ? `<span class="expertise-tag">+${mentor.expertise.length - 3}</span>` : ''}
+            </div>
+
+            <div class="mentor-bio">
+              ${mentor.bio ? mentor.bio.substring(0, 80) + '...' : 'Experienced mentor ready to help'}
+            </div>
+
+            <div class="mentor-pricing">
+              <span class="mentor-price">$${mentor.hourly_price || 50}</span>
+              <span class="mentor-price-label">/hour</span>
+            </div>
+
+            <div class="mentor-actions">
+              <button class="btn-book" onclick="bookMentor('${mentor.id}', '${mentor.full_name}')">
+                <i class="fas fa-calendar-alt"></i> Book Session
+              </button>
+              <button class="btn-chat" onclick="chatMentor('${mentor.id}')">
+                <i class="fas fa-comments"></i> Chat
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ==========================================
+    // Show Featured Mentors
+    // ==========================================
+    function showFeaturedMentors(mentors) {
+      const section = document.getElementById('featuredSection');
+      const container = document.getElementById('featuredMentors');
+
+      container.innerHTML = mentors.map(mentor => `
+        <div class="featured-mentor">
+          <img src="${mentor.profile_image_url || 'https://via.placeholder.com/60?text=' + mentor.full_name.charAt(0)}" class="featured-mentor-avatar" alt="${mentor.full_name}">
+          <div class="featured-mentor-name">${mentor.full_name}</div>
+          <div class="featured-mentor-title">${mentor.title || 'Mentor'}</div>
+          <div class="featured-mentor-rate"><i class="fas fa-star"></i> ${(mentor.rating || 0).toFixed(1)}</div>
+        </div>
+      `).join('');
+
+      section.style.display = 'block';
+    }
+
+    // ==========================================
+    // Apply Filters
+    // ==========================================
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const expertise = document.getElementById('expertiseFilter').value;
+      const minRating = parseFloat(document.getElementById('ratingFilter').value) || 0;
+      const maxPrice = parseFloat(document.getElementById('priceFilter').value) || Infinity;
+
+      filteredMentors = allMentors.filter(mentor => {
+        const matchesSearch = !search || 
+          mentor.full_name.toLowerCase().includes(search) ||
+          mentor.expertise.some(e => e.toLowerCase().includes(search));
+        
+        const matchesExpertise = !expertise || mentor.expertise.includes(expertise);
+        const matchesRating = mentor.rating >= minRating;
+        const matchesPrice = mentor.hourly_price <= maxPrice;
+
+        return matchesSearch && matchesExpertise && matchesRating && matchesPrice;
+      });
+
+      currentPage = 1;
+      renderMentors(filteredMentors);
+      document.getElementById('paginationSection').style.display = 'none';
+    }
+
+    // ==========================================
+    // Reset Filters
+    // ==========================================
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('expertiseFilter').value = '';
+      document.getElementById('ratingFilter').value = '';
+      document.getElementById('priceFilter').value = '';
+      
+      filteredMentors = [...allMentors];
+      currentPage = 1;
+      renderMentors(filteredMentors);
+    }
+
+    // ==========================================
+    // Render Pagination
+    // ==========================================
+    function renderPagination(pagination) {
+      const section = document.getElementById('paginationSection');
+      const container = document.getElementById('pagination');
+
+      if (pagination.pages <= 1) {
+        section.style.display = 'none';
+        return;
+      }
+
+      section.style.display = 'block';
+
+      let html = '';
+      
+      if (pagination.page > 1) {
+        html += `<a onclick="loadMentors(${pagination.page - 1})"><i class="fas fa-chevron-left"></i></a>`;
+      }
+
+      for (let i = 1; i <= pagination.pages; i++) {
+        if (i === pagination.page) {
+          html += `<span class="active">${i}</span>`;
+        } else {
+          html += `<a onclick="loadMentors(${i})">${i}</a>`;
+        }
+      }
+
+      if (pagination.page < pagination.pages) {
+        html += `<a onclick="loadMentors(${pagination.page + 1})"><i class="fas fa-chevron-right"></i></a>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ==========================================
+    // Book Mentor
+    // ==========================================
+    function bookMentor(mentorId, mentorName) {
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        alert('Please login to book a session');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Ready for integration with booking system
+      alert(`Booking session with ${mentorName}...`);
+      // Redirect to booking page or open booking modal
+      // window.location.href = `booking.html?mentorId=${mentorId}`;
+    }
+
+    // ==========================================
+    // Chat Mentor
+    // ==========================================
+    function chatMentor(mentorId) {
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        alert('Please login to chat');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Ready for integration with chat system
+      alert(`Opening chat with mentor...`);
+      // window.location.href = `chat.html?mentorId=${mentorId}`;
+    }
+  </script>
+</body>
+</html>

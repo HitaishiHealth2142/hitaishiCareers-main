@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a Mentor - WinJob</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #a855f7;
+      --success: #10b981;
+      --danger: #ef4444;
+      --light-bg: #f8f9ff;
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .register-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .register-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .register-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    .register-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .register-header p {
+      font-size: 0.95rem;
+      opacity: 0.95;
+      margin: 0;
+    }
+
+    .register-body {
+      padding: 40px 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px 15px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .form-control.error {
+      border-color: var(--danger);
+    }
+
+    .error-message {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .two-col-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 576px) {
+      .two-col-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .expertise-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      min-height: 40px;
+      align-content: flex-start;
+    }
+
+    .tag {
+      background: var(--light-bg);
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .tag.selected {
+      background: var(--primary);
+      color: white;
+    }
+
+    .tag .remove {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .file-upload-area {
+      border: 2px dashed var(--primary);
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--light-bg);
+    }
+
+    .file-upload-area:hover {
+      border-color: var(--secondary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .file-upload-area.dragover {
+      border-color: var(--secondary);
+      background: rgba(168, 85, 247, 0.1);
+    }
+
+    .file-upload-area i {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .file-upload-area p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .preview-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-top: 10px;
+      border: 2px solid #e5e7eb;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border: none;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+    }
+
+    .register-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #6b7280;
+    }
+
+    .login-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .login-link a:hover {
+      color: var(--secondary);
+    }
+
+    .success-message {
+      background: #d1fae5;
+      color: #065f46;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .loading-spinner {
+      display: none;
+      margin-right: 8px;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .badge-info {
+      font-size: 0.8rem;
+      font-weight: normal;
+      opacity: 0.8;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="register-card">
+      <div class="register-header">
+        <h1><i class="fas fa-graduation-cap"></i> Become a Mentor</h1>
+        <p>Share your expertise and help others succeed</p>
+      </div>
+
+      <div class="register-body">
+        <div class="success-message" id="successMessage">
+          <i class="fas fa-check-circle"></i> Registration successful! Redirecting...
+        </div>
+
+        <form id="mentorRegisterForm">
+          <!-- Full Name & Email -->
+          <div class="two-col-row">
+            <div class="form-group">
+              <label class="form-label">Full Name <span style="color: var(--danger);">*</span></label>
+              <input type="text" class="form-control" id="fullName" placeholder="Your full name" required>
+              <div class="error-message" id="fullNameError"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email <span style="color: var(--danger);">*</span></label>
+              <input type="email" class="form-control" id="email" placeholder="your@email.com" required>
+              <div class="error-message" id="emailError"></div>
+            </div>
+          </div>
+
+          <!-- Password & Confirm Password -->
+          <div class="two-col-row">
+            <div class="form-group">
+              <label class="form-label">Password <span style="color: var(--danger);">*</span> <span class="badge-info">Min 8 chars, uppercase, number</span></label>
+              <input type="password" class="form-control" id="password" placeholder="••••••••" required>
+              <div class="error-message" id="passwordError"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm Password <span style="color: var(--danger);">*</span></label>
+              <input type="password" class="form-control" id="confirmPassword" placeholder="••••••••" required>
+              <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+          </div>
+
+          <!-- Title & Company -->
+          <div class="two-col-row">
+            <div class="form-group">
+              <label class="form-label">Professional Title</label>
+              <input type="text" class="form-control" id="title" placeholder="e.g., Senior Software Engineer">
+              <div class="error-message" id="titleError"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Current Company</label>
+              <input type="text" class="form-control" id="currentCompany" placeholder="e.g., Google, Microsoft">
+              <div class="error-message" id="currentCompanyError"></div>
+            </div>
+          </div>
+
+          <!-- Experience & Pricing -->
+          <div class="two-col-row">
+            <div class="form-group">
+              <label class="form-label">Years of Experience</label>
+              <input type="number" class="form-control" id="experienceYears" placeholder="e.g., 10" min="0" max="70">
+              <div class="error-message" id="experienceYearsError"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hourly Rate <span style="font-size: 0.8rem;">($)</span></label>
+              <input type="number" class="form-control" id="hourlyPrice" placeholder="e.g., 50" min="0" step="0.01">
+              <div class="error-message" id="hourlyPriceError"></div>
+            </div>
+          </div>
+
+          <!-- Expertise Tags -->
+          <div class="form-group">
+            <label class="form-label">Expertise Areas <span class="badge-info">(Click to add/remove)</span></label>
+            <div class="expertise-tags" id="expertiseTags">
+              <span class="tag" data-skill="Web Development">Web Development</span>
+              <span class="tag" data-skill="JavaScript">JavaScript</span>
+              <span class="tag" data-skill="React">React</span>
+              <span class="tag" data-skill="Python">Python</span>
+              <span class="tag" data-skill="Data Science">Data Science</span>
+              <span class="tag" data-skill="Machine Learning">Machine Learning</span>
+              <span class="tag" data-skill="Mobile Development">Mobile Development</span>
+              <span class="tag" data-skill="DevOps">DevOps</span>
+              <span class="tag" data-skill="Cloud Engineering">Cloud Engineering</span>
+              <span class="tag" data-skill="UI/UX Design">UI/UX Design</span>
+              <span class="tag" data-skill="Product Management">Product Management</span>
+              <span class="tag" data-skill="Career Coaching">Career Coaching</span>
+            </div>
+            <input type="hidden" id="expertise" value="">
+            <div class="error-message" id="expertiseError"></div>
+          </div>
+
+          <!-- Bio -->
+          <div class="form-group">
+            <label class="form-label">Bio / About You</label>
+            <textarea class="form-control" id="bio" placeholder="Tell mentees about your background, achievements, and what you can help them with..."></textarea>
+            <div class="error-message" id="bioError"></div>
+          </div>
+
+          <!-- LinkedIn URL -->
+          <div class="form-group">
+            <label class="form-label">LinkedIn Profile URL</label>
+            <input type="url" class="form-control" id="linkedinUrl" placeholder="https://linkedin.com/in/yourprofile">
+            <div class="error-message" id="linkedinUrlError"></div>
+          </div>
+
+          <!-- Available Slots -->
+          <div class="form-group">
+            <label class="form-label">Available Time Slots (JSON format)</label>
+            <textarea class="form-control" id="availableSlots" placeholder='{"monday": ["10:00-12:00", "14:00-16:00"], "friday": ["16:00-18:00"]}' style="min-height: 80px; font-family: monospace; font-size: 0.85rem;"></textarea>
+            <div class="error-message" id="availableSlotsError"></div>
+          </div>
+
+          <!-- Profile Image Upload -->
+          <div class="form-group">
+            <label class="form-label">Profile Picture</label>
+            <div class="file-upload-area" id="fileUploadArea">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Click to upload or drag and drop</p>
+              <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 5px;">PNG, JPG, GIF up to 5MB</p>
+            </div>
+            <input type="file" id="file-input" accept="image/*">
+            <img id="previewImage" class="preview-image" style="display: none;">
+            <div class="error-message" id="fileError"></div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="register-btn" id="registerBtn">
+            <span class="loading-spinner" id="loadingSpinner">
+              <i class="fas fa-spinner fa-spin"></i>
+            </span>
+            Register as Mentor
+          </button>
+        </form>
+
+        <div class="login-link">
+          Already have an account? <a href="mentor-login.html">Login here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ==========================================
+    // Expertise Tags Handler
+    // ==========================================
+    const tagElements = document.querySelectorAll('.tag');
+    const selectedExpertise = new Set();
+
+    tagElements.forEach(tag => {
+      tag.addEventListener('click', () => {
+        const skill = tag.dataset.skill;
+        if (selectedExpertise.has(skill)) {
+          selectedExpertise.delete(skill);
+          tag.classList.remove('selected');
+        } else {
+          selectedExpertise.add(skill);
+          tag.classList.add('selected');
+        }
+        updateExpertiseInput();
+      });
+    });
+
+    function updateExpertiseInput() {
+      const expertiseArray = Array.from(selectedExpertise);
+      document.getElementById('expertise').value = JSON.stringify(expertiseArray);
+    }
+
+    // ==========================================
+    // File Upload Handler
+    // ==========================================
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const fileInput = document.getElementById('file-input');
+    const previewImage = document.getElementById('previewImage');
+
+    fileUploadArea.addEventListener('click', () => fileInput.click());
+
+    fileUploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileUploadArea.classList.add('dragover');
+    });
+
+    fileUploadArea.addEventListener('dragleave', () => {
+      fileUploadArea.classList.remove('dragover');
+    });
+
+    fileUploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileUploadArea.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        fileInput.files = files;
+        handleFileSelect();
+      }
+    });
+
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleFileSelect() {
+      const file = fileInput.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImage.src = e.target.result;
+          previewImage.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // ==========================================
+    // Form Validation
+    // ==========================================
+    function clearErrors() {
+      document.querySelectorAll('.form-control, .form-select').forEach(el => {
+        el.classList.remove('error');
+      });
+      document.querySelectorAll('.error-message').forEach(el => {
+        el.classList.remove('show');
+      });
+    }
+
+    function showError(fieldId, message) {
+      const field = document.getElementById(fieldId);
+      const errorEl = document.getElementById(fieldId + 'Error');
+      if (field) field.classList.add('error');
+      if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.classList.add('show');
+      }
+    }
+
+    function validateForm() {
+      clearErrors();
+      let isValid = true;
+
+      const fullName = document.getElementById('fullName').value.trim();
+      if (!fullName) {
+        showError('fullName', 'Full name is required');
+        isValid = false;
+      }
+
+      const email = document.getElementById('email').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailRegex.test(email)) {
+        showError('email', 'Valid email is required');
+        isValid = false;
+      }
+
+      const password = document.getElementById('password').value;
+      if (!password) {
+        showError('password', 'Password is required');
+        isValid = false;
+      } else if (password.length < 8) {
+        showError('password', 'Password must be at least 8 characters');
+        isValid = false;
+      } else if (!/[A-Z]/.test(password)) {
+        showError('password', 'Password must contain uppercase letter');
+        isValid = false;
+      } else if (!/[0-9]/.test(password)) {
+        showError('password', 'Password must contain number');
+        isValid = false;
+      }
+
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      if (password !== confirmPassword) {
+        showError('confirmPassword', 'Passwords do not match');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    // ==========================================
+    // Form Submission
+    // ==========================================
+    document.getElementById('mentorRegisterForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!validateForm()) {
+        return;
+      }
+
+      const registerBtn = document.getElementById('registerBtn');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+
+      registerBtn.disabled = true;
+      loadingSpinner.style.display = 'inline-block';
+
+      const formData = new FormData();
+      formData.append('full_name', document.getElementById('fullName').value);
+      formData.append('email', document.getElementById('email').value);
+      formData.append('password', document.getElementById('password').value);
+      formData.append('title', document.getElementById('title').value);
+      formData.append('current_company', document.getElementById('currentCompany').value);
+      formData.append('experience_years', document.getElementById('experienceYears').value || '');
+      formData.append('expertise', document.getElementById('expertise').value);
+      formData.append('bio', document.getElementById('bio').value);
+      formData.append('linkedin_url', document.getElementById('linkedinUrl').value);
+      formData.append('hourly_price', document.getElementById('hourlyPrice').value || '');
+      formData.append('available_slots', document.getElementById('availableSlots').value);
+
+      if (fileInput.files.length > 0) {
+        formData.append('profile_image', fileInput.files[0]);
+      }
+
+      try {
+        const response = await fetch('/api/mentor/register', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById('successMessage').classList.add('show');
+          setTimeout(() => {
+            window.location.href = 'mentor-dashboard.html';
+          }, 1500);
+        } else {
+          showError('email', data.message || 'Registration failed');
+          registerBtn.disabled = false;
+          loadingSpinner.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        alert('An error occurred during registration. Please try again.');
+        registerBtn.disabled = false;
+        loadingSpinner.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

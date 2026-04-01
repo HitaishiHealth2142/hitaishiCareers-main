@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentor Dashboard - WinJob</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #a855f7;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --light-bg: #f8f9ff;
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --sidebar-bg: #1e293b;
+    }
+
+    * {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: var(--light-bg);
+      color: #1f2937;
+    }
+
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ==========================================
+       SIDEBAR
+       ========================================== */
+    .sidebar {
+      background: linear-gradient(135deg, var(--sidebar-bg) 0%, #0f172a 100%);
+      color: white;
+      padding: 30px 0;
+      position: fixed;
+      width: 280px;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: 5px 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-header {
+      padding: 0 25px 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.3rem;
+    }
+
+    .sidebar-brand i {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: white;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0 15px;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 10px;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 15px;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .sidebar-menu a:hover {
+      background: rgba(99, 102, 241, 0.2);
+      color: white;
+    }
+
+    .sidebar-menu a.active {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+    }
+
+    .sidebar-menu i {
+      width: 20px;
+      text-align: center;
+    }
+
+    .logout-btn {
+      position: absolute;
+      bottom: 30px;
+      left: 15px;
+      right: 15px;
+      padding: 12px 15px;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: none;
+      width: calc(100% - 30px);
+    }
+
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: white;
+    }
+
+    /* ==========================================
+       MAIN CONTENT
+       ========================================== */
+    .main-content {
+      grid-column: 2;
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary-gradient {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border: none;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary-gradient:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+      color: white;
+    }
+
+    /* ==========================================
+       STATS CARDS
+       ========================================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+
+    .stat-card-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    .stat-card-icon.primary {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+    }
+
+    .stat-card-icon.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .stat-card-icon.warning {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .stat-card-icon.secondary {
+      background: rgba(168, 85, 247, 0.1);
+      color: var(--secondary);
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+
+    .stat-change {
+      font-size: 0.85rem;
+      color: var(--success);
+      font-weight: 500;
+    }
+
+    .stat-change.negative {
+      color: var(--danger);
+    }
+
+    /* ==========================================
+       TABS
+       ========================================== */
+    .nav-tabs {
+      border: none;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .nav-tabs .nav-link {
+      background: white;
+      border: 2px solid #e5e7eb;
+      color: #6b7280;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .nav-tabs .nav-link:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .nav-tabs .nav-link.active {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-color: transparent;
+      color: white;
+    }
+
+    /* ==========================================
+       UPCOMING BOOKINGS
+       ========================================== */
+    .booking-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 15px;
+      border-left: 4px solid var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .booking-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .booking-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .booking-details {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .booking-name {
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .booking-time {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+
+    .booking-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-join {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-join:hover {
+      background: #059669;
+    }
+
+    .btn-reschedule {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .btn-reschedule:hover {
+      background: #e5e7eb;
+    }
+
+    /* ==========================================
+       CHART
+       ========================================== */
+    .chart-container {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 30px;
+    }
+
+    .chart-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #1f2937;
+    }
+
+    /* ==========================================
+       SLOTS MANAGER
+       ========================================== */
+    .slots-manager {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .slot-day {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .slot-day:last-child {
+      border-bottom: none;
+    }
+
+    .day-header {
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+
+    .slot-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .slot-tag {
+      background: #f3f4f6;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #9ca3af;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+
+    /* ==========================================
+       PROFILE COMPLETION
+       ========================================== */
+    .profile-completion {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 30px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+
+    /* ==========================================
+       RESPONSIVE
+       ========================================== */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: absolute;
+        left: -280px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+      }
+
+      .sidebar.show {
+        left: 0;
+      }
+
+      .main-content {
+        padding: 20px;
+        grid-column: 1;
+      }
+
+      .page-header {
+        margin-bottom: 30px;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .header-actions button {
+        width: 100%;
+      }
+
+      .booking-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="sidebar-brand">
+          <i class="fas fa-graduation-cap"></i>
+          WinJob
+        </a>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li>
+          <a href="#overview" class="nav-link active" data-section="overview">
+            <i class="fas fa-chart-line"></i>
+            <span>Overview</span>
+          </a>
+        </li>
+        <li>
+          <a href="#bookings" class="nav-link" data-section="bookings">
+            <i class="fas fa-calendar-alt"></i>
+            <span>My Bookings</span>
+            <span style="margin-left: auto; background: var(--danger); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem;">3</span>
+          </a>
+        </li>
+        <li>
+          <a href="#chats" class="nav-link" data-section="chats">
+            <i class="fas fa-comments"></i>
+            <span>Messages</span>
+          </a>
+        </li>
+        <li>
+          <a href="#availability" class="nav-link" data-section="availability">
+            <i class="fas fa-clock"></i>
+            <span>Availability</span>
+          </a>
+        </li>
+        <li>
+          <a href="#profile" class="nav-link" data-section="profile">
+            <i class="fas fa-user"></i>
+            <span>Edit Profile</span>
+          </a>
+        </li>
+        <li>
+          <a href="#earnings" class="nav-link" data-section="earnings">
+            <i class="fas fa-wallet"></i>
+            <span>Earnings</span>
+          </a>
+        </li>
+      </ul>
+
+      <button class="logout-btn" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <h1 class="page-title">Welcome back, <span id="mentorName">Mentor</span>! 👋</h1>
+        <div class="header-actions">
+          <a href="mentor-profile.html" class="btn-primary-gradient">
+            <i class="fas fa-edit"></i>
+            Edit Profile
+          </a>
+          <button class="btn-primary-gradient" style="background: #f3f4f6; color: #6b7280;">
+            <i class="fas fa-bell"></i>
+            Notifications
+          </button>
+        </div>
+      </div>
+
+      <!-- PROFILE COMPLETION -->
+      <div class="profile-completion">
+        <div class="progress-label">
+          <span>Profile Completion</span>
+          <span id="profilePercent">85%</span>
+        </div>
+        <div style="height: 10px; background: #e5e7eb; border-radius: 10px; overflow: hidden;">
+          <div class="progress-bar" style="width: 85%;"></div>
+        </div>
+      </div>
+
+      <!-- STATS GRID -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon primary">
+            <i class="fas fa-video"></i>
+          </div>
+          <div class="stat-label">Total Sessions</div>
+          <div class="stat-value" id="totalSessions">24</div>
+          <div class="stat-change">↑ 5 this month</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-icon success">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="stat-label">Your Rating</div>
+          <div class="stat-value" id="rating">4.8</div>
+          <div class="stat-change">Based on 48 reviews</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-icon warning">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <div class="stat-label">Estimated Earnings</div>
+          <div class="stat-value" id="earnings">$2,400</div>
+          <div class="stat-change">This month</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-icon secondary">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-label">Upcoming Sessions</div>
+          <div class="stat-value" id="upcomingSessions">3</div>
+          <div class="stat-change">Next 7 days</div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" href="#overview" data-section="overview">Overview</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#bookings" data-section="bookings">Upcoming Bookings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#analytics" data-section="analytics">Analytics</a>
+        </li>
+      </ul>
+
+      <!-- OVERVIEW SECTION -->
+      <section id="overview-section">
+        <!-- UPCOMING BOOKINGS -->
+        <div class="chart-container">
+          <div class="chart-title">📅 Your Next 3 Sessions</div>
+          <div id="upcomingBookingsList">
+            <div class="booking-card">
+              <div class="booking-info">
+                <div class="booking-avatar">RK</div>
+                <div class="booking-details">
+                  <div class="booking-name">Rajesh Kumar</div>
+                  <div class="booking-time">🗓️ Tomorrow, 2:00 PM - 3:00 PM</div>
+                  <div class="booking-time">📝 Topic: JavaScript Interview Prep</div>
+                </div>
+              </div>
+              <div class="booking-actions">
+                <button class="btn-small btn-join">Join Session</button>
+                <button class="btn-small btn-reschedule">Reschedule</button>
+              </div>
+            </div>
+
+            <div class="booking-card">
+              <div class="booking-info">
+                <div class="booking-avatar">AK</div>
+                <div class="booking-details">
+                  <div class="booking-name">Ananya Kadam</div>
+                  <div class="booking-time">🗓️ Friday, 4:00 PM - 5:00 PM</div>
+                  <div class="booking-time">📝 Topic: React Best Practices</div>
+                </div>
+              </div>
+              <div class="booking-actions">
+                <button class="btn-small btn-join">Join Session</button>
+                <button class="btn-small btn-reschedule">Reschedule</button>
+              </div>
+            </div>
+
+            <div class="booking-card">
+              <div class="booking-info">
+                <div class="booking-avatar">SP</div>
+                <div class="booking-details">
+                  <div class="booking-name">Sanjay Patel</div>
+                  <div class="booking-time">🗓️ Saturday, 10:00 AM - 11:00 AM</div>
+                  <div class="booking-time">📝 Topic: Career Guidance</div>
+                </div>
+              </div>
+              <div class="booking-actions">
+                <button class="btn-small btn-join">Join Session</button>
+                <button class="btn-small btn-reschedule">Reschedule</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT REVIEWS -->
+        <div class="chart-container">
+          <div class="chart-title">⭐ Recent Mentee Feedback</div>
+          <div style="display: grid; gap: 15px;">
+            <div style="padding: 15px; background: #f9fafb; border-radius: 10px; border-left: 4px solid var(--success);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <strong style="color: #1f2937;">Priya Sharma</strong>
+                <span style="color: var(--warning);">⭐⭐⭐⭐⭐</span>
+              </div>
+              <p style="margin: 0; color: #6b7280; font-size: 0.95rem;">"Excellent mentor! Very knowledgeable about React and explained concepts in a clear way."</p>
+            </div>
+
+            <div style="padding: 15px; background: #f9fafb; border-radius: 10px; border-left: 4px solid var(--success);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <strong style="color: #1f2937;">Vikram Singh</strong>
+                <span style="color: var(--warning);">⭐⭐⭐⭐</span>
+              </div>
+              <p style="margin: 0; color: #6b7280; font-size: 0.95rem;">"Great guidance on system design. Would definitely book another session."</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYTICS SECTION -->
+      <section id="analytics-section" style="display: none;">
+        <div class="chart-container">
+          <div class="chart-title">📊 Session Analytics (Last 30 Days)</div>
+          <canvas id="analyticsChart"></canvas>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ==========================================
+    // Initialize Dashboard
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadMentorData();
+      setupEventListeners();
+      initializeCharts();
+    });
+
+    // ==========================================
+    // Load Mentor Data
+    // ==========================================
+    async function loadMentorData() {
+      try {
+        // Get token from cookie or localStorage
+        const token = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('mentorToken='))
+          ?.split('=')[1] || localStorage.getItem('mentorToken');
+
+        if (!token) {
+          window.location.href = 'mentor-login.html';
+          return;
+        }
+
+        // Fetch mentor profile
+        const response = await fetch('/api/mentor/profile', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            window.location.href = 'mentor-login.html';
+          }
+          return;
+        }
+
+        const data = await response.json();
+        if (data.success) {
+          const mentor = data.mentor;
+          document.getElementById('mentorName').textContent = mentor.full_name.split(' ')[0];
+          document.getElementById('totalSessions').textContent = mentor.total_sessions || 0;
+          document.getElementById('rating').textContent = (mentor.rating || 0).toFixed(1);
+          document.getElementById('profilePercent').textContent = mentor.profileCompletion + '%';
+
+          // Update profile completion bar
+          const progressBar = document.querySelector('.progress-bar');
+          progressBar.style.width = mentor.profileCompletion + '%';
+
+          // Calculate earnings
+          const earnings = (mentor.total_sessions || 0) * (mentor.hourly_price || 0);
+          document.getElementById('earnings').textContent = '$' + earnings.toFixed(0);
+        }
+      } catch (error) {
+        console.error('Error loading mentor data:', error);
+      }
+    }
+
+    // ==========================================
+    // Event Listeners
+    // ==========================================
+    function setupEventListeners() {
+      // Sidebar navigation
+      document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          document.querySelectorAll('.sidebar-menu .nav-link').forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+        });
+      });
+
+      // Tab navigation
+      document.querySelectorAll('.nav-tabs .nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const section = link.getAttribute('data-section') || link.getAttribute('href').substring(1);
+          
+          document.querySelectorAll('[id$="-section"]').forEach(sec => {
+            sec.style.display = 'none';
+          });
+          
+          const sectionEl = document.getElementById(section + '-section');
+          if (sectionEl) {
+            sectionEl.style.display = 'block';
+          }
+          
+          document.querySelectorAll('.nav-tabs .nav-link').forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+        });
+      });
+
+      // Logout
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        try {
+          const token = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('mentorToken='))
+            ?.split('=')[1];
+
+          if (token) {
+            await fetch('/api/mentor/logout', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            });
+          }
+
+          localStorage.removeItem('mentorToken');
+          localStorage.removeItem('mentor');
+          window.location.href = 'mentor-login.html';
+        } catch (error) {
+          console.error('Logout error:', error);
+          window.location.href = 'mentor-login.html';
+        }
+      });
+    }
+
+    // ==========================================
+    // Initialize Charts
+    // ==========================================
+    function initializeCharts() {
+      const ctx = document.getElementById('analyticsChart');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [
+              {
+                label: 'Sessions',
+                data: [5, 4, 6, 8, 7, 9, 6],
+                borderColor: 'rgb(99, 102, 241)',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 5,
+                pointBackgroundColor: 'rgb(99, 102, 241)',
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                display: true,
+                labels: {
+                  usePointStyle: true,
+                  padding: 15,
+                  font: { size: 12, weight: '600' },
+                },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(0, 0, 0, 0.05)',
+                },
+              },
+            },
+          },
+        });
+      }
+    }
+  </script>
+</body>
+</html>
