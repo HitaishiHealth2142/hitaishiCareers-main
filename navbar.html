@@ -1,44 +1,1037 @@
 <header>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary fixed-top py-2">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="index.html">
-        <img src="images/winjob_logo.png" alt="Hitaishi Careers Logo" height="40" class="me-2">
-        <span class="fw-bold">WINJOB</span>
-        <!-- sub heading below this winjob text-->
-        <small class="text-white-50">Smart Careers Start Here.</small>
-      </a>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 120px;
+        }
 
-      <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="jobs.html">Jobs</a></li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Services</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="featuredprofile.html">Featured Profile</a></li>
-              <li><a class="dropdown-item" href="placementassistant.html">Placement Assistant</a></li>
-              <li><a class="dropdown-item" href="careerbooster.html">Career Booster</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="employerlogin.html">Post Jobs</a></li>
-          <li class="nav-item"><a class="nav-link" href="employers.html">Employers</a></li>
-          <li class="nav-item"><a class="nav-link" href="tutu.html">Apply with AI</a></li>
-        </ul>
+        /* ============================================
+           TOP INFO BAR STYLING
+           ============================================ */
+        .top-info-bar {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+            padding: 12px 0;
+            font-size: 13px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            width: 100%;
+        }
 
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link d-flex align-items-center" href="login.html" id="profileLink">
-              <i id="profile-icon" class="fas fa-user-circle fa-2x text-white"></i>
-              <img id="profile-avatar" src="" alt="User Avatar"
-                class="rounded-circle d-none" width="40" height="40">
-            </a>
-          </li>
-        </ul>
-      </div>
+        .top-info-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .top-info-left {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .top-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .top-info-item:hover {
+            color: #3498db;
+            transform: translateX(2px);
+        }
+
+        .top-info-item i {
+            font-size: 14px;
+            color: #3498db;
+        }
+
+        .top-info-item a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .top-info-item a:hover {
+            color: #3498db;
+        }
+
+        .divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ecf0f1;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .social-icons a:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        /* ============================================
+           MAIN NAVBAR STYLING
+           ============================================ */
+        .main-navbar {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 12px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 47px;
+            left: 0;
+            right: 0;
+            z-index: 1040;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            margin-right: 30px;
+        }
+
+        .navbar-brand-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .navbar-brand-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000000;
+            margin: 0;
+        }
+
+        .navbar-brand-subtitle {
+            font-size: 11px;
+            color: #010202;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .navbar-brand-title.gradient-text {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: #2c3e50 !important;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 10px 18px !important;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .main-navbar .nav-link {
+            color: #2c3e50 !important;
+            opacity: 1 !important;
+        }
+
+        .nav-link:hover {
+            color: #3498db !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+            transition: all 0.3s ease;
+            /* transform: translateX(-10%); */
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        /* DROPDOWN MENU STYLING */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle::after {
+            display: none;
+        }
+
+        .dropdown-menu {
+            min-width: 280px;
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+            padding: 20px 0;
+            top: 100%;
+            left: 0;
+            background: #fff;
+            margin-top: 8px;
+            display: none;
+            animation: slideDown 0.25s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-menu.three-columns {
+            min-width: 540px;
+            /* display: grid; */
+            /* grid-template-columns: repeat(3, 1fr); */
+            gap: 0;
+            padding: 20px 0;
+        }
+        .dropdown:hover .dropdown-menu.three-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .dropdown-column {
+            padding: 0 15px;
+        }
+
+        .dropdown-column-title {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 13px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ecf0f1;
+            text-transform: uppercase;
+        }
+
+        .dropdown-item {
+            color: #555;
+            padding: 10px 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            margin-bottom: 4px;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: #f0f4f8;
+            color: #3498db;
+            border-left-color: #3498db;
+            padding-left: 20px;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* LANGUAGE SELECTOR */
+        .language-selector {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            color: #2c3e50;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 8px 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .language-btn:hover {
+            color: #3498db;
+            transform: scale(1.1);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            min-width: 150px;
+            display: none;
+            z-index: 1060;
+            margin-top: 8px;
+        }
+
+        .language-dropdown.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .language-option {
+            padding: 12px 18px;
+            cursor: pointer;
+            color: #2c3e50;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .language-option:hover {
+            background: #f0f4f8;
+            color: #3498db;
+            padding-left: 22px;
+        }
+
+        .language-option.active {
+            background: #e3f2fd;
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .language-option.active::before {
+            content: '✓';
+            margin-right: -4px;
+            color: #3498db;
+        }
+
+        /* PROFILE ICON */
+        .profile-icon-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-icon-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .profile-icon-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+        }
+
+        .profile-icon-btn img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* MOBILE MENU TOGGLE */
+        .navbar-toggler {
+            border: none;
+            padding: 8px;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+
+        .navbar-toggler:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: none;
+            position: relative;
+            width: 24px;
+            height: 24px;
+        }
+
+        .navbar-toggler-icon::before,
+        .navbar-toggler-icon::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 2px;
+            background: #2c3e50;
+            left: 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-toggler-icon::before {
+            top: 6px;
+        }
+
+        .navbar-toggler-icon::after {
+            bottom: 6px;
+        }
+
+        .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        @media (max-width: 1200px) {
+            .navbar-nav {
+                gap: 0;
+            }
+
+            .nav-link {
+                padding: 8px 12px !important;
+                font-size: 13px;
+            }
+
+            .dropdown-menu.three-columns {
+                min-width: 520px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            body {
+                padding-top: 150px;
+            }
+
+            .top-info-bar .container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .top-info-left {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .divider {
+                display: none;
+            }
+
+            .social-icons {
+                order: -1;
+            }
+
+            .main-navbar {
+                top: 95px;
+            }
+
+            .navbar-brand {
+                margin-right: auto;
+            }
+
+            .navbar-nav:not(.ms-auto) {
+                margin-left: 0;
+            }
+
+            .navbar-collapse {
+                margin-top: 15px;
+                padding-top: 15px;
+                border-top: 2px solid #ecf0f1;
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .nav-link {
+                padding: 12px 18px !important;
+                border-radius: 8px;
+                margin: 4px 0;
+            }
+
+            .nav-link::after {
+                display: none;
+            }
+
+            .nav-link:hover {
+                background: #f0f4f8;
+            }
+
+            .dropdown-menu {
+                position: static;
+                box-shadow: none;
+                background: #f8f9fa;
+                border-radius: 0;
+                margin: 0;
+            }
+
+            .dropdown-menu.three-columns {
+                grid-template-columns: 1fr;
+                min-width: 100%;
+                gap: 15px;
+                padding: 15px 18px;
+            }
+
+            .dropdown-column {
+                padding: 0;
+            }
+
+            .navbar-nav.ms-auto {
+                flex-direction: row;
+                border-top: 2px solid #ecf0f1;
+                margin-top: 15px;
+                padding-top: 15px;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .language-selector {
+                width: 100%;
+                justify-content: center;
+                margin: 10px 0;
+            }
+
+            .language-dropdown {
+                position: static;
+                display: none;
+                box-shadow: none;
+                background: #f8f9fa;
+                margin-top: 8px;
+            }
+
+            .language-dropdown.show {
+                display: block;
+            }
+
+            .profile-icon-container {
+                width: 100%;
+                justify-content: center;
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-info-bar {
+                display: none;
+            }
+
+            body {
+                padding-top: 65px;
+            }
+
+            .main-navbar {
+                top: 0;
+            }
+
+            .navbar-brand-img {
+                width: 35px;
+                height: 35px;
+            }
+
+            .navbar-brand-title {
+                font-size: 16px;
+            }
+
+            .navbar-brand-subtitle {
+                font-size: 9px;
+            }
+
+            .navbar-brand {
+                margin-right: 10px;
+            }
+
+            .nav-link {
+                font-size: 13px;
+            }
+
+            .dropdown-menu.three-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .social-icons {
+                gap: 8px;
+            }
+
+            .social-icons a {
+                width: 24px;
+                height: 24px;
+                font-size: 11px;
+            }
+
+            .top-info-item i {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand-content {
+                display: none;
+            }
+
+            .navbar-brand {
+                margin-right: auto;
+            }
+
+            .nav-link {
+                padding: 10px 10px !important;
+                font-size: 12px;
+            }
+
+            .profile-icon-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .language-btn {
+                font-size: 16px;
+                padding: 6px 8px;
+            }
+
+            .dropdown-menu.three-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================
+           PAGE CONTENT
+           ============================================ */
+        .page-content {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px 20px;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 1200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .demo-section p {
+            color: #555;
+            line-height: 1.6;
+        }
+    </style>
+
+    <!-- ============================================
+         TOP INFO BAR
+         ============================================ -->
+    <div class="top-info-bar">
+        <div class="container">
+            <div class="top-info-left">
+                <div class="top-info-item">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+919876543210">+91 9876543210</a>
+                </div>
+                <div class="divider"></div>
+                <div class="top-info-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:support@winjob.com">support@winjob.com</a>
+                </div>
+            </div>
+
+            <div class="social-icons">
+                <a href="https://facebook.com" target="_blank" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://twitter.com" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://instagram.com" target="_blank" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://linkedin.com" target="_blank" title="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://youtube.com" target="_blank" title="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+        </div>
     </div>
-  </nav>
+
+    <!-- ============================================
+         MAIN NAVBAR
+         ============================================ -->
+    <nav class="main-navbar navbar navbar-expand-lg">
+        <div class="container">
+            <!-- BRAND -->
+            <a class="navbar-brand" href="index.html">
+                <img src="images/winjob_logo.png" alt="WINJOB Logo" class="navbar-brand-img">
+                <div class="navbar-brand-content">
+                    <h1 class="navbar-brand-title">WINJOB</h1>
+                    <small class="navbar-brand-subtitle">Smart Careers Start Here.</small>
+                </div>
+            </a>
+
+            <!-- MOBILE TOGGLE BUTTON -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- NAVBAR CONTENT -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto">
+                    <!-- HOME -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+
+                    <!-- JOBS -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="jobs.html">
+                            <i class="fas fa-briefcase"></i> Jobs
+                        </a>
+                    </li>
+
+                    <!-- SERVICES WITH 3-COLUMN DROPDOWN -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+                            <i class="fas fa-cogs"></i> Services
+                        </a>
+                        <div class="dropdown-menu three-columns">
+                            <!-- Column 1 -->
+                            <div class="dropdown-column">
+                                <div class="dropdown-column-title">Profile Services</div>
+                                <a class="dropdown-item" href="featuredprofile.html">
+                                    <i class="fas fa-star"></i> Featured Profile
+                                </a>
+                                <a class="dropdown-item" href="featuredprofile.html">
+                                    <i class="fas fa-paint-brush"></i> Profile Highlighter
+                                </a>
+                            </div>
+
+                            <!-- Column 2 -->
+                            <div class="dropdown-column">
+                                <div class="dropdown-column-title">Career Services</div>
+                                <a class="dropdown-item" href="careerbooster.html">
+                                    <i class="fas fa-rocket"></i> Career Booster
+                                </a>
+                                <a class="dropdown-item" href="resumebuild.html">
+                                    <i class="fas fa-file-alt"></i> Resume Writing
+                                </a>
+                                <a class="dropdown-item" href="resumebuild.html">
+                                    <i class="fas fa-file"></i> Resume Builder
+                                </a>
+                            </div>
+
+                            <!-- Column 3 -->
+                            <div class="dropdown-column">
+                                <div class="dropdown-column-title">Prep & Learning</div>
+                                <a class="dropdown-item" href="network.html">
+                                    <i class="fas fa-linkedin"></i> LinkedIn Makeover
+                                </a>
+                                <a class="dropdown-item" href="preparation.html">
+                                    <i class="fas fa-microphone"></i> Mock Interview
+                                </a>
+                                <a class="dropdown-item" href="preparation.html">
+                                    <i class="fas fa-graduation-cap"></i> Interview Prep
+                                </a>
+                                <a class="dropdown-item" href="preparation.html">
+                                    <i class="fas fa-check-circle"></i> Skill Assessment
+                                </a>
+                                <a class="dropdown-item" href="preparation.html">
+                                    <i class="fas fa-book"></i> Degree Programs
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- EMPLOYERS -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="employers.html">
+                            <i class="fas fa-building"></i> Employers
+                        </a>
+                    </li>
+
+                    <!-- APPLY WITH AI -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="tutu.html">
+                            <i class="fas fa-magic"></i> Apply with AI
+                        </a>
+                    </li>
+
+                    <!-- CONTACT -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">
+                            <i class="fas fa-headset"></i> Contact
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- RIGHT SIDE ITEMS -->
+                <ul class="navbar-nav ms-auto">
+                    <!-- LANGUAGE SELECTOR -->
+                    <li class="nav-item">
+                        <div class="language-selector">
+                            <button class="language-btn" id="languageBtn" title="Change Language">
+                                <i class="fas fa-globe"></i>
+                            </button>
+                            <div class="language-dropdown" id="languageDropdown">
+                                <button class="language-option active" data-lang="en">English</button>
+                                <button class="language-option" data-lang="es">Español</button>
+                                <button class="language-option" data-lang="fr">Français</button>
+                                <button class="language-option" data-lang="de">Deutsch</button>
+                                <button class="language-option" data-lang="hi">हिंदी</button>
+                                <button class="language-option" data-lang="te">తెలుగు</button>
+                                <button class="language-option" data-lang="ta">தமிழ்</button>
+                                <button class="language-option" data-lang="pt">Português</button>
+                                <button class="language-option" data-lang="ja">日本語</button>
+                                <button class="language-option" data-lang="zh">中文</button>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- PROFILE ICON -->
+                    <li class="nav-item">
+                        <div class="profile-icon-container">
+                            <a href="userProfile.html" class="profile-icon-btn" id="profileIconBtn" title="Profile">
+                                <i class="fas fa-user"></i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Google Translate Script -->
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // ============================================
+        // GOOGLE TRANSLATE INITIALIZATION
+        // ============================================
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,es,fr,de,hi,te,ta,pt,ja,zh-CN',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false
+                },
+                'google_translate_element'
+            );
+        }
+
+        // ============================================
+        // LANGUAGE SELECTOR FUNCTIONALITY
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageBtn = document.getElementById('languageBtn');
+            const languageDropdown = document.getElementById('languageDropdown');
+            const languageOptions = document.querySelectorAll('.language-option');
+
+            // Toggle language dropdown
+            languageBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+
+            // Handle language selection
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const lang = this.getAttribute('data-lang');
+                    
+                    // Update active state
+                    languageOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Save language preference
+                    localStorage.setItem('selectedLanguage', lang);
+
+                    // Close dropdown
+                    languageDropdown.classList.remove('show');
+
+                    // Trigger Google Translate
+                    const frame = document.querySelector('.goog-te-menu-frame');
+                    if (frame) {
+                        const dropdown = frame.contentDocument.querySelector('select.goog-te-combo');
+                        if (dropdown) {
+                            dropdown.value = lang;
+                            dropdown.dispatchEvent(new Event('change'));
+                        }
+                    }
+
+                    // Alternative: Use simple language code mapping
+                    translatePage(lang);
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.language-selector')) {
+                    languageDropdown.classList.remove('show');
+                }
+            });
+
+            // Load saved language preference
+            const savedLanguage = localStorage.getItem('selectedLanguage');
+            if (savedLanguage && savedLanguage !== 'en') {
+                const option = document.querySelector(`.language-option[data-lang="${savedLanguage}"]`);
+                if (option) {
+                    option.click();
+                }
+            }
+        });
+
+        // ============================================
+        // SIMPLE TRANSLATION FUNCTION (Optional)
+        // ============================================
+        function translatePage(lang) {
+            // You can implement a simple translation here or rely on Google Translate
+            // This is a placeholder for custom translation logic
+            console.log('Language changed to:', lang);
+            
+            // If using Google Translate API:
+            const googleTranslateElement = document.getElementById('google_translate_element');
+            const select = googleTranslateElement.querySelector('select');
+            if (select) {
+                select.value = lang;
+                select.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // ============================================
+        // NAVBAR COLLAPSE ON MOBILE
+        // ============================================
+        const navLinks = document.querySelectorAll('.navbar-nav a.nav-link');
+        const navbarToggle = document.querySelector('.navbar-toggler');
+        const navbarCollapse = document.querySelector('.navbar-collapse');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                // Don't close menu for dropdown toggles
+                if (!this.classList.contains('dropdown-toggle')) {
+                    navbarToggle.classList.remove('show');
+                    if (navbarCollapse.classList.contains('show')) {
+                        navbarToggle.click();
+                    }
+                }
+            });
+        });
+
+        // ============================================
+        // ACTIVE LINK HIGHLIGHTING
+        // ============================================
+        function setActiveLink() {
+            const currentLocation = location.pathname;
+            const navLinks = document.querySelectorAll('.navbar-nav a.nav-link');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentLocation) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        // Call on page load
+        window.addEventListener('load', setActiveLink);
+
+        // ============================================
+        // NAVBAR SCROLL EFFECT
+        // ============================================
+        let lastScrollTop = 0;
+        const topInfoBar = document.querySelector('.top-info-bar');
+        const mainNavbar = document.querySelector('.main-navbar');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            if (scrollTop > 100) {
+                mainNavbar.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)';
+            } else {
+                mainNavbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+            }
+
+            lastScrollTop = scrollTop;
+        });
+    </script>
+
+    <!-- Hidden Google Translate Container (for API integration) -->
+    <div id="google_translate_element" style="display: none;"></div>
 </header>
