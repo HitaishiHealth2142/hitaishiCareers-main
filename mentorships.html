@@ -1804,7 +1804,7 @@
     // Razorpay Integration for Mentor Booking
     async function startMentorPayment(mentorId, mentorName, amount) {
       try {
-        const orderRes = await fetch('/api/mentor/create-order', {
+        const orderRes = await fetch('/api/mentors/create-order', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -1827,7 +1827,7 @@
           order_id: orderData.orderId,
 
           handler: async function (response) {
-            const verifyRes = await fetch('/api/mentor/payment-success', {
+            const verifyRes = await fetch('/api/mentors/payment-success', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
