@@ -417,7 +417,7 @@
         </form>
 
         <div class="login-link">
-          Already have an account? <a href="mentor-login.html">Login here</a>
+          Already have an account? <a href="mentorsLogin.html">Login here</a>
         </div>
       </div>
     </div>
@@ -589,7 +589,7 @@
       }
 
       try {
-        const response = await fetch('/api/mentor/register', {
+        const response = await fetch('/api/mentors/register', {
           method: 'POST',
           body: formData,
         });
@@ -599,7 +599,7 @@
         if (data.success) {
           document.getElementById('successMessage').classList.add('show');
           setTimeout(() => {
-            window.location.href = 'mentor-dashboard.html';
+            window.location.href = 'mentorsLogin.html';
           }, 1500);
         } else {
           showError('email', data.message || 'Registration failed');

@@ -426,7 +426,7 @@
         <div class="divider">OR</div>
 
         <div class="signup-link">
-          New to mentoring? <a href="mentor-register.html">Create an account</a>
+          New to mentoring? <a href="mentorsRegister.html">Create an account</a>
         </div>
       </div>
     </div>
@@ -493,7 +493,7 @@
       loadingSpinner.style.display = 'inline-block';
 
       try {
-        const response = await fetch('/api/mentor/login', {
+        const response = await fetch('/api/mentors/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -516,7 +516,7 @@
 
           document.getElementById('successMessage').classList.add('show');
           setTimeout(() => {
-            window.location.href = 'mentor-dashboard.html';
+            window.location.href = 'mentorsDashboard.html';
           }, 1500);
         } else {
           showError('email', data.message || 'Login failed');
