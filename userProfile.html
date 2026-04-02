@@ -578,6 +578,10 @@
         .btn-primary:focus {
             animation: pulse 0.5s ease;
         }
+        .profile-sidebar .nav-link::after {
+            display: none !important;
+            content: none !important;
+        }
     </style>
 </head>
 <body>
@@ -650,6 +654,7 @@
                     <div class="section-status"><i class="fas fa-times"></i></div>
                     <div>Skills</div>
                 </div>
+                
             </div>
         </div>
 
@@ -669,6 +674,10 @@
                             <a class="nav-link" href="#" data-section="certifications"><i class="bi bi-award me-2"></i>Certifications</a>
                             <a class="nav-link" href="#" data-section="languages"><i class="bi bi-translate me-2"></i>Languages</a>
                             <a class="nav-link" href="#" data-section="password"><i class="bi bi-shield-lock me-2"></i>Password</a>
+                            <!-- find mentors -->
+                            <a class="nav-link" href="mentorships.html" data-section="mentors"><i class="bi bi-people me-2"></i>Find Mentors</a>
+                            <!-- MyChat -->
+                            <a class="nav-link" href="#" data-section="mychat"><i class="bi bi-chat-dots me-2"></i>MyChat</a>
                             <!-- *** ADDED LOGOUT BUTTON *** -->
                             <a class="nav-link" href="#" id="logoutButton"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
                         </nav>
@@ -826,17 +835,34 @@
     // === NAVIGATION HANDLER ===
     function setupNavigation() {
         document.querySelectorAll('#profileNav .nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (this.id === 'logoutButton') return; // skip logout
+link.addEventListener('click', function(e) {
+    if (this.id === 'logoutButton') {
+        e.preventDefault();
+        return;
+    }
 
-                document.querySelectorAll('#profileNav .nav-link').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
+    const href = this.getAttribute('href');
+    const sectionId = this.getAttribute('data-section');
+        // allow real page navigation
+        if (href && href !== '#' && href !== '') {
+            return;
+        }
 
-                document.querySelectorAll('.section-content').forEach(section => section.classList.remove('active'));
-                const sectionId = this.getAttribute('data-section');
-                document.getElementById(sectionId).classList.add('active');
-            });
+        e.preventDefault();
+
+        document.querySelectorAll('#profileNav .nav-link')
+            .forEach(l => l.classList.remove('active'));
+
+        this.classList.add('active');
+
+        document.querySelectorAll('.section-content')
+            .forEach(section => section.classList.remove('active'));
+
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+    });
         });
     }
 

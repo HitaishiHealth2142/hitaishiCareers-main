@@ -13,7 +13,7 @@ const { query } = require('../db');
 // MULTER CONFIGURATION
 // ==========================================
 
-const uploadDir = path.join(__dirname, '../public/uploads/mentors');
+const uploadDir = path.join(__dirname, '../uploads/mentors');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
