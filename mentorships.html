@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -1630,7 +1631,7 @@
             </div>
 
             <div class="mentor-actions">
-              <button class="btn-book" onclick="bookMentor('${mentor.id}', '${mentor.full_name}')">
+              <button class="btn-book" onclick="bookMentor('${mentor.id}', '${mentor.full_name}', '${mentor.hourly_price}')">
                 <i class="fas fa-calendar-alt"></i> Book
               </button>
               <button class="btn-chat" onclick="chatMentor('${mentor.id}')">
@@ -1764,18 +1765,24 @@
     // ==========================================
     // Book Mentor
     // ==========================================
-    function bookMentor(mentorId, mentorName) {
-      const token = localStorage.getItem('userToken');
-      if (!token) {
-        alert('Please login to book a session');
-        window.location.href = 'login.html';
-        return;
+    async function bookMentor(mentorId, mentorName, price) {
+      try {
+        const checkAuth = await fetch('/api/profile/full', {
+          credentials: 'include'
+        });
+
+        if (checkAuth.status === 401) {
+          alert('Please login to book a session');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        startMentorPayment(mentorId, mentorName, price);
+
+      } catch (error) {
+        console.error(error);
+        alert('Something went wrong');
       }
-      
-      // Ready for integration with booking system
-      alert(`Booking session with ${mentorName}...`);
-      // Redirect to booking page or open booking modal
-      // window.location.href = `booking.html?mentorId=${mentorId}`;
     }
 
     // ==========================================
@@ -1793,6 +1800,67 @@
       alert(`Opening chat with mentor...`);
       // window.location.href = `chat.html?mentorId=${mentorId}`;
     }
+ 
+    // Razorpay Integration for Mentor Booking
+    async function startMentorPayment(mentorId, mentorName, amount) {
+      try {
+        const orderRes = await fetch('/api/mentor/create-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            mentorId,
+            amount
+          })
+        });
+
+        const orderData = await orderRes.json();
+
+        const options = {
+          key: "rzp_test_SYW8QFaHP8GPNq",
+          amount: orderData.amount,
+          currency: "INR",
+          name: "WINJOB Mentorship",
+          description: `Mentor Session with ${mentorName}`,
+          order_id: orderData.orderId,
+
+          handler: async function (response) {
+            const verifyRes = await fetch('/api/mentor/payment-success', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              credentials: 'include',
+              body: JSON.stringify({
+                mentorId,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id
+              })
+            });
+
+            const result = await verifyRes.json();
+
+            if (result.success) {
+              window.location.href = `chat.html?mentorId=${mentorId}`;
+            }
+          },
+
+          theme: {
+            color: "#6a0dad"
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+
+      } catch (error) {
+        console.error(error);
+        alert("Payment failed");
+      }
+    }
+      
   </script>
 </body>
 </html>

@@ -8,6 +8,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const protectMentorRoute = require('../middleware/mentorAuthMiddleware');
 const { query } = require('../db');
+const { protectRoute: verifyUser } = require('../middleware/authMiddleware');
 
 // ==========================================
 // MULTER CONFIGURATION
@@ -45,9 +46,12 @@ const upload = multer({
 // AUTO TABLE CREATION & MIGRATIONS
 // ==========================================
 
-async function initializeMentorTable() {
+async function initializeMentorTables() {
   try {
-    const createTableSQL = `
+    // =========================
+    // mentors table
+    // =========================
+    const createMentorsTableSQL = `
       CREATE TABLE IF NOT EXISTS mentors (
         id CHAR(36) PRIMARY KEY,
         full_name VARCHAR(255) NOT NULL,
@@ -72,18 +76,38 @@ async function initializeMentorTable() {
         INDEX idx_is_verified (is_verified)
       );
     `;
-    
-    await query(createTableSQL);
-    console.log('✓ Mentors table initialized');
+
+    // =========================
+    // mentor bookings table
+    // =========================
+    const createBookingsTableSQL = `
+      CREATE TABLE IF NOT EXISTS mentor_bookings (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        mentor_id CHAR(36) NOT NULL,
+        razorpay_order_id VARCHAR(255),
+        razorpay_payment_id VARCHAR(255),
+        payment_status VARCHAR(50) DEFAULT 'pending',
+        booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_user_id (user_id),
+        INDEX idx_mentor_id (mentor_id),
+        INDEX idx_payment_status (payment_status)
+      );
+    `;
+
+    await query(createMentorsTableSQL);
+    await query(createBookingsTableSQL);
+
+    console.log("✅ Mentors table initialized");
+    console.log("✅ Mentor bookings table initialized");
+
   } catch (error) {
-    if (!error.message.includes('already exists')) {
-      console.error('Error initializing mentors table:', error);
-    }
+    console.error("❌ Table initialization error:", error);
   }
 }
 
-// Initialize table on module load
-initializeMentorTable();
+
+initializeMentorTables();
 
 // ==========================================
 // UTILITY FUNCTIONS
@@ -741,6 +765,50 @@ router.get('/dashboard/stats', protectMentorRoute, async (req, res) => {
       success: false,
       message: 'Failed to fetch dashboard stats',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+});
+
+
+// create order for mentorship session
+router.post('/create-order', verifyUser, async (req, res) => {
+  const { mentorId, amount } = req.body;
+
+  const order = await razorpay.orders.create({
+    amount: amount * 100,
+    currency: "INR",
+    receipt: `mentor_${mentorId}_${Date.now()}`
+  });
+
+  res.json({
+    orderId: order.id,
+    amount: order.amount
+  });
+});
+
+// success payment saves in table
+router.post('/payment-success', verifyUser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const {
+      mentorId,
+      razorpay_order_id,
+      razorpay_payment_id
+    } = req.body;
+
+    await query(`
+      INSERT INTO mentor_bookings
+      (user_id, mentor_id, razorpay_order_id, razorpay_payment_id, payment_status)
+      VALUES (?, ?, ?, ?, 'paid')
+    `, [userId, mentorId, razorpay_order_id, razorpay_payment_id]);
+
+    res.json({ success: true });
+
+  } catch (error) {
+    console.error("Payment save error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to save booking"
     });
   }
 });
