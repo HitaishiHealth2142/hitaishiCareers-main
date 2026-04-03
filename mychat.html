@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyChat - WinJob Mentor</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* ========================================
+    CHAT CSS - WhatsApp Inspired Design
+    ======================================== */
+
+    :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #a855f7;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --light-bg: #f5f5f5;
+    --border-color: #e5e7eb;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-light: #9ca3af;
+    }
+
+    * {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+    background: #ffffff;
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    }
+
+    /* ========================================
+    CONTAINER & LAYOUT
+    ======================================== */
+
+    .chat-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    background: white;
+    position: relative;
+    }
+
+    /* ========================================
+    LEFT SIDEBAR - CHAT LIST
+    ======================================== */
+
+    .chat-sidebar {
+    width: 320px;
+    background: #ffffff;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 100;
+    }
+
+    .sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+
+    .sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+
+    .sidebar-title h5 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    }
+
+    .badge-primary {
+    background: var(--danger) !important;
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    }
+
+    .sidebar-actions {
+    display: flex;
+    gap: 8px;
+    }
+
+    .btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    }
+
+    .btn-icon:hover {
+    background: var(--light-bg);
+    color: var(--primary-dark);
+    }
+
+    .sidebar-search {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--light-bg);
+    margin: 8px;
+    border-radius: 25px;
+    position: relative;
+    }
+
+    .search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    }
+
+    .search-input::placeholder {
+    color: var(--text-light);
+    }
+
+    .search-icon {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    }
+
+    .chat-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    }
+
+    .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-light);
+    text-align: center;
+    padding: 20px;
+    }
+
+    .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.3;
+    }
+
+    .empty-state p {
+    margin: 10px 0 5px 0;
+    font-weight: 600;
+    color: var(--text-secondary);
+    }
+
+    .empty-state small {
+    font-size: 0.85rem;
+    }
+
+    /* Chat Item */
+    .chat-item {
+    padding: 8px 8px;
+    margin: 0 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    }
+
+    .chat-item:hover {
+    background: var(--light-bg);
+    }
+
+    .chat-item.active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+    border-left: 3px solid var(--primary);
+    padding-left: 5px;
+    }
+
+    .chat-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    position: relative;
+    }
+
+    .avatar-online::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: var(--success);
+    border: 2px solid white;
+    border-radius: 50%;
+    bottom: 0;
+    right: 0;
+    }
+
+    .chat-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    }
+
+    .chat-header-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    }
+
+    .chat-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    white-space: nowrap;
+    }
+
+    .chat-time {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    white-space: nowrap;
+    margin-left: 8px;
+    }
+
+    .chat-message {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .chat-message.unseen {
+    color: var(--text-primary);
+    font-weight: 600;
+    }
+
+    .unread-badge {
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-left: 8px;
+    }
+
+    /* Scrollbar */
+    .chat-list::-webkit-scrollbar {
+    width: 6px;
+    }
+
+    .chat-list::-webkit-scrollbar-track {
+    background: transparent;
+    }
+
+    .chat-list::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+    }
+
+    .chat-list::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+    }
+
+    /* ========================================
+    RIGHT PANEL - CHAT VIEW
+    ======================================== */
+
+    .chat-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    position: relative;
+    overflow: hidden;
+    }
+
+    .chat-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-light);
+    }
+
+    .empty-content {
+    text-align: center;
+    }
+
+    .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.2;
+    }
+
+    .empty-content h3 {
+    margin: 15px 0 10px 0;
+    color: var(--text-primary);
+    font-weight: 700;
+    }
+
+    .empty-content p {
+    margin: 5px 0;
+    color: var(--text-secondary);
+    }
+
+    /* Chat Header */
+    .chat-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    z-index: 50;
+    }
+
+    .chat-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    }
+
+    .btn-back {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    }
+
+    .mentor-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    }
+
+    .mentor-info .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    }
+
+    .mentor-details {
+    display: flex;
+    flex-direction: column;
+    }
+
+    .mentor-details h6 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    }
+
+    .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    }
+
+    .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    display: inline-block;
+    }
+
+    .status-dot.offline {
+    background: var(--text-light);
+    }
+
+    .chat-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    }
+
+    .dropdown {
+    position: relative;
+    }
+
+    .dropdown-toggle::after {
+    display: none;
+    }
+
+    .dropdown-menu {
+    min-width: 150px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 10px;
+    padding: 8px 0;
+    }
+
+    .dropdown-item {
+    color: var(--text-primary);
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    }
+
+    .dropdown-item:hover {
+    background: var(--light-bg);
+    color: var(--primary);
+    }
+
+    /* Messages Container */
+    .messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    }
+
+    .message-group {
+    display: flex;
+    margin-bottom: 8px;
+    animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    }
+
+    .message-group.sent {
+    justify-content: flex-end;
+    }
+
+    .message-group.received {
+    justify-content: flex-start;
+    }
+
+    .date-separator {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+    }
+
+    .date-separator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-color);
+    }
+
+    .date-separator span {
+    background: white;
+    padding: 0 12px;
+    color: var(--text-light);
+    font-size: 0.8rem;
+    position: relative;
+    z-index: 1;
+    }
+
+    .message-bubble {
+    max-width: 60%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    word-wrap: break-word;
+    position: relative;
+    animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+    }
+
+    .message-bubble.sent {
+    background: var(--primary);
+    color: white;
+    border-bottom-right-radius: 4px;
+    margin-left: 12px;
+    }
+
+    .message-bubble.received {
+    background: var(--light-bg);
+    color: var(--text-primary);
+    border-bottom-left-radius: 4px;
+    margin-right: 12px;
+    }
+
+    .message-content {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    }
+
+    .message-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    }
+
+    .message-time {
+    color: var(--text-secondary);
+    }
+
+    .message-bubble.sent .message-time {
+    color: rgba(255, 255, 255, 0.7);
+    }
+
+    .message-status {
+    color: var(--text-light);
+    }
+
+    .message-bubble.sent .message-status {
+    color: rgba(255, 255, 255, 0.7);
+    }
+
+    .message-status i {
+    font-size: 0.7rem;
+    }
+
+    .message-bubble img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    }
+
+    .message-bubble .file-preview {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    }
+
+    .message-bubble .file-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: white;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    }
+
+    .message-bubble.received .file-icon {
+    background: var(--secondary);
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    }
+
+    .typing-indicator span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-light);
+    animation: typing 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+    0%, 60%, 100% {
+        opacity: 0.5;
+        transform: translateY(0);
+    }
+    30% {
+        opacity: 1;
+        transform: translateY(-10px);
+    }
+    }
+
+    /* Message Composer */
+    .message-composer {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    background: white;
+    border-top: 1px solid var(--border-color);
+    }
+
+    .composer-actions {
+    display: flex;
+    gap: 8px;
+    }
+
+    .btn-action {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+    background: var(--light-bg);
+    color: var(--primary-dark);
+    }
+
+    .message-input {
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 10px 16px;
+    outline: none;
+    font-size: 0.95rem;
+    resize: none;
+    max-height: 100px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    }
+
+    .message-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .btn-send {
+    background: var(--primary);
+    border: none;
+    color: white;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    }
+
+    .btn-send:hover {
+    background: var(--primary-dark);
+    transform: scale(1.05);
+    }
+
+    /* ========================================
+    CALL COMPONENTS
+    ======================================== */
+
+    .call-modal {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    color: white;
+    }
+
+    .call-header {
+    padding: 30px;
+    text-align: center;
+    }
+
+    .call-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .call-body {
+    padding: 20px;
+    text-align: center;
+    }
+
+    .call-body h4 {
+    margin: 15px 0 5px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    }
+
+    .call-body p {
+    margin: 0 0 20px 0;
+    opacity: 0.9;
+    }
+
+    .call-timer {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 15px 0;
+    }
+
+    .call-actions {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    }
+
+    .btn-call-reject,
+    .btn-call-accept {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    color: white;
+    }
+
+    .btn-call-reject {
+    background: var(--danger);
+    }
+
+    .btn-call-reject:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+    }
+
+    .btn-call-accept {
+    background: var(--success);
+    }
+
+    .btn-call-accept:hover {
+    background: #059669;
+    transform: scale(1.1);
+    }
+
+    /* Active Call Container */
+    .call-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .call-video-area {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    }
+
+    .remote-video,
+    .local-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    }
+
+    .local-video {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 150px;
+    height: 200px;
+    border-radius: 12px;
+    border: 3px solid white;
+    z-index: 10;
+    object-fit: cover;
+    }
+
+    .call-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    pointer-events: none;
+    }
+
+    .call-overlay .call-header {
+    color: white;
+    padding: 20px;
+    text-align: center;
+    pointer-events: auto;
+    }
+
+    .call-overlay .call-header h6 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    }
+
+    .call-overlay .call-timer {
+    color: white;
+    margin: 0;
+    }
+
+    .call-controls {
+    display: flex;
+    gap: 20px;
+    pointer-events: auto;
+    }
+
+    .btn-call-control {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    }
+
+    .btn-call-control:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+    }
+
+    .btn-call-control.active {
+    background: var(--primary);
+    }
+
+    .btn-end-call {
+    background: var(--danger);
+    }
+
+    .btn-end-call:hover {
+    background: #dc2626;
+    }
+
+    /* ========================================
+    EMOJI PICKER
+    ======================================== */
+
+    .emoji-picker {
+    position: absolute;
+    bottom: 100%;
+    left: 16px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    z-index: 200;
+    max-width: 300px;
+    }
+
+    .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    }
+
+    .emoji-item {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    background: transparent;
+    border: none;
+    padding: 0;
+    }
+
+    .emoji-item:hover {
+    background: var(--light-bg);
+    transform: scale(1.2);
+    }
+
+    /* ========================================
+    TOAST NOTIFICATIONS
+    ======================================== */
+
+    .toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    }
+
+    .toast {
+    background: white;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    animation: slideInRight 0.3s ease;
+    }
+
+    @keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    }
+
+    .toast.success {
+    border-left: 3px solid var(--success);
+    }
+
+    .toast.error {
+    border-left: 3px solid var(--danger);
+    }
+
+    .toast.info {
+    border-left: 3px solid var(--primary);
+    }
+
+    .toast i {
+    font-size: 1.2rem;
+    }
+
+    .toast.success i {
+    color: var(--success);
+    }
+
+    .toast.error i {
+    color: var(--danger);
+    }
+
+    .toast.info i {
+    color: var(--primary);
+    }
+
+    /* ========================================
+    MOBILE RESPONSIVE
+    ======================================== */
+
+    @media (max-width: 768px) {
+    .chat-sidebar {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        transition: all 0.3s ease;
+        z-index: 200;
+    }
+
+    .chat-sidebar.hidden {
+        transform: translateX(-100%);
+    }
+
+    .chat-panel {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        z-index: 100;
+    }
+
+    .message-bubble {
+        max-width: 85%;
+    }
+
+    .local-video {
+        width: 100px;
+        height: 130px;
+        bottom: 80px;
+    }
+
+    .btn-send {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .message-input {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+    }
+
+    @media (max-width: 480px) {
+    .chat-sidebar {
+        width: 100%;
+    }
+
+    .message-bubble {
+        max-width: 90%;
+    }
+
+    .chat-item {
+        padding: 6px;
+        gap: 10px;
+    }
+
+    .chat-avatar {
+        width: 44px;
+        height: 44px;
+    }
+
+    .message-composer {
+        padding: 8px 12px;
+        gap: 6px;
+    }
+
+    .btn-action {
+        width: 30px;
+        height: 30px;
+        font-size: 0.95rem;
+    }
+
+    .message-input {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .toast-container {
+        left: 12px;
+        right: 12px;
+    }
+
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .emoji-picker {
+        left: auto;
+        right: 12px;
+        max-width: calc(100% - 24px);
+    }
+
+    .call-controls {
+        gap: 12px;
+    }
+
+    .btn-call-control {
+        width: 44px;
+        height: 44px;
+        font-size: 1rem;
+    }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <!-- LEFT SIDEBAR - Chat List -->
+    <div class="chat-sidebar">
+      <!-- Header -->
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <h5>MyChat</h5>
+          <span class="badge badge-primary" id="unreadCount">0</span>
+        </div>
+        <div class="sidebar-actions">
+          <button class="btn-icon" id="btnNewChat" title="New Chat">
+            <i class="fas fa-plus"></i>
+          </button>
+          <button class="btn-icon" id="btnMore" title="More">
+            <i class="fas fa-ellipsis-v"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="sidebar-search">
+        <input 
+          type="text" 
+          id="searchChats" 
+          class="search-input" 
+          placeholder="Search chats..."
+        >
+        <i class="fas fa-search search-icon"></i>
+      </div>
+
+      <!-- Chat List -->
+      <div class="chat-list" id="chatList">
+        <div class="empty-state">
+          <i class="fas fa-comments"></i>
+          <p>No chats yet</p>
+          <small>Book a mentor to start chatting</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL - Chat Messages -->
+    <div class="chat-panel">
+      <!-- No Chat Selected State -->
+      <div class="chat-empty-state" id="emptyState">
+        <div class="empty-content">
+          <div class="empty-icon">
+            <i class="fas fa-comments"></i>
+          </div>
+          <h3>Welcome to MyChat</h3>
+          <p>Select a chat to start messaging</p>
+          <small>Real-time messaging with your mentors</small>
+        </div>
+      </div>
+
+      <!-- Chat View -->
+      <div class="chat-view" id="chatView" style="display: none;">
+        <!-- Chat Header -->
+        <div class="chat-header">
+          <div class="chat-header-left">
+            <button class="btn-back d-lg-none" id="btnBack">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="mentor-info">
+              <img id="mentorAvatar" src="" alt="Mentor" class="avatar">
+              <div class="mentor-details">
+                <h6 id="mentorName"></h6>
+                <small id="mentorStatus" class="status-indicator">
+                  <span class="status-dot"></span> Online
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-header-right">
+            <button class="btn-icon" id="btnAudioCall" title="Audio Call">
+              <i class="fas fa-phone"></i>
+            </button>
+            <button class="btn-icon" id="btnVideoCall" title="Video Call">
+              <i class="fas fa-video"></i>
+            </button>
+            <div class="dropdown">
+              <button class="btn-icon dropdown-toggle" id="btnChatMore">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" id="chatMoreMenu">
+                <li><a class="dropdown-item" href="#" id="menuViewProfile">View Profile</a></li>
+                <li><a class="dropdown-item" href="#" id="menuClearChat">Clear Chat</a></li>
+                <li><a class="dropdown-item" href="#" id="menuBlock">Block User</a></li>
+                <li><a class="dropdown-item" href="#" id="menuReport">Report Issue</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages Container -->
+        <div class="messages-container" id="messagesContainer">
+          <!-- Messages will be loaded here -->
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typingIndicator" style="display: none;">
+          <span></span><span></span><span></span>
+        </div>
+
+        <!-- Message Composer -->
+        <div class="message-composer">
+          <div class="composer-actions">
+            <button class="btn-action" id="btnEmoji" title="Emoji">
+              <i class="fas fa-smile"></i>
+            </button>
+            <button class="btn-action" id="btnAttach" title="Attachment">
+              <i class="fas fa-paperclip"></i>
+            </button>
+            <button class="btn-action" id="btnVoice" title="Voice Message">
+              <i class="fas fa-microphone"></i>
+            </button>
+          </div>
+
+          <input 
+            type="text" 
+            id="messageInput" 
+            class="message-input" 
+            placeholder="Type a message..."
+            autocomplete="off"
+          >
+
+          <button class="btn-send" id="btnSendMessage">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+
+          <!-- Hidden file input -->
+          <input 
+            type="file" 
+            id="fileInput" 
+            accept="image/*,application/pdf,.doc,.docx"
+            style="display: none;"
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Incoming Call Modal -->
+  <div class="modal fade" id="incomingCallModal" tabindex="-1" backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content call-modal">
+        <div class="call-header">
+          <img id="callAvatar" src="" alt="Caller" class="call-avatar">
+        </div>
+        <div class="call-body">
+          <h4 id="callName"></h4>
+          <p id="callType"></p>
+          <div class="call-timer" id="callTimer">00:00</div>
+        </div>
+        <div class="call-actions">
+          <button class="btn-call-reject" id="btnRejectCall">
+            <i class="fas fa-times"></i>
+          </button>
+          <button class="btn-call-accept" id="btnAcceptCall">
+            <i class="fas fa-phone"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Call View -->
+  <div class="call-container" id="callContainer" style="display: none;">
+    <div class="call-video-area">
+      <video id="remoteVideo" class="remote-video"></video>
+      <video id="localVideo" class="local-video" muted></video>
+      
+      <div class="call-overlay">
+        <div class="call-header">
+          <h6 id="activeCallName"></h6>
+          <div class="call-timer" id="activeCallTimer">00:00</div>
+        </div>
+
+        <div class="call-controls">
+          <button class="btn-call-control" id="btnMuteMic" title="Mute Mic">
+            <i class="fas fa-microphone"></i>
+          </button>
+          <button class="btn-call-control" id="btnMuteSpeaker" title="Mute Speaker">
+            <i class="fas fa-volume-up"></i>
+          </button>
+          <button class="btn-call-control" id="btnToggleCamera" title="Toggle Camera">
+            <i class="fas fa-video"></i>
+          </button>
+          <button class="btn-call-control btn-end-call" id="btnEndCall" title="End Call">
+            <i class="fas fa-phone"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emoji Picker (Simple emoji panel) -->
+  <div class="emoji-picker" id="emojiPicker" style="display: none;">
+    <div class="emoji-grid" id="emojiGrid"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="chat.js"></script>
+</body>
+</html>
