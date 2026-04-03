@@ -1798,7 +1798,7 @@
       
       // Ready for integration with chat system
       alert(`Opening chat with mentor...`);
-      // window.location.href = `chat.html?mentorId=${mentorId}`;
+      // window.location.href = `mychat.html?mentorId=${mentorId}`;
     }
  
     // Razorpay Integration for Mentor Booking
@@ -1843,7 +1843,7 @@
             const result = await verifyRes.json();
 
             if (result.success) {
-              window.location.href = `chat.html?mentorId=${mentorId}`;
+              window.location.href = `mychat.html?mentorId=${mentorId}`;
             }
           },
 

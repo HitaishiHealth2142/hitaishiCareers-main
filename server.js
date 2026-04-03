@@ -15,8 +15,8 @@ const jobsRoute = require('./routes/jobs');
 const applicantRoute = require('./routes/applicant');
 const companyRoute = require('./routes/company');
 const mentorsRoute = require('./routes/mentors');
-const chatRoute = require('./routes/chat');
 const { protectRoute, protectEmployerRoute } = require('./middleware/authMiddleware');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -101,7 +101,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // SOCKET.IO INITIALIZATION
 // ========================================
 
-require('./socket')(io, app);
+require('./routes/socket')(io, app);
+require('./routes/mychat')(app, io);
+
 
 // Middleware to attach io to requests
 app.use((req, res, next) => {
@@ -134,7 +136,6 @@ app.use('/api/jobs', jobsRoute);
 app.use('/api/applicant', applicantRoute);
 app.use('/api/company', companyRoute);
 app.use('/api/mentors', mentorsRoute);
-app.use('/api/chat', chatRoute); // Chat routes
 
 // ========================================
 // FRONTEND ROUTES

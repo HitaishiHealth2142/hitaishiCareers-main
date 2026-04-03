@@ -1,7 +1,7 @@
 // socket.js - Socket.IO Chat & Call Handling
 
 module.exports = function(io, app) {
-  const { query } = require('./db');
+  const { query } = require('../db');
   const { v4: uuidv4 } = require('uuid');
 
   // Store active users
