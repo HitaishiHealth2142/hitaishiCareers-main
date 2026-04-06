@@ -1802,6 +1802,36 @@
     }
 
     // ==========================================
+    // Book Mentor
+    // ==========================================
+    async function bookMentor(mentorId) {
+      try {
+        const res = await fetch('/api/mentors/start-booking', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ mentorId })
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          alert(data.message);
+          return;
+        }
+
+        window.location.href = data.redirectUrl;
+
+      } catch (err) {
+        console.error(err);
+        alert('Failed to start booking');
+      }
+    }
+      
+    
+    // ==========================================
     // Chat Mentor
     // ==========================================
     function chatMentor(mentorId) {
