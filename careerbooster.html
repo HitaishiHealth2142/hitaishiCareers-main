@@ -6,6 +6,8 @@
     <title>Career Booster | Accelerate Your Job Hunt</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <style>
         :root {
@@ -31,6 +33,7 @@
             color: var(--dark);
             line-height: 1.6;
             background-color: var(--light);
+            padding-top: 70px;
         }
         
         .container {
@@ -511,6 +514,17 @@
         .delay-3 {
             animation-delay: 0.6s;
         }
+
+        /* Nav & Mega Menu Fixes */
+        .nav-item.dropdown {
+            position: relative !important;
+        }
+        .dropdown-menu {
+            position: absolute !important;
+            top: 100%;
+            left: 0;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
@@ -551,7 +565,7 @@
   </script>
 
     <!-- Hero Section -->
-    <section class="hero" style="margin-top: 68px;">
+    <section class="hero">
         <div class="container" style="display: flex; gap: 50px;">
             <div class="hero-content animate">
                 <h1>Accelerate Your Job Hunt with Career Booster</h1>
