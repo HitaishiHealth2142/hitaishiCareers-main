@@ -27,11 +27,6 @@
       --shadow: 0 8px 20px rgba(106, 58, 255, 0.4);
       --border-radius: 50px;
       --transition: all 0.3s ease;
-
-      /* Added from index.html for navbar */
-      --primary-color: #6a0dad;
-      --secondary-color: #d653c9;
-      --dark-text: #333333;
     }
 
     body {
@@ -40,74 +35,30 @@
       background: var(--primary-bg);
       color: var(--text-primary);
       line-height: 1.6;
-      /* Added padding to prevent content from being hidden by the fixed navbar */
-      padding-top: 70px; 
     }
 
-    /* Updated Navbar styles to match image */
-    .navbar {
-      background: linear-gradient(135deg, #6a0dad, #d653c9) !important;
-      padding: 0.5rem 0;
-    }
-    
-    .navbar-brand {
-      font-weight: bold;
-      font-size: 1.5rem;
-    }
-    
-    .navbar-nav .nav-link {
-      color: white !important;
-      font-weight: 500;
-      padding: 0.5rem 1rem;
-      transition: color 0.3s ease;
-    }
-    
-    .navbar-nav .nav-link:hover {
-      color: #ffcc00 !important;
-    }
-    
-    .navbar-nav .nav-link.active {
-      color: #ffcc00 !important;
-      font-weight: 600;
-    }
-    
-    .dropdown-menu {
-      background-color: white;
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      padding: 0.5rem 0;
-    }
-    
-    .dropdown-item {
-      color: #333;
-      padding: 0.5rem 1.5rem;
-      transition: all 0.2s ease;
-    }
-    
-    .dropdown-item:hover {
-      background-color: rgba(106, 13, 173, 0.1);
-      color: #6a0dad;
-    }
-    
-    .navbar-toggler {
-      border: none;
-      padding: 0.25rem 0.5rem;
-    }
-    
-    .navbar-toggler:focus {
-      box-shadow: none;
+    /* Navbar padding adjustment for different screen sizes */
+    @media (min-width: 769px) {
+      body {
+        padding-top: 120px;
+      }
     }
 
-    /* Original tutu.html styles */
-    .container {
+    @media (max-width: 768px) {
+      body {
+        padding-top: 65px;
+      }
+    }
+
+    /* Tutu-specific styles (scoped to avoid Bootstrap override) */
+    .tutu-container {
       padding: 5rem 2rem;
       text-align: center;
       max-width: 600px;
       margin: 0 auto;
     }
 
-    .title {
+    .tutu-title {
       font-size: clamp(2rem, 5vw, 3rem);
       background: var(--text-gradient);
       -webkit-background-clip: text;
@@ -116,13 +67,13 @@
       margin-bottom: 1rem;
     }
 
-    .subtitle {
+    .tutu-subtitle {
       color: var(--text-secondary);
       font-size: 1.2rem;
       margin-bottom: 2rem;
     }
 
-    .file-label {
+    .tutu-file-label {
       display: inline-block;
       background: #3f2d7d;
       color: var(--text-primary);
@@ -133,21 +84,21 @@
       transition: var(--transition);
     }
 
-    .file-label:hover {
+    .tutu-file-label:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow);
     }
 
-    .file-input {
+    .tutu-file-input {
       display: none;
     }
 
-    .file-name {
+    .tutu-file-name {
       margin-top: 1rem;
       color: var(--text-muted);
     }
 
-    .apply-btn {
+    .tutu-apply-btn {
       background: var(--button-bg);
       color: var(--text-primary);
       padding: 1rem 2.5rem;
@@ -159,7 +110,7 @@
       transition: var(--transition);
     }
 
-    .apply-btn:hover {
+    .tutu-apply-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(106, 58, 255, 0.6);
     }
@@ -183,9 +134,63 @@
       transition: opacity 0.5s ease;
     }
 
+    @media (max-width: 768px) {
+      .popup-container {
+        top: 65px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+      }
+
+      .popup {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+      }
+    }
+
     @media (max-width: 600px) {
-      .container {
+      .popup-container {
+        top: 65px;
+        right: 5px;
+        left: 5px;
+      }
+
+      .popup {
+        padding: 0.65rem 1rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .tutu-container {
         padding: 3rem 1.5rem;
+        margin-top: 1rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .tutu-container {
+        padding: 2rem 1rem;
+        margin-top: 0.5rem;
+      }
+
+      .tutu-title {
+        font-size: 1.75rem;
+      }
+
+      .tutu-subtitle {
+        font-size: 1rem;
+      }
+
+      .tutu-file-label {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .tutu-apply-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -226,20 +231,20 @@
     }
   </script>
 
-    <main class="container">
-        <h1 class="title">Tutu AI Job Assistant</h1>
-        <p class="subtitle">Upload your resume and let Tutu apply to jobs for you!</p>
+    <main class="tutu-container">
+        <h1 class="tutu-title">Tutu AI Job Assistant</h1>
+        <p class="tutu-subtitle">Upload your resume and let Tutu apply to jobs for you!</p>
 
         <!-- File input -->
-        <label for="resumeInput" class="file-label" aria-label="Upload resume">
+        <label for="resumeInput" class="tutu-file-label" aria-label="Upload resume">
         <i class="fas fa-upload" aria-hidden="true"></i> Select Resume
         </label>
-        <input type="file" id="resumeInput" class="file-input" accept=".pdf,.doc,.docx" />
-        <p id="fileName" class="file-name" aria-live="polite"></p>
+        <input type="file" id="resumeInput" class="tutu-file-input" accept=".pdf,.doc,.docx" />
+        <p id="fileName" class="tutu-file-name" aria-live="polite"></p>
 
         <!-- Apply button (hidden initially) -->
-        <div id="applySection" class="apply-section" hidden>
-        <button id="applyButton" class="apply-btn">Apply with Tutu</button>
+        <div id="applySection" class="tutu-apply-section" hidden>
+        <button id="applyButton" class="tutu-apply-btn">Apply with Tutu</button>
         </div>
     </main>
 
@@ -313,11 +318,9 @@
     </script>
 
 
-    <section class="animated-section" style="margin: auto;">
+    <section class="animated-section" style="margin: 3rem auto 2rem;">
 
         <style>
-            
-
             .animated-section {
                 max-width: 800px;
                 background-color: #0e0b1c;
@@ -325,16 +328,17 @@
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 line-height: 1.6;
+                margin: 3rem auto 2rem;
             }
 
             .animated-text span {
                 opacity: 0;
                 transition: opacity 0.3s ease-in-out;
                 display: inline-block;
-                margin-right: 5px; /* Adds space between words */
+                margin-right: 5px;
             }
 
-            h2 {
+            .animated-section h2 {
                 text-align: center;
                 font-size: 24px;
                 margin-bottom: 20px;
@@ -347,6 +351,39 @@
             @keyframes colorShift {
                 0% { filter: hue-rotate(0deg); }
                 100% { filter: hue-rotate(360deg); }
+            }
+
+            @media (max-width: 768px) {
+                .animated-section {
+                    padding: 20px;
+                    max-width: 100%;
+                    margin: 2rem 10px 1.5rem;
+                }
+
+                .animated-section h2 {
+                    font-size: 20px;
+                    margin-bottom: 15px;
+                }
+
+                .animated-text {
+                    font-size: 14px;
+                    line-height: 1.5;
+                }
+            }
+
+            @media (max-width: 600px) {
+                .animated-section {
+                    padding: 15px;
+                    margin: 1.5rem 5px 1rem;
+                }
+
+                .animated-section h2 {
+                    font-size: 18px;
+                }
+
+                .animated-text span {
+                    margin-right: 3px;
+                }
             }
         </style>
 
