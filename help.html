@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help Center - Hitaishi Careers</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #6a0dad;
+      --secondary-color: #d653c9;
+      --accent-color: #ff6b00;
+      --light-bg: #f9f7ff;
+      --dark-text: #333333;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--dark-text);
+      padding-top: 70px;
+      background-color: var(--light-bg);
+    }
+    
+    .bg-gradient-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 60px 0;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .hero-title {
+      font-weight: 700;
+      font-size: 2.5rem;
+    }
+    
+    .accordion-button:not(.collapsed) {
+      color: var(--primary-color);
+      background-color: rgba(106, 13, 173, 0.1);
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
+    }
+    
+    .accordion-button:focus {
+      box-shadow: 0 0 0 0.25rem rgba(106, 13, 173, 0.25);
+    }
+    
+    .contact-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      text-align: center;
+      height: 100%;
+      transition: transform 0.3s ease;
+    }
+    
+    .contact-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .contact-icon {
+      font-size: 2.5rem;
+      color: var(--accent-color);
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar Placeholder -->
+  <div id="navbar-container"></div>
+
+  <!-- Help Center Hero -->
+  <section class="hero-section">
+    <div class="container">
+      <h1 class="hero-title">How can we help you today?</h1>
+      <p class="lead">Find answers to common questions or reach out to our support team.</p>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <div class="container mb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h2 class="text-center mb-4 fw-bold">Frequently Asked Questions</h2>
+        
+        <div class="accordion" id="faqAccordion">
+          
+          <!-- Job Seekers FAQs -->
+          <h4 class="mt-4 mb-3 text-secondary">For Job Seekers</h4>
+          
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                How do I apply for a job?
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                To apply for a job, you first need to create an account and complete your profile. Once logged in, browse our job listings, click on a job that interests you, and hit the "Apply Now" button to submit your application directly to the employer.
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                How can I update my resume?
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                You can update your resume by navigating to your <strong>User Profile</strong> and selecting the "Resume" tab. You can either use our built-in Resume Builder tool or upload a new PDF/Word document directly.
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Is Hitaishi Careers free for job seekers?
+              </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Yes! Creating a profile, searching for jobs, and applying to positions is completely free for all job seekers.
+              </div>
+            </div>
+          </div>
+
+           <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFour">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                How does the Mentorship system work?
+              </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                You can find experienced mentors in your field through our <strong>Mentorships</strong> page. You can request a session, ask for career guidance, and get personalized advice to accelerate your career growth.
+              </div>
+            </div>
+          </div>
+
+          <!-- Employers FAQs -->
+          <h4 class="mt-5 mb-3 text-secondary">For Employers</h4>
+          
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFive">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                How do I post a job vacancy?
+              </button>
+            </h2>
+            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Employers need to register an account. After verification, log in to your Employer Dashboard, click on "Post a Job," and fill in the necessary details such as job title, skills required, salary, and location.
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSix">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                How can I view applications for my job posts?
+              </button>
+            </h2>
+            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                All applications are tracked in your Employer Dashboard. Go to the "Manage Applications" section to review candidate profiles, resumes, and change selection statuses.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Options -->
+  <div class="container mb-5 pb-5">
+    <h3 class="text-center mb-4 fw-bold">Still Need Help?</h3>
+    <div class="row g-4 justify-content-center">
+      
+      <div class="col-md-4">
+        <div class="contact-card">
+          <i class="contact-icon fas fa-envelope"></i>
+          <h4>Email Support</h4>
+          <p class="text-muted">Drop us an email and we'll get back within 24 hours.</p>
+          <a href="mailto:support@winjob.in" class="btn btn-outline-primary mt-2">support@winjob.in</a>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="contact-card">
+          <i class="contact-icon fas fa-phone-alt"></i>
+          <h4>Call Us</h4>
+          <p class="text-muted">Our support team is available Mon-Fri, 9am - 6pm.</p>
+          <a href="tel:+910000000000" class="btn btn-outline-primary mt-2">+91-XXXXXXXXXX</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Load Navbar
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const navbarRes = await fetch("navbar.html");
+        if(navbarRes.ok) {
+          const navbarHtml = await navbarRes.text();
+          document.getElementById("navbar-container").innerHTML = navbarHtml;
+          
+          if(typeof loadNavbarProfile === 'function') {
+             loadNavbarProfile();
+          } else {
+             // Redefine if not loaded in navbar script
+             loadProfileIcon();
+          }
+        }
+      } catch (e) {
+        console.error("Error loading navbar:", e);
+      }
+    });
+
+    async function loadProfileIcon() {
+      const email = sessionStorage.getItem("email");
+      if (!email) return;
+
+      try {
+        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const profilePhoto = data.personalDetails?.profilePhoto;
+
+        if (profilePhoto) {
+          const profileIcon = document.getElementById("profile-icon");
+          if(profileIcon) profileIcon.classList.add("d-none");
+          const avatar = document.getElementById("profile-avatar");
+          if(avatar) {
+             avatar.src = profilePhoto;
+             avatar.classList.remove("d-none");
+          }
+        }
+      } catch (err) {
+        console.error("Navbar profile load error:", err);
+      }
+    }
+  </script>
+</body>
+</html>
