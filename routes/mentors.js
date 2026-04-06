@@ -853,6 +853,87 @@ router.get('/dashboard/stats', protectMentorRoute, async (req, res) => {
 });
 
 
+// ==========================================
+// POST /api/mentors/start-booking
+// ==========================================
+router.post('/start-booking', verifyUser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { mentorId } = req.body;
+
+    if (!mentorId) {
+      return res.status(400).json({ success: false, message: 'Mentor ID required' });
+    }
+
+    const [mentor] = await query('SELECT * FROM mentors WHERE id = ?', [mentorId]);
+    if (!mentor) {
+      return res.status(404).json({ success: false, message: 'Mentor not found' });
+    }
+
+    // Check if user already has pending/active booking with this mentor
+    const [existingBooking] = await query(
+      `SELECT * FROM mentor_bookings 
+       WHERE user_id = ? AND mentor_id = ? AND payment_status IN ('pending', 'paid')
+       ORDER BY created_at DESC LIMIT 1`,
+      [userId, mentorId]
+    );
+
+    let bookingId, roomId;
+
+    if (existingBooking) {
+      // Reuse existing booking
+      bookingId = existingBooking.id;
+      const [existingRoom] = await query(
+        'SELECT id FROM mentor_chat_rooms WHERE booking_id = ?',
+        [bookingId]
+      );
+      if (existingRoom) {
+        roomId = existingRoom.id;
+      } else {
+        // Create room if missing
+        const roomResult = await query(
+          `INSERT INTO mentor_chat_rooms (uuid, booking_id, user_id, mentor_id)
+           VALUES (?, ?, ?, ?)`,
+          [uuidv4(), bookingId, userId, mentorId]
+        );
+        roomId = roomResult.insertId;
+      }
+    } else {
+      // Create new booking with pending status
+      const result = await query(
+        `INSERT INTO mentor_bookings (user_id, mentor_id, payment_status, session_status)
+         VALUES (?, ?, 'pending', 'pending')`,
+        [userId, mentorId]
+      );
+      bookingId = result.insertId;
+
+      // Create chat room for this booking
+      const roomResult = await query(
+        `INSERT INTO mentor_chat_rooms (uuid, booking_id, user_id, mentor_id)
+         VALUES (?, ?, ?, ?)`,
+        [uuidv4(), bookingId, userId, mentorId]
+      );
+      roomId = roomResult.insertId;
+    }
+
+    return res.json({
+      success: true,
+      bookingId,
+      roomId,
+      mentor: {
+        id: mentor.id,
+        full_name: mentor.full_name,
+        profile_image_url: mentor.profile_image_url,
+        hourly_price: mentor.hourly_price,
+        title: mentor.title
+      }
+    });
+  } catch (error) {
+    console.error('Booking start error:', error);
+    res.status(500).json({ success: false, message: 'Failed to start booking' });
+  }
+});
+
 // create order for mentorship session
 router.post('/create-order', verifyUser, async (req, res) => {
   const { mentorId, amount } = req.body;

@@ -1777,7 +1777,23 @@
           return;
         }
 
-        startMentorPayment(mentorId, mentorName, price);
+        // Start booking without payment
+        const bookingRes = await fetch('/api/mentors/start-booking', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ mentorId })
+        });
+
+        const bookingData = await bookingRes.json();
+        
+        if (!bookingData.success) {
+          alert(bookingData.message || 'Failed to create booking');
+          return;
+        }
+
+        // Redirect to chat with booking context
+        window.location.href = `mychat.html?roomId=${bookingData.roomId}&bookingId=${bookingData.bookingId}&mentorId=${mentorId}`;
 
       } catch (error) {
         console.error(error);
@@ -1801,65 +1817,7 @@
       // window.location.href = `mychat.html?mentorId=${mentorId}`;
     }
  
-    // Razorpay Integration for Mentor Booking
-    async function startMentorPayment(mentorId, mentorName, amount) {
-      try {
-        const orderRes = await fetch('/api/mentors/create-order', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            mentorId,
-            amount
-          })
-        });
-
-        const orderData = await orderRes.json();
-
-        const options = {
-          key: "rzp_test_SYW8QFaHP8GPNq",
-          amount: orderData.amount,
-          currency: "INR",
-          name: "WINJOB Mentorship",
-          description: `Mentor Session with ${mentorName}`,
-          order_id: orderData.orderId,
-
-          handler: async function (response) {
-            const verifyRes = await fetch('/api/mentors/payment-success', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              credentials: 'include',
-              body: JSON.stringify({
-                mentorId,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id
-              })
-            });
-
-            const result = await verifyRes.json();
-
-            if (result.success) {
-              window.location.href = `mychat.html?bookingId=${result.bookingId}&mentorId=${mentorId}`;
-            }
-          },
-
-          theme: {
-            color: "#6a0dad"
-          }
-        };
-
-        const rzp = new Razorpay(options);
-        rzp.open();
-
-      } catch (error) {
-        console.error(error);
-        alert("Payment failed");
-      }
-    }
+    // Payment is now handled on mychat.html after booking is created
       
   </script>
 </body>
