@@ -517,15 +517,44 @@
 
   <!-- Header/Navbar -->
   <div id="navbar-container"></div>
+  
   <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const navbar = await fetch("navbar.html");
-      const html = await navbar.text();
-      document.getElementById("navbar-container").innerHTML = html;
+    // =====================================================
+    // CONSOLIDATED NAVBAR LOADING & GOOGLE TRANSLATE
+    // =====================================================
+    
+    // Global function for Google Translate initialization
+    window.googleTranslateElementInit = function () {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,hi,te,ta,fr,de,es,ja,zh-CN',
+        autoDisplay: false
+      }, 'google_translate_element');
+    };
 
-      loadNavbarProfile();
+    // Load navbar and initialize all functionality
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        // Fetch and inject navbar HTML
+        const navbarResponse = await fetch("navbar.html");
+        const navbarHtml = await navbarResponse.text();
+        document.getElementById("navbar-container").innerHTML = navbarHtml;
+
+        // Load user profile photo
+        await loadNavbarProfile();
+
+        // Load Google Translate script dynamically
+        loadGoogleTranslateScript();
+
+        // Bind language selection after navbar is loaded
+        bindLanguageSelectionHandlers();
+
+      } catch (err) {
+        console.error("Error loading navbar or dependencies:", err);
+      }
     });
 
+    // Load user profile information into navbar
     async function loadNavbarProfile() {
       const email = sessionStorage.getItem("email");
       if (!email) return;
@@ -546,6 +575,88 @@
       } catch (err) {
         console.error("Navbar profile load error:", err);
       }
+    }
+
+    // Load Google Translate script dynamically
+    function loadGoogleTranslateScript() {
+      const script = document.createElement("script");
+      script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    // Bind language selection event handlers after navbar loads
+    function bindLanguageSelectionHandlers() {
+      // Wait for language dropdown elements to be available
+      const waitForLanguageElements = setInterval(() => {
+        const languageBtn = document.getElementById("languageBtn");
+        const languageDropdown = document.getElementById("languageDropdown");
+        const languageOptions = document.querySelectorAll(".language-option");
+
+        if (!languageBtn || !languageDropdown || languageOptions.length === 0) {
+          return; // Elements not ready yet
+        }
+
+        clearInterval(waitForLanguageElements);
+
+        // Toggle language dropdown
+        languageBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          languageDropdown.classList.toggle("show");
+        });
+
+        // Handle language selection
+        languageOptions.forEach(option => {
+          option.addEventListener("click", function () {
+            const lang = this.dataset.lang;
+
+            // Save selected language to localStorage
+            localStorage.setItem("selectedLanguage", lang);
+
+            // Update active UI state
+            languageOptions.forEach(opt => opt.classList.remove("active"));
+            this.classList.add("active");
+
+            // Trigger Google Translate language change
+            changeLanguageTranslate(lang);
+
+            // Close dropdown
+            languageDropdown.classList.remove("show");
+          });
+        });
+
+        // Restore saved language on page reload
+        const savedLang = localStorage.getItem("selectedLanguage");
+        if (savedLang) {
+          const savedOption = document.querySelector(`[data-lang="${savedLang}"]`);
+          if (savedOption) {
+            savedOption.click();
+          }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (e) {
+          if (!e.target.closest(".language-selector")) {
+            languageDropdown.classList.remove("show");
+          }
+        });
+
+      }, 100); // Check every 100ms
+    }
+
+    // Change language using Google Translate
+    function changeLanguageTranslate(lang) {
+      const interval = setInterval(() => {
+        const select = document.querySelector(".goog-te-combo");
+        if (select) {
+          select.value = lang;
+          select.dispatchEvent(new Event("change"));
+          clearInterval(interval);
+        }
+      }, 100);
+
+      // Timeout after 5 seconds
+      setTimeout(() => clearInterval(interval), 5000);
     }
   </script>
 

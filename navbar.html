@@ -925,108 +925,12 @@
     </nav>
 
 
-    <!-- Google Translate Script -->
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <!-- Custom JavaScript -->
     <script>
-        // ============================================
-        // GOOGLE TRANSLATE INITIALIZATION
-        // ============================================
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement(
-                {
-                    pageLanguage: 'en',
-                    includedLanguages: 'en,es,fr,de,hi,te,ta,pt,ja,zh-CN',
-                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                    autoDisplay: false
-                },
-                'google_translate_element'
-            );
-        }
-
-        // ============================================
-        // LANGUAGE SELECTOR FUNCTIONALITY
-        // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const languageBtn = document.getElementById('languageBtn');
-            const languageDropdown = document.getElementById('languageDropdown');
-            const languageOptions = document.querySelectorAll('.language-option');
-
-            // Toggle language dropdown
-            languageBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                languageDropdown.classList.toggle('show');
-            });
-
-            // Handle language selection
-            languageOptions.forEach(option => {
-                option.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const lang = this.getAttribute('data-lang');
-                    
-                    // Update active state
-                    languageOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-
-                    // Save language preference
-                    localStorage.setItem('selectedLanguage', lang);
-
-                    // Close dropdown
-                    languageDropdown.classList.remove('show');
-
-                    // Trigger Google Translate
-                    const frame = document.querySelector('.goog-te-menu-frame');
-                    if (frame) {
-                        const dropdown = frame.contentDocument.querySelector('select.goog-te-combo');
-                        if (dropdown) {
-                            dropdown.value = lang;
-                            dropdown.dispatchEvent(new Event('change'));
-                        }
-                    }
-
-                    // Alternative: Use simple language code mapping
-                    translatePage(lang);
-                });
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.language-selector')) {
-                    languageDropdown.classList.remove('show');
-                }
-            });
-
-            // Load saved language preference
-            const savedLanguage = localStorage.getItem('selectedLanguage');
-            if (savedLanguage && savedLanguage !== 'en') {
-                const option = document.querySelector(`.language-option[data-lang="${savedLanguage}"]`);
-                if (option) {
-                    option.click();
-                }
-            }
-        });
-
-        // ============================================
-        // SIMPLE TRANSLATION FUNCTION (Optional)
-        // ============================================
-        function translatePage(lang) {
-            // You can implement a simple translation here or rely on Google Translate
-            // This is a placeholder for custom translation logic
-            console.log('Language changed to:', lang);
-            
-            // If using Google Translate API:
-            const googleTranslateElement = document.getElementById('google_translate_element');
-            const select = googleTranslateElement.querySelector('select');
-            if (select) {
-                select.value = lang;
-                select.dispatchEvent(new Event('change'));
-            }
-        }
-
+ 
         // ============================================
         // NAVBAR COLLAPSE ON MOBILE
         // ============================================
