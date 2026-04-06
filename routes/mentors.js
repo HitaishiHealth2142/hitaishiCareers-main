@@ -95,6 +95,11 @@ async function initializeMentorTables() {
         razorpay_payment_id VARCHAR(255),
         payment_status VARCHAR(50) DEFAULT 'pending',
         booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        session_start DATETIME DEFAULT NULL,
+        session_end DATETIME DEFAULT NULL,
+        amount DECIMAL(10,2) DEFAULT NULL,
+        session_status VARCHAR(50) DEFAULT 'pending',
+        room_id INT DEFAULT NULL,
         INDEX idx_user_id (user_id),
         INDEX idx_mentor_id (mentor_id),
         INDEX idx_payment_status (payment_status)
@@ -103,13 +108,6 @@ async function initializeMentorTables() {
 
     await query(createMentorsTableSQL);
     await query(createBookingsTableSQL);
-
-    // Add session and payment metadata if missing from existing table
-    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS session_start DATETIME DEFAULT NULL`);
-    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS session_end DATETIME DEFAULT NULL`);
-    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS amount DECIMAL(10,2) DEFAULT NULL`);
-    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS session_status VARCHAR(50) DEFAULT 'pending'`);
-    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS room_id INT DEFAULT NULL`);
 
     console.log("✅ Mentors table initialized");
     console.log("✅ Mentor bookings table initialized");
