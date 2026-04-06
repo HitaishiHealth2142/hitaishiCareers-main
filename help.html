@@ -12,10 +12,10 @@
   
   <style>
     :root {
-      --primary-color: #6a0dad;
-      --secondary-color: #d653c9;
+      --primary-color: #0d6efd; /* Blue color as requested */
+      --secondary-color: #0b5ed7;
       --accent-color: #ff6b00;
-      --light-bg: #f9f7ff;
+      --light-bg: #f8f9fa;
       --dark-text: #333333;
     }
     
@@ -26,12 +26,8 @@
       background-color: var(--light-bg);
     }
     
-    .bg-gradient-primary {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
-    }
-    
     .hero-section {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
       color: white;
       padding: 60px 0;
       text-align: center;
@@ -42,15 +38,34 @@
       font-weight: 700;
       font-size: 2.5rem;
     }
+
+    .category-btn {
+      border-radius: 25px;
+      padding: 10px 25px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+    }
+
+    .category-btn.active, .category-btn:hover {
+      box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+      transform: translateY(-2px);
+    }
     
     .accordion-button:not(.collapsed) {
-      color: var(--primary-color);
-      background-color: rgba(106, 13, 173, 0.1);
+      color: #0d6efd;
+      background-color: rgba(13, 110, 253, 0.1);
       box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
+      font-weight: 600;
     }
     
     .accordion-button:focus {
-      box-shadow: 0 0 0 0.25rem rgba(106, 13, 173, 0.25);
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    .accordion-button {
+      font-weight: 500;
+      font-size: 1.05rem;
     }
     
     .contact-card {
@@ -72,6 +87,16 @@
       color: var(--accent-color);
       margin-bottom: 20px;
     }
+
+    /* Animation for content changes */
+    .fade-in {
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 
@@ -83,103 +108,184 @@
   <section class="hero-section">
     <div class="container">
       <h1 class="hero-title">How can we help you today?</h1>
-      <p class="lead">Find answers to common questions or reach out to our support team.</p>
+      <p class="lead">Select a category below to find solutions to your problems.</p>
     </div>
   </section>
 
   <!-- FAQ Section -->
   <div class="container mb-5">
+    
+    <!-- Category Selection -->
+    <div class="d-flex justify-content-center flex-wrap gap-3 mb-5" id="category-buttons">
+      <button class="btn btn-primary category-btn active" data-target="job-apply">Job Apply Problem</button>
+      <button class="btn btn-outline-primary category-btn" data-target="profile">Profile Related Problem</button>
+      <button class="btn btn-outline-primary category-btn" data-target="employer">Job Posting Problem</button>
+      <button class="btn btn-outline-primary category-btn" data-target="general">General Queries</button>
+    </div>
+
     <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <h2 class="text-center mb-4 fw-bold">Frequently Asked Questions</h2>
+      <div class="col-lg-8 min-vh-50">
         
-        <div class="accordion" id="faqAccordion">
-          
-          <!-- Job Seekers FAQs -->
-          <h4 class="mt-4 mb-3 text-secondary">For Job Seekers</h4>
-          
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="headingOne">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                How do I apply for a job?
-              </button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                To apply for a job, you first need to create an account and complete your profile. Once logged in, browse our job listings, click on a job that interests you, and hit the "Apply Now" button to submit your application directly to the employer.
+        <!-- Job Apply Problems Content -->
+        <div id="job-apply" class="faq-category-content fade-in">
+          <h3 class="mb-4 fw-bold text-center text-primary">Job Application Problems</h3>
+          <div class="accordion" id="accordionJobApply">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jaOne">
+                  I get an error when I click "Apply Now". What should I do?
+                </button>
+              </h2>
+              <div id="jaOne" class="accordion-collapse collapse" data-bs-parent="#accordionJobApply">
+                <div class="accordion-body">
+                  First, ensure your profile is 100% complete. Many jobs require a resume and complete educational details before you can apply. If your profile is complete, try logging out and logging back in, or clear your browser cache.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jaTwo">
+                  How can I check the status of my application?
+                </button>
+              </h2>
+              <div id="jaTwo" class="accordion-collapse collapse" data-bs-parent="#accordionJobApply">
+                <div class="accordion-body">
+                  Go to your <strong>User Profile</strong> and navigate to the "Applied Jobs" section. Any updates from the employer (e.g., Shortlisted, Rejected, Interview Scheduled) will be updated there.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jaThree">
+                  Can I withdraw a job application?
+                </button>
+              </h2>
+              <div id="jaThree" class="accordion-collapse collapse" data-bs-parent="#accordionJobApply">
+                <div class="accordion-body">
+                  Currently, applications submitted directly to employers cannot be withdrawn. However, you can update your profile which reflects automatically to employers reviewing your application.
+                </div>
               </div>
             </div>
           </div>
-          
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="headingTwo">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                How can I update my resume?
-              </button>
-            </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                You can update your resume by navigating to your <strong>User Profile</strong> and selecting the "Resume" tab. You can either use our built-in Resume Builder tool or upload a new PDF/Word document directly.
-              </div>
-            </div>
-          </div>
-          
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="headingThree">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                Is Winjob free for job seekers?
-              </button>
-            </h2>
-            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                Yes! Creating a profile, searching for jobs, and applying to positions is completely free for all job seekers.
-              </div>
-            </div>
-          </div>
-
-           <div class="accordion-item">
-            <h2 class="accordion-header" id="headingFour">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                How does the Mentorship system work?
-              </button>
-            </h2>
-            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                You can find experienced mentors in your field through our <strong>Mentorships</strong> page. You can request a session, ask for career guidance, and get personalized advice to accelerate your career growth.
-              </div>
-            </div>
-          </div>
-
-          <!-- Employers FAQs -->
-          <h4 class="mt-5 mb-3 text-secondary">For Employers</h4>
-          
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="headingFive">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                How do I post a job vacancy?
-              </button>
-            </h2>
-            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                Employers need to register an account. After verification, log in to your Employer Dashboard, click on "Post a Job," and fill in the necessary details such as job title, skills required, salary, and location.
-              </div>
-            </div>
-          </div>
-          
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="headingSix">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-                How can I view applications for my job posts?
-              </button>
-            </h2>
-            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                All applications are tracked in your Employer Dashboard. Go to the "Manage Applications" section to review candidate profiles, resumes, and change selection statuses.
-              </div>
-            </div>
-          </div>
-
         </div>
+
+        <!-- Profile Related Problems Content -->
+        <div id="profile" class="faq-category-content d-none fade-in">
+           <h3 class="mb-4 fw-bold text-center text-primary">Profile & Resume Problems</h3>
+          <div class="accordion" id="accordionProfile">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#prOne">
+                  My profile photo is not uploading.
+                </button>
+              </h2>
+              <div id="prOne" class="accordion-collapse collapse" data-bs-parent="#accordionProfile">
+                <div class="accordion-body">
+                  Please ensure the image file is in JPG or PNG format and the size is below 5MB. If the problem persists, try using a different browser.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#prTwo">
+                  How can I update or change my resume?
+                </button>
+              </h2>
+              <div id="prTwo" class="accordion-collapse collapse" data-bs-parent="#accordionProfile">
+                <div class="accordion-body">
+                  Navigate to your <strong>User Profile</strong> and click on the "Resume" tab. You can either use the Resume Builder to generate a new one, or upload your existing document (PDF/Docx) directly.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#prThree">
+                  I forgot my password, how do I recover my account?
+                </button>
+              </h2>
+              <div id="prThree" class="accordion-collapse collapse" data-bs-parent="#accordionProfile">
+                <div class="accordion-body">
+                  Go to the Login page and click on "Forgot Password?". Enter your registered email address to receive a password reset link.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Employer Job Posting Problems Content -->
+        <div id="employer" class="faq-category-content d-none fade-in">
+           <h3 class="mb-4 fw-bold text-center text-primary">Job Posting Problems</h3>
+          <div class="accordion" id="accordionEmployer">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emOne">
+                  I posted a job but it is not visible on the search page.
+                </button>
+              </h2>
+              <div id="emOne" class="accordion-collapse collapse" data-bs-parent="#accordionEmployer">
+                <div class="accordion-body">
+                  Newly posted jobs may take up to 24 hours to be reviewed by our moderation team to prevent spam. Once approved, it will be visible to all candidates.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emTwo">
+                  How do I edit or close an existing job posting?
+                </button>
+              </h2>
+              <div id="emTwo" class="accordion-collapse collapse" data-bs-parent="#accordionEmployer">
+                <div class="accordion-body">
+                  Log in to your Employer Dashboard, go to "Manage Jobs", and click the Three Dots icon next to the job. You will find options to "Edit", "Deactivate", or "Close" the listing.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emThree">
+                  I am unable to view candidate contact details.
+                </button>
+              </h2>
+              <div id="emThree" class="accordion-collapse collapse" data-bs-parent="#accordionEmployer">
+                <div class="accordion-body">
+                  Candidate contact details are only fully revealed if you shortlist the candidate or unlock their profile through your subscription plan. Check your Current Plan details under the billing section.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- General Content -->
+        <div id="general" class="faq-category-content d-none fade-in">
+           <h3 class="mb-4 fw-bold text-center text-primary">General Queries</h3>
+          <div class="accordion" id="accordionGeneral">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gnOne">
+                  Is Winjob completely free for candidates?
+                </button>
+              </h2>
+              <div id="gnOne" class="accordion-collapse collapse" data-bs-parent="#accordionGeneral">
+                <div class="accordion-body">
+                  Yes, registering, creating a profile, searching for jobs, and applying to positions is 100% free for job seekers.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gnTwo">
+                  How does the Mentorship system work?
+                </button>
+              </h2>
+              <div id="gnTwo" class="accordion-collapse collapse" data-bs-parent="#accordionGeneral">
+                <div class="accordion-body">
+                  You can find experienced mentors in your field through our Mentorships page. You can request a session, ask for career guidance, and get personalized advice to accelerate your career growth.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -213,6 +319,34 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
+    // Handle Category Selection
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Remove active styling from all buttons
+        document.querySelectorAll('.category-btn').forEach(b => {
+          b.classList.remove('btn-primary', 'active');
+          b.classList.add('btn-outline-primary');
+        });
+        
+        // Add active styling to clicked button
+        this.classList.remove('btn-outline-primary');
+        this.classList.add('btn-primary', 'active');
+        
+        // Hide all content sections
+        document.querySelectorAll('.faq-category-content').forEach(content => {
+          content.classList.add('d-none');
+          // small hack to re-trigger fade animation
+          content.classList.remove('fade-in');
+          void content.offsetWidth;
+          content.classList.add('fade-in');
+        });
+        
+        // Show target content section
+        const targetId = this.getAttribute('data-target');
+        document.getElementById(targetId).classList.remove('d-none');
+      });
+    });
+
     // Load Navbar
     document.addEventListener("DOMContentLoaded", async () => {
       try {
@@ -224,7 +358,6 @@
           if(typeof loadNavbarProfile === 'function') {
              loadNavbarProfile();
           } else {
-             // Redefine if not loaded in navbar script
              loadProfileIcon();
           }
         }
