@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Help Center - Winjob</title>
+  <title>Help Center - WinJob</title>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,91 +12,475 @@
   
   <style>
     :root {
-      --primary-color: #0d6efd; /* Blue color as requested */
-      --secondary-color: #0b5ed7;
-      --accent-color: #ff6b00;
+      --primary-blue: #0d6efd;
+      --secondary-blue: #0b5ed7;
+      --accent-orange: #ff6b00;
       --light-bg: #f8f9fa;
-      --dark-text: #333333;
+      --card-white: #ffffff;
+      --text-dark: #1a1a1a;
+      --text-muted: #6c757d;
+      --border-light: #e9ecef;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
     
     body {
       font-family: 'Poppins', sans-serif;
-      color: var(--dark-text);
-      padding-top: 70px;
-      background-color: var(--light-bg);
+      color: var(--text-dark);
+      background-color: #f0f2f5;
+      line-height: 1.6;
     }
     
+    /* ======================== HERO SECTION ======================== */
     .hero-section {
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
       color: white;
-      padding: 60px 0;
+      padding: 60px 20px;
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 50px;
     }
     
     .hero-title {
+      font-size: 2.8rem;
       font-weight: 700;
-      font-size: 2.5rem;
-    }
-
-    .category-btn {
-      border-radius: 25px;
-      padding: 10px 25px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      font-size: 1.1rem;
-    }
-
-    .category-btn.active, .category-btn:hover {
-      box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
-      transform: translateY(-2px);
+      margin-bottom: 15px;
+      letter-spacing: -0.5px;
     }
     
-    .accordion-button:not(.collapsed) {
-      color: #0d6efd;
-      background-color: rgba(13, 110, 253, 0.1);
-      box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
+    .hero-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      opacity: 0.95;
+    }
+    
+    /* ======================== MAIN CONTAINER ======================== */
+    .help-center-container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 30px;
+      padding: 0 20px;
+      max-width: 1400px;
+      margin: 0 auto 60px;
+    }
+    
+    /* ======================== LEFT COLUMN - SUPPORT CARDS ======================== */
+    .support-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+    
+    .support-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+    
+    .support-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 1);
+    }
+    
+    .support-icon {
+      font-size: 2.2rem;
+      color: var(--accent-orange);
+      margin-bottom: 16px;
+      display: block;
+    }
+    
+    .support-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+    }
+    
+    .support-contact {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--primary-blue);
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+    
+    .support-time {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    
+    /* ======================== RIGHT COLUMN - GUIDED WORKFLOW ======================== */
+    .issue-resolution-panel {
+      background: var(--card-white);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+    
+    .panel-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    
+    .panel-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    
+    /* ======================== STEP 1: CATEGORY GRID ======================== */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .category-card {
+      background: var(--light-bg);
+      border: 2px solid transparent;
+      border-radius: 18px;
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(13, 110, 253, 0.05), rgba(11, 94, 215, 0.05));
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+    
+    .category-card:hover {
+      border-color: var(--primary-blue);
+      box-shadow: 0 8px 20px rgba(13, 110, 253, 0.12);
+      transform: translateY(-4px);
+    }
+    
+    .category-card:hover::before {
+      opacity: 1;
+    }
+    
+    .category-card.active {
+      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+      border-color: var(--primary-blue);
+      color: white;
+      box-shadow: 0 12px 28px rgba(13, 110, 253, 0.25);
+    }
+    
+    .category-icon {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      color: var(--accent-orange);
+      display: block;
+    }
+    
+    .category-card.active .category-icon {
+      color: white;
+    }
+    
+    .category-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-dark);
+    }
+    
+    .category-card.active .category-name {
+      color: white;
+    }
+    
+    /* ======================== STEP 2: SUB-ISSUES ======================== */
+    .sub-issues-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .sub-issues-container.show {
+      max-height: 500px;
+      opacity: 1;
+    }
+    
+    .sub-issue-btn {
+      background: white;
+      border: 1.5px solid var(--border-light);
+      border-radius: 14px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .sub-issue-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(13, 110, 253, 0.08), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .sub-issue-btn:hover::before {
+      left: 100%;
+    }
+    
+    .sub-issue-btn:hover {
+      border-color: var(--primary-blue);
+      background: rgba(13, 110, 253, 0.04);
+      transform: translateX(4px);
+    }
+    
+    .sub-issue-btn.active {
+      background: linear-gradient(135deg, rgba(13, 110, 253, 0.1), rgba(11, 94, 215, 0.05));
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
       font-weight: 600;
     }
     
-    .accordion-button:focus {
-      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-    }
-
-    .accordion-button {
-      font-weight: 500;
-      font-size: 1.05rem;
+    /* ======================== STEP 3: SOLUTION BOX ======================== */
+    .solution-container {
+      margin-bottom: 0;
     }
     
-    .contact-card {
+    .solution-box {
       background: white;
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      text-align: center;
-      height: 100%;
-      transition: transform 0.3s ease;
+      border-radius: 16px;
+      border-left: 5px solid var(--primary-blue);
+      padding: 28px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    .contact-card:hover {
-      transform: translateY(-5px);
+    .solution-box.show {
+      max-height: 1200px;
+      opacity: 1;
     }
     
-    .contact-icon {
-      font-size: 2.5rem;
-      color: var(--accent-color);
+    .solution-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .solution-title-icon {
+      font-size: 1.4rem;
+      color: var(--accent-orange);
+    }
+    
+    .solution-steps {
       margin-bottom: 20px;
     }
-
-    /* Animation for content changes */
-    .fade-in {
-      animation: fadeIn 0.4s ease-in-out;
+    
+    .solution-step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-light);
     }
-
+    
+    .solution-step:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .step-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    
+    .step-content {
+      flex: 1;
+      padding-top: 2px;
+    }
+    
+    .step-text {
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    .solution-action-btn {
+      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+      display: inline-block;
+    }
+    
+    .solution-action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+      color: white;
+      text-decoration: none;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+    
+    .empty-state-icon {
+      font-size: 3.5rem;
+      color: var(--accent-orange);
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+    
+    /* ======================== RESPONSIVE ======================== */
+    @media (max-width: 1024px) {
+      .help-center-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      
+      .support-sidebar {
+        position: static;
+        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        gap: 16px;
+      }
+      
+      .support-card {
+        padding: 24px 20px;
+      }
+      
+      .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2rem;
+      }
+      
+      .help-center-container {
+        padding: 0 15px;
+        margin-bottom: 40px;
+      }
+      
+      .issue-resolution-panel {
+        padding: 24px;
+      }
+      
+      .support-sidebar {
+        grid-template-columns: 1fr;
+      }
+      
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .sub-issues-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .panel-title {
+        font-size: 1.2rem;
+      }
+      
+      .solution-box {
+        padding: 20px;
+      }
+    }
+    
+    /* ======================== ANIMATIONS ======================== */
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
+    
+    .category-card {
+      animation: slideInUp 0.5s ease-out forwards;
+    }
+    
+    .category-card:nth-child(1) { animation-delay: 0.1s; }
+    .category-card:nth-child(2) { animation-delay: 0.2s; }
+    .category-card:nth-child(3) { animation-delay: 0.3s; }
+    .category-card:nth-child(4) { animation-delay: 0.4s; }
+    .category-card:nth-child(5) { animation-delay: 0.5s; }
+    .category-card:nth-child(6) { animation-delay: 0.6s; }
+    .category-card:nth-child(7) { animation-delay: 0.7s; }
+    .category-card:nth-child(8) { animation-delay: 0.8s; }
+    .category-card:nth-child(9) { animation-delay: 0.9s; }
   </style>
 </head>
 
@@ -104,292 +488,668 @@
   <!-- Navbar Placeholder -->
   <div id="navbar-container"></div>
 
-  <!-- Help Center Hero -->
+  <!-- Hero Section -->
   <section class="hero-section">
     <div class="container">
-      <h1 class="hero-title">How can we help you today?</h1>
-      <p class="lead">Select a category below to find solutions to your problems.</p>
+      <h1 class="hero-title">How can we help you?</h1>
+      <p class="hero-subtitle">Select your issue and get instant solutions</p>
     </div>
   </section>
 
-  <!-- FAQ Section -->
-  <div class="container mb-5">
+  <!-- Main Help Center -->
+  <div class="help-center-container">
     
-    <!-- Category Selection -->
-    <div class="d-flex justify-content-center flex-wrap gap-3 mb-5" id="category-buttons">
-      <button class="btn btn-primary category-btn active" data-target="job-apply">Job Apply Problem</button>
-      <button class="btn btn-outline-primary category-btn" data-target="profile">Profile Related Problem</button>
-      <button class="btn btn-outline-primary category-btn" data-target="employer">Job Posting Problem</button>
-      <button class="btn btn-outline-primary category-btn" data-target="general">General Queries</button>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-lg-8 min-vh-50">
-        
-        <!-- Job Apply Problems Content -->
-        <div id="job-apply" class="faq-category-content fade-in">
-          <h3 class="mb-4 fw-bold text-center text-primary">Job Application Problems</h3>
-          <div class="accordion" id="accordionJobApply">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jaOne">
-                  I get an error when I click "Apply Now". What should I do?
-                </button>
-              </h2>
-              <div id="jaOne" class="accordion-collapse collapse" data-bs-parent="#accordionJobApply">
-                <div class="accordion-body">
-                  First, ensure your profile is 100% complete. Many jobs require a resume and complete educational details before you can apply. If your profile is complete, try logging out and logging back in, or clear your browser cache.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jaTwo">
-                  How can I check the status of my application?
-                </button>
-              </h2>
-              <div id="jaTwo" class="accordion-collapse collapse" data-bs-parent="#accordionJobApply">
-                <div class="accordion-body">
-                  Go to your <strong>User Profile</strong> and navigate to the "Applied Jobs" section. Any updates from the employer (e.g., Shortlisted, Rejected, Interview Scheduled) will be updated there.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jaThree">
-                  Can I withdraw a job application?
-                </button>
-              </h2>
-              <div id="jaThree" class="accordion-collapse collapse" data-bs-parent="#accordionJobApply">
-                <div class="accordion-body">
-                  Currently, applications submitted directly to employers cannot be withdrawn. However, you can update your profile which reflects automatically to employers reviewing your application.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Profile Related Problems Content -->
-        <div id="profile" class="faq-category-content d-none fade-in">
-           <h3 class="mb-4 fw-bold text-center text-primary">Profile & Resume Problems</h3>
-          <div class="accordion" id="accordionProfile">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#prOne">
-                  My profile photo is not uploading.
-                </button>
-              </h2>
-              <div id="prOne" class="accordion-collapse collapse" data-bs-parent="#accordionProfile">
-                <div class="accordion-body">
-                  Please ensure the image file is in JPG or PNG format and the size is below 5MB. If the problem persists, try using a different browser.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#prTwo">
-                  How can I update or change my resume?
-                </button>
-              </h2>
-              <div id="prTwo" class="accordion-collapse collapse" data-bs-parent="#accordionProfile">
-                <div class="accordion-body">
-                  Navigate to your <strong>User Profile</strong> and click on the "Resume" tab. You can either use the Resume Builder to generate a new one, or upload your existing document (PDF/Docx) directly.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#prThree">
-                  I forgot my password, how do I recover my account?
-                </button>
-              </h2>
-              <div id="prThree" class="accordion-collapse collapse" data-bs-parent="#accordionProfile">
-                <div class="accordion-body">
-                  Go to the Login page and click on "Forgot Password?". Enter your registered email address to receive a password reset link.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Employer Job Posting Problems Content -->
-        <div id="employer" class="faq-category-content d-none fade-in">
-           <h3 class="mb-4 fw-bold text-center text-primary">Job Posting Problems</h3>
-          <div class="accordion" id="accordionEmployer">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emOne">
-                  I posted a job but it is not visible on the search page.
-                </button>
-              </h2>
-              <div id="emOne" class="accordion-collapse collapse" data-bs-parent="#accordionEmployer">
-                <div class="accordion-body">
-                  Newly posted jobs may take up to 24 hours to be reviewed by our moderation team to prevent spam. Once approved, it will be visible to all candidates.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emTwo">
-                  How do I edit or close an existing job posting?
-                </button>
-              </h2>
-              <div id="emTwo" class="accordion-collapse collapse" data-bs-parent="#accordionEmployer">
-                <div class="accordion-body">
-                  Log in to your Employer Dashboard, go to "Manage Jobs", and click the Three Dots icon next to the job. You will find options to "Edit", "Deactivate", or "Close" the listing.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emThree">
-                  I am unable to view candidate contact details.
-                </button>
-              </h2>
-              <div id="emThree" class="accordion-collapse collapse" data-bs-parent="#accordionEmployer">
-                <div class="accordion-body">
-                  Candidate contact details are only fully revealed if you shortlist the candidate or unlock their profile through your subscription plan. Check your Current Plan details under the billing section.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- General Content -->
-        <div id="general" class="faq-category-content d-none fade-in">
-           <h3 class="mb-4 fw-bold text-center text-primary">General Queries</h3>
-          <div class="accordion" id="accordionGeneral">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gnOne">
-                  Is Winjob completely free for candidates?
-                </button>
-              </h2>
-              <div id="gnOne" class="accordion-collapse collapse" data-bs-parent="#accordionGeneral">
-                <div class="accordion-body">
-                  Yes, registering, creating a profile, searching for jobs, and applying to positions is 100% free for job seekers.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gnTwo">
-                  How does the Mentorship system work?
-                </button>
-              </h2>
-              <div id="gnTwo" class="accordion-collapse collapse" data-bs-parent="#accordionGeneral">
-                <div class="accordion-body">
-                  You can find experienced mentors in your field through our Mentorships page. You can request a session, ask for career guidance, and get personalized advice to accelerate your career growth.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+    <!-- LEFT COLUMN: Support Cards -->
+    <aside class="support-sidebar">
+      <!-- Email Support Card -->
+      <div class="support-card">
+        <i class="support-icon fas fa-envelope"></i>
+        <div class="support-title">Email Support</div>
+        <div class="support-contact">support@winjob.in</div>
+        <div class="support-time">📧 Response within 24 hours</div>
       </div>
-    </div>
-  </div>
 
-  <!-- Contact Options -->
-  <div class="container mb-5 pb-5">
-    <h3 class="text-center mb-4 fw-bold">Still Need Help?</h3>
-    <div class="row g-4 justify-content-center">
-      
-      <div class="col-md-4">
-        <div class="contact-card">
-          <i class="contact-icon fas fa-envelope"></i>
-          <h4>Email Support</h4>
-          <p class="text-muted">Drop us an email and we'll get back within 24 hours.</p>
-          <a href="mailto:support@winjob.in" class="btn btn-outline-primary mt-2">support@winjob.in</a>
-        </div>
+      <!-- Phone Support Card -->
+      <div class="support-card">
+        <i class="support-icon fas fa-phone"></i>
+        <div class="support-title">Call Support</div>
+        <div class="support-contact">+91 99087 93602</div>
+        <div class="support-time">📞 Available 24/7</div>
       </div>
-      
-      <div class="col-md-4">
-        <div class="contact-card">
-          <i class="contact-icon fas fa-phone-alt"></i>
-          <h4>Call Us</h4>
-          <p class="text-muted">Our support team is available Mon-Fri, 9am - 6pm.</p>
-          <a href="tel:+910000000000" class="btn btn-outline-primary mt-2">+91-XXXXXXXXXX</a>
+    </aside>
+
+    <!-- RIGHT COLUMN: Guided Resolution Panel -->
+    <main class="issue-resolution-panel">
+      <div class="panel-title">Find Your Solution</div>
+      <p class="panel-subtitle">Step 1: Select your issue category</p>
+
+      <!-- Category Grid (3x3) -->
+      <div class="category-grid" id="categoryGrid">
+        <!-- Categories will be populated by JavaScript -->
+      </div>
+
+      <!-- Sub-Issues Container -->
+      <div class="sub-issues-container" id="subIssuesContainer">
+        <!-- Sub-issues will be populated by JavaScript -->
+      </div>
+
+      <!-- Solution Box -->
+      <div class="solution-container">
+        <div class="solution-box" id="solutionBox">
+          <!-- Solution content will be populated by JavaScript -->
         </div>
       </div>
 
-    </div>
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-state-icon">
+          <i class="fas fa-lightbulb"></i>
+        </div>
+        <p style="margin-bottom: 0;">Select a category and issue to view solutions</p>
+      </div>
+    </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-    // Handle Category Selection
-    document.querySelectorAll('.category-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        // Remove active styling from all buttons
-        document.querySelectorAll('.category-btn').forEach(b => {
-          b.classList.remove('btn-primary', 'active');
-          b.classList.add('btn-outline-primary');
-        });
-        
-        // Add active styling to clicked button
-        this.classList.remove('btn-outline-primary');
-        this.classList.add('btn-primary', 'active');
-        
-        // Hide all content sections
-        document.querySelectorAll('.faq-category-content').forEach(content => {
-          content.classList.add('d-none');
-          // small hack to re-trigger fade animation
-          content.classList.remove('fade-in');
-          void content.offsetWidth;
-          content.classList.add('fade-in');
-        });
-        
-        // Show target content section
-        const targetId = this.getAttribute('data-target');
-        document.getElementById(targetId).classList.remove('d-none');
-      });
-    });
-
-    // Load Navbar
-    document.addEventListener("DOMContentLoaded", async () => {
-      try {
-        const navbarRes = await fetch("navbar.html");
-        if(navbarRes.ok) {
-          const navbarHtml = await navbarRes.text();
-          document.getElementById("navbar-container").innerHTML = navbarHtml;
-          
-          if(typeof loadNavbarProfile === 'function') {
-             loadNavbarProfile();
-          } else {
-             loadProfileIcon();
+    // ======================== DATA STRUCTURE ========================
+    const issueCategories = [
+      {
+        id: 'job-apply',
+        name: 'Job Application',
+        icon: 'fas fa-briefcase',
+        issues: [
+          {
+            id: 'apply-error',
+            title: 'Cannot Click Apply Button',
+            icon: 'fas fa-exclamation-circle',
+            steps: [
+              'Ensure your profile is 100% complete (profile photo, resume, education)',
+              'Some jobs require specific qualifications - check job requirements',
+              'Clear your browser cache (Ctrl+Shift+Delete on Windows)',
+              'Try using a different browser if the issue persists',
+              'Log out and log back in to refresh your session'
+            ],
+            action: { text: 'Go to My Profile', link: '/profile' }
+          },
+          {
+            id: 'apply-status',
+            title: 'Check Application Status',
+            icon: 'fas fa-search',
+            steps: [
+              'Navigate to your User Profile',
+              'Click on "Applied Jobs" section',
+              'View real-time updates from employers (Shortlisted, Rejected, Interview Scheduled)',
+              'Follow up directly with employers if no response within 7 days'
+            ],
+            action: { text: 'View Applications', link: '/my-applications' }
+          },
+          {
+            id: 'apply-withdraw',
+            title: 'Withdraw Application',
+            icon: 'fas fa-arrow-left',
+            steps: [
+              'Applications sent to employers cannot be withdrawn directly',
+              'You can update your profile which automatically reflects to reviewing employers',
+              'Contact support if you need employer-specific assistance'
+            ]
           }
-        }
-      } catch (e) {
-        console.error("Error loading navbar:", e);
+        ]
+      },
+      {
+        id: 'login',
+        name: 'Login & Password',
+        icon: 'fas fa-lock',
+        issues: [
+          {
+            id: 'forgot-password',
+            title: 'Forgot Your Password',
+            icon: 'fas fa-key',
+            steps: [
+              'Go to the Login page and click "Forgot Password?"',
+              'Enter your registered email address',
+              'Check your inbox for the password reset link (check spam folder too)',
+              'Click the link and create a new password',
+              'Log in with your new password'
+            ],
+            action: { text: 'Reset Password', link: '/forgot-password' }
+          },
+          {
+            id: 'login-error',
+            title: 'Login Error or Invalid Credentials',
+            icon: 'fas fa-ban',
+            steps: [
+              'Verify your email address is correct',
+              'Use the "Forgot Password" option if unsure',
+              'Try clearing browser cache and cookies',
+              'Ensure Caps Lock is off while typing password',
+              'Try incognito mode to rule out browser extensions'
+            ]
+          },
+          {
+            id: 'account-locked',
+            title: 'Account Locked or Disabled',
+            icon: 'fas fa-shield-alt',
+            steps: [
+              'Too many failed login attempts temporarily lock your account',
+              'Wait 15-30 minutes before trying again',
+              'Use "Forgot Password" to regain access',
+              'Contact support if account is permanently disabled'
+            ],
+            action: { text: 'Contact Support', link: '#' }
+          }
+        ]
+      },
+      {
+        id: 'resume',
+        name: 'Resume Upload',
+        icon: 'fas fa-file-pdf',
+        issues: [
+          {
+            id: 'upload-failed',
+            title: 'Resume Upload Failed',
+            icon: 'fas fa-upload',
+            steps: [
+              'Ensure file is in PDF or DOCX format',
+              'Check that file size is below 5MB',
+              'Rename the file to remove special characters',
+              'Try uploading again with a different format',
+              'Use Firefox or Chrome if using Safari'
+            ]
+          },
+          {
+            id: 'resume-not-visible',
+            title: 'Resume Not Visible to Employers',
+            icon: 'fas fa-eye-slash',
+            steps: [
+              'Go to User Profile → Resume section',
+              'Verify your resume shows "Active" status',
+              'Make sure resume upload completed 100%',
+              'Set your resume as default/primary',
+              'Try uploading a new resume if none visible'
+            ],
+            action: { text: 'Upload Resume', link: '/profile/resume' }
+          },
+          {
+            id: 'resume-builder',
+            title: 'Use Resume Builder',
+            icon: 'fas fa-pencil',
+            steps: [
+              'Go to User Profile → Resume section',
+              'Click "Use Resume Builder"',
+              'Fill in your professional details section by section',
+              'Preview your formatted resume',
+              'Save and activate your built resume'
+            ],
+            action: { text: 'Open Builder', link: '/resume-builder' }
+          }
+        ]
+      },
+      {
+        id: 'employer',
+        name: 'Employer Dashboard',
+        icon: 'fas fa-chart-line',
+        issues: [
+          {
+            id: 'job-not-visible',
+            title: 'Posted Job Not Visible',
+            icon: 'fas fa-eye-slash',
+            steps: [
+              'Newly posted jobs take up to 24 hours for moderation review',
+              'Check job status in Employer Dashboard → Manage Jobs',
+              'If status shows "Draft", you need to submit/publish it',
+              'Job must meet quality standards to be approved',
+              'Wait 24 hours then refresh dashboard to see published job'
+            ]
+          },
+          {
+            id: 'manage-candidates',
+            title: 'View & Manage Candidates',
+            icon: 'fas fa-users',
+            steps: [
+              'Go to Employer Dashboard → Manage Jobs',
+              'Click on specific job to see applications',
+              'Shortlist candidates to unlock contact details',
+              'Use candidate filters (location, experience, skills)',
+              'Send messages or interview invitations through dashboard'
+            ],
+            action: { text: 'Employer Dashboard', link: '/employer/dashboard' }
+          },
+          {
+            id: 'edit-close-job',
+            title: 'Edit or Close Job Posting',
+            icon: 'fas fa-edit',
+            steps: [
+              'Go to Employer Dashboard → Manage Jobs',
+              'Find the job you want to modify',
+              'Click Three Dots menu next to the job',
+              'Select Edit, Deactivate, or Close from options',
+              'Save changes - changes apply immediately'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'mentorship',
+        name: 'Mentorship Booking',
+        icon: 'fas fa-graduation-cap',
+        issues: [
+          {
+            id: 'booking-payment',
+            title: 'Razorpay Payment Issue',
+            icon: 'fas fa-credit-card',
+            steps: [
+              'Ensure you have sufficient balance or valid payment method',
+              'Check internet connection is stable before submitting payment',
+              'Try again after 1-2 minutes if payment fails',
+              'Use a different payment method if available',
+              'Contact support if payment deducted but session not booked'
+            ]
+          },
+          {
+            id: 'find-mentor',
+            title: 'Find Right Mentor',
+            icon: 'fas fa-search',
+            steps: [
+              'Go to Mentorship page in main navigation',
+              'Filter by expertise (career, resume, interview prep, skills)',
+              'Check mentor ratings and student reviews',
+              'Review mentor bio and experience background',
+              'Send request to confirm availability before booking'
+            ],
+            action: { text: 'Browse Mentors', link: '/mentors' }
+          },
+          {
+            id: 'session-reschedule',
+            title: 'Reschedule or Cancel Session',
+            icon: 'fas fa-calendar-times',
+            steps: [
+              'Go to your booked sessions in "My Sessions"',
+              'Click on the session you want to modify',
+              'Choose Reschedule or Cancel option',
+              'For video call issues, try joining 5 minutes early',
+              'Check camera/microphone permissions before session'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'payment',
+        name: 'Payment Issues',
+        icon: 'fas fa-wallet',
+        issues: [
+          {
+            id: 'payment-failed',
+            title: 'Payment Failed or Declined',
+            icon: 'fas fa-times-circle',
+            steps: [
+              'Check your card has sufficient balance',
+              'Verify card is not expired and details are correct',
+              'Check with your bank - some transactions are auto-blocked',
+              'Try a different payment method or card',
+              'Wait 2-3 minutes and retry the transaction'
+            ]
+          },
+          {
+            id: 'deducted-not-updated',
+            title: 'Amount Deducted But Service Not Updated',
+            icon: 'fas fa-hourglass-half',
+            steps: [
+              'Wait 24 hours - payment processing can be delayed',
+              'Check your bank statement to confirm deduction',
+              'Refresh the WinJob page or log out/in',
+              'Contact support with transaction ID from your bank',
+              'Support will manually verify and add credits within 4 hours'
+            ],
+            action: { text: 'Contact Support', link: '#' }
+          },
+          {
+            id: 'invoice-missing',
+            title: 'Invoice Not Generated',
+            icon: 'fas fa-receipt',
+            steps: [
+              'Go to Account → Billing History section',
+              'Find your transaction in the list',
+              'Click Download Invoice button next to transaction',
+              'If button unavailable, contact support with transaction ID',
+              'Invoices generate within 1 hour of successful payment'
+            ]
+          },
+          {
+            id: 'session-not-unlocked',
+            title: 'Premium Feature Not Unlocked',
+            icon: 'fas fa-lock',
+            steps: [
+              'Verify payment was marked as "Completed" or "Success"',
+              'Refresh page completely (Ctrl+Shift+R)',
+              'Log out and log back in to sync account',
+              'Clear browser cache and try again',
+              'Contact support immediately if still locked after 24 hours'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'profile',
+        name: 'Profile Problems',
+        icon: 'fas fa-user-circle',
+        issues: [
+          {
+            id: 'profile-pic-upload',
+            title: 'Profile Picture Not Uploading',
+            icon: 'fas fa-image',
+            steps: [
+              'Ensure image is in JPG or PNG format',
+              'Check image size is below 5MB',
+              'Try compressing image if too large',
+              'Clear browser cache (Ctrl+Shift+Delete)',
+              'Use Google Chrome or Firefox for best compatibility'
+            ]
+          },
+          {
+            id: 'profile-incomplete',
+            title: 'Profile Incomplete - Boost It',
+            icon: 'fas fa-star',
+            steps: [
+              'Go to User Profile and check completion percentage',
+              'Add missing sections (photo, headline, summary, skills)',
+              'Ensure all required fields are filled',
+              'Add work experience and education details',
+              '100% complete profiles get 5x more job recommendations'
+            ]
+          },
+          {
+            id: 'update-failed',
+            title: 'Profile Update Failed',
+            icon: 'fas fa-exclamation-triangle',
+            steps: [
+              'Check internet connection is stable',
+              'Verify you entered valid information',
+              'Try updating one field at a time',
+              'Refresh page and try again',
+              'Contact support if persists - may be server issue'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'notifications',
+        name: 'Notifications',
+        icon: 'fas fa-bell',
+        issues: [
+          {
+            id: 'no-notifications',
+            title: 'Not Receiving Job Alerts',
+            icon: 'fas fa-bell-slash',
+            steps: [
+              'Go to Settings → Notifications',
+              'Ensure job alerts are turned ON',
+              'Check your filters are not too restrictive',
+              'Verify email address is correct and confirmed',
+              'Add your phone number for SMS alerts (optional)'
+            ]
+          },
+          {
+            id: 'unsubscribe',
+            title: 'Too Many Notifications',
+            icon: 'fas fa-volume-mute',
+            steps: [
+              'Go to Settings → Email Preferences',
+              'Uncheck notification types you don\'t want',
+              'Adjust job alert frequency (daily, weekly, instant)',
+              'Update your job preferences to get relevant alerts only',
+              'You can always re-enable notifications later'
+            ]
+          },
+          {
+            id: 'missed-opportunity',
+            title: 'Missed Job or Offer Notification',
+            icon: 'fas fa-clock',
+            steps: [
+              'Check Notifications page for missed messages',
+              'Enable push notifications in browser settings',
+              'Ensure notifications aren\'t blocked by do-not-disturb',
+              'Add to favorites any jobs you\'re interested in',
+              'Contact employer directly if you missed interview invitation'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'mychat',
+        name: 'Chat & Messages',
+        icon: 'fas fa-comments',
+        issues: [
+          {
+            id: 'messages-not-received',
+            title: 'Messages Not Received',
+            icon: 'fas fa-inbox',
+            steps: [
+              'Refresh the chat page (Ctrl+R)',
+              'Check if notifications are enabled in settings',
+              'Scroll up in conversation to see all messages',
+              'Try logging out and logging back in',
+              'Clear browser cache if messages are slow to load'
+            ]
+          },
+          {
+            id: 'send-message-error',
+            title: 'Cannot Send Message',
+            icon: 'fas fa-paper-plane',
+            steps: [
+              'Check internet connection is stable',
+              'Verify message is not empty or too long (max 5000 chars)',
+              'Try refreshing the page',
+              'Ensure the conversation is still active',
+              'Use Google Chrome if having issues with other browsers'
+            ]
+          },
+          {
+            id: 'video-call-issue',
+            title: 'Video/Audio Call Not Working',
+            icon: 'fas fa-video',
+            steps: [
+              'Check camera and microphone permissions in browser',
+              'Go to browser settings → Privacy → Camera/Microphone → Allow WinJob',
+              'Test your audio/video on a different app first',
+              'Use headphones if experiencing feedback',
+              'Ensure good internet speed (min 2Mbps for video)',
+              'Try joining 5 minutes early to test connection',
+              'Close other bandwidth-heavy apps (downloads, streaming)'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'general',
+        name: 'General Questions',
+        icon: 'fas fa-question-circle',
+        issues: [
+          {
+            id: 'platform-free',
+            title: 'Is WinJob Really Free?',
+            icon: 'fas fa-smile',
+            steps: [
+              '✓ Searching jobs - 100% Free',
+              '✓ Creating profile - 100% Free',
+              '✓ Applying to jobs - 100% Free',
+              '✓ Premium features like mentorship are optional paid add-ons',
+              'No hidden charges - pay only for services you choose'
+            ]
+          },
+          {
+            id: 'account-verification',
+            title: 'Verify Your Email/Phone',
+            icon: 'fas fa-check-circle',
+            steps: [
+              'Check your inbox for verification link',
+              'Look in spam/promotions folder if not in inbox',
+              'Click the verification link to confirm email',
+              'Add phone number in Settings for 2-factor authentication',
+              'Verified accounts get 10x better visibility to employers'
+            ]
+          },
+          {
+            id: 'data-privacy',
+            title: 'Your Data & Privacy',
+            icon: 'fas fa-shield-alt',
+            steps: [
+              'WinJob never shares your data without permission',
+              'Your resume/contact is shown only to employers you apply to',
+              'You control what information is visible in your profile',
+              'Read our Privacy Policy for full details',
+              'Contact support to request data deletion (per GDPR/privacy laws)'
+            ]
+          }
+        ]
       }
+    ];
+
+    // ======================== DOM ELEMENTS ========================
+    const categoryGrid = document.getElementById('categoryGrid');
+    const subIssuesContainer = document.getElementById('subIssuesContainer');
+    const solutionBox = document.getElementById('solutionBox');
+    const emptyState = document.getElementById('emptyState');
+
+    let selectedCategory = null;
+    let selectedIssue = null;
+
+    // ======================== RENDER CATEGORIES ========================
+    function renderCategories() {
+      categoryGrid.innerHTML = '';
+      issueCategories.forEach((category, index) => {
+        const card = document.createElement('div');
+        card.className = 'category-card';
+        card.innerHTML = `
+          <i class="category-icon ${category.icon}"></i>
+          <div class="category-name">${category.name}</div>
+        `;
+        card.addEventListener('click', () => selectCategory(category, card));
+        categoryGrid.appendChild(card);
+      });
+    }
+
+    // ======================== SELECT CATEGORY ========================
+    function selectCategory(category, element) {
+      // Remove active from all
+      document.querySelectorAll('.category-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      element.classList.add('active');
+
+      selectedCategory = category;
+      selectedIssue = null;
+
+      // Render sub-issues
+      renderSubIssues(category.issues);
+
+      // Hide solution
+      solutionBox.classList.remove('show');
+      emptyState.style.display = 'block';
+    }
+
+    // ======================== RENDER SUB-ISSUES ========================
+    function renderSubIssues(issues) {
+      subIssuesContainer.innerHTML = '';
+      subIssuesContainer.classList.add('show');
+
+      issues.forEach(issue => {
+        const btn = document.createElement('button');
+        btn.className = 'sub-issue-btn';
+        btn.innerHTML = `<i class="${issue.icon}" style="margin-right: 8px; color: var(--accent-orange);"></i>${issue.title}`;
+        btn.addEventListener('click', () => selectIssue(issue, btn));
+        subIssuesContainer.appendChild(btn);
+      });
+    }
+
+    // ======================== SELECT ISSUE ========================
+    function selectIssue(issue, element) {
+      // Remove active from all sub-issues
+      document.querySelectorAll('.sub-issue-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      element.classList.add('active');
+
+      selectedIssue = issue;
+
+      // Show solution
+      renderSolution(issue);
+    }
+
+    // ======================== RENDER SOLUTION ========================
+    function renderSolution(issue) {
+      let stepsHTML = '';
+      issue.steps.forEach((step, index) => {
+        stepsHTML += `
+          <div class="solution-step">
+            <div class="step-number">${index + 1}</div>
+            <div class="step-content">
+              <p class="step-text">${step}</p>
+            </div>
+          </div>
+        `;
+      });
+
+      let actionHTML = '';
+      if (issue.action) {
+        actionHTML = `<a href="${issue.action.link}" class="solution-action-btn">${issue.action.text}</a>`;
+      }
+
+      solutionBox.innerHTML = `
+        <div class="solution-title">
+          <span class="solution-title-icon"><i class="${issue.icon}"></i></span>
+          ${issue.title}
+        </div>
+        <div class="solution-steps">${stepsHTML}</div>
+        ${actionHTML}
+      `;
+
+      solutionBox.classList.add('show');
+      emptyState.style.display = 'none';
+    }
+
+    // ======================== INITIALIZE ========================
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCategories();
+
+      // Load navbar
+      const navbarContainer = document.getElementById('navbar-container');
+      fetch('navbar.html')
+        .then(res => res.ok ? res.text() : null)
+        .then(html => {
+          if (html) {
+            navbarContainer.innerHTML = html;
+            if (typeof loadNavbarProfile === 'function') {
+              loadNavbarProfile();
+            } else {
+              loadProfileIcon();
+            }
+          }
+        })
+        .catch(err => console.error('Navbar load error:', err));
     });
 
-    async function loadProfileIcon() {
-      const email = sessionStorage.getItem("email");
+    // Simple profile loader
+    function loadProfileIcon() {
+      const email = sessionStorage.getItem('email');
       if (!email) return;
 
-      try {
-        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
-        if (!res.ok) return;
-
-        const data = await res.json();
-        const profilePhoto = data.personalDetails?.profilePhoto;
-
-        if (profilePhoto) {
-          const profileIcon = document.getElementById("profile-icon");
-          if(profileIcon) profileIcon.classList.add("d-none");
-          const avatar = document.getElementById("profile-avatar");
-          if(avatar) {
-             avatar.src = profilePhoto;
-             avatar.classList.remove("d-none");
+      fetch(`/api/profile/full?email=${encodeURIComponent(email)}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.personalDetails?.profilePhoto) {
+            const avatar = document.getElementById('profile-avatar');
+            if (avatar) {
+              avatar.src = data.personalDetails.profilePhoto;
+              const profileIcon = document.getElementById('profile-icon');
+              if (profileIcon) profileIcon.classList.add('d-none');
+            }
           }
-        }
-      } catch (err) {
-        console.error("Navbar profile load error:", err);
-      }
+        })
+        .catch(err => console.error('Profile load error:', err));
     }
   </script>
 </body>
+
 </html>
