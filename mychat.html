@@ -411,6 +411,74 @@
     background: var(--text-light);
     }
 
+    .session-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: #fafafa;
+    }
+
+    .session-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    }
+
+    .btn-pay-now {
+    background: var(--secondary);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn-pay-now:hover {
+    transform: translateY(-1px);
+    }
+
+    .locked-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 24px;
+    gap: 14px;
+    z-index: 40;
+    }
+
+    .locked-overlay.hidden {
+    display: none;
+    }
+
+    .locked-overlay .overlay-text {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    max-width: 320px;
+    }
+
+    .locked-overlay .overlay-subtext {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    }
+
     .chat-header-right {
     display: flex;
     align-items: center;
@@ -1235,9 +1303,22 @@
           </div>
         </div>
 
+        <div class="session-panel" id="sessionPanel" style="display: none;">
+          <div class="session-badge" id="sessionBadge">
+            <span id="sessionTimerLabel">Session Locked</span>
+          </div>
+          <button class="btn-pay-now" id="btnPayNow">Pay Now</button>
+        </div>
+
         <!-- Messages Container -->
         <div class="messages-container" id="messagesContainer">
           <!-- Messages will be loaded here -->
+        </div>
+
+        <div class="locked-overlay hidden" id="lockedOverlay">
+          <div class="overlay-text">Pay to start 1-hour session</div>
+          <div class="overlay-subtext">Messages, audio calls, video calls and file upload are locked until payment is completed.</div>
+          <button class="btn-pay-now" id="btnPayNowOverlay">Pay Now</button>
         </div>
 
         <!-- Typing Indicator -->
@@ -1347,6 +1428,7 @@
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   
@@ -1455,6 +1537,12 @@
         typingIndicator: document.getElementById('typingIndicator'),
         searchChats: document.getElementById('searchChats'),
         unreadCount: document.getElementById('unreadCount'),
+        sessionPanel: document.getElementById('sessionPanel'),
+        sessionBadge: document.getElementById('sessionBadge'),
+        sessionTimerLabel: document.getElementById('sessionTimerLabel'),
+        btnPayNow: document.getElementById('btnPayNow'),
+        lockedOverlay: document.getElementById('lockedOverlay'),
+        btnPayNowOverlay: document.getElementById('btnPayNowOverlay'),
         
         // Call elements
         btnAudioCall: document.getElementById('btnAudioCall'),
@@ -1570,6 +1658,7 @@
         this.chatRooms = data.chats || [];
         
         this.renderChatList();
+        await this.autoSelectBookingFromUrl();
         } catch (error) {
         console.error('❌ Error loading chats:', error);
         this.elements.chatList.innerHTML = `
@@ -1579,6 +1668,183 @@
             <small>${error.message}</small>
             </div>
         `;
+        }
+    }
+
+    async autoSelectBookingFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const bookingId = params.get('bookingId');
+        const mentorId = params.get('mentorId');
+
+        if (!bookingId || !mentorId) return;
+
+        try {
+            const response = await fetch(`/api/mentors/booking/${bookingId}`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || this.getCookie('token')}` }
+            });
+            if (!response.ok) return;
+            const data = await response.json();
+            if (!data.success) return;
+
+            const roomId = data.booking.roomId;
+            if (!roomId) return;
+            this.currentBooking = data.booking;
+            this.currentMentor = {
+                id: data.booking.mentorId,
+                full_name: data.booking.mentorName,
+                profile_image_url: data.booking.mentorAvatar
+            };
+            this.currentChat = { roomId, mentorId, bookingId };
+            await this.selectChat(roomId, mentorId, bookingId);
+        } catch (error) {
+            console.error('❌ Error selecting booking from URL:', error);
+        }
+    }
+
+    async loadBookingDetails(bookingId) {
+        try {
+            const response = await fetch(`/api/mentors/booking/${bookingId}`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || this.getCookie('token')}` }
+            });
+            if (!response.ok) throw new Error('Failed to load booking info');
+
+            const data = await response.json();
+            if (!data.success) throw new Error(data.message || 'Failed to load booking info');
+
+            this.currentBooking = data.booking;
+            return data.booking;
+        } catch (error) {
+            console.error('❌ Error loading booking details:', error);
+            return null;
+        }
+    }
+
+    updateSessionState() {
+        const active = this.currentBooking?.remainingSeconds > 0;
+        const expired = this.currentBooking && this.currentBooking.paymentStatus === 'paid' && !active;
+
+        if (this.currentBooking) {
+            this.elements.sessionPanel.style.display = 'flex';
+            this.elements.sessionBadge.style.display = 'inline-flex';
+            this.elements.sessionTimerLabel.textContent = active
+                ? `Time left: ${this.formatCountdown(this.currentBooking.remainingSeconds)}`
+                : expired
+                ? 'Session expired'
+                : 'Payment required';
+        } else {
+            this.elements.sessionPanel.style.display = 'none';
+        }
+
+        if (!active) {
+            this.elements.lockedOverlay.classList.remove('hidden');
+            this.disableChatControls();
+        } else {
+            this.elements.lockedOverlay.classList.add('hidden');
+            this.enableChatControls();
+            this.startSessionTimer(this.currentBooking.remainingSeconds);
+        }
+    }
+
+    startSessionTimer(seconds) {
+        this.stopSessionTimer();
+        this.currentBooking.remainingSeconds = seconds;
+        this.sessionTimerInterval = setInterval(() => {
+            if (!this.currentBooking) return;
+            this.currentBooking.remainingSeconds -= 1;
+            if (this.currentBooking.remainingSeconds <= 0) {
+                this.currentBooking.remainingSeconds = 0;
+                this.updateSessionState();
+                clearInterval(this.sessionTimerInterval);
+                this.showToast('Session expired. Click Pay Again to continue.', 'info');
+                return;
+            }
+            this.elements.sessionTimerLabel.textContent = `Time left: ${this.formatCountdown(this.currentBooking.remainingSeconds)}`;
+        }, 1000);
+    }
+
+    stopSessionTimer() {
+        if (this.sessionTimerInterval) {
+            clearInterval(this.sessionTimerInterval);
+            this.sessionTimerInterval = null;
+        }
+    }
+
+    formatCountdown(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    disableChatControls() {
+        this.elements.messageInput.disabled = true;
+        this.elements.btnSendMessage.disabled = true;
+        this.elements.btnAudioCall.disabled = true;
+        this.elements.btnVideoCall.disabled = true;
+        this.elements.btnAttach.disabled = true;
+        this.elements.btnVoice.disabled = true;
+    }
+
+    enableChatControls() {
+        this.elements.messageInput.disabled = false;
+        this.elements.btnSendMessage.disabled = false;
+        this.elements.btnAudioCall.disabled = false;
+        this.elements.btnVideoCall.disabled = false;
+        this.elements.btnAttach.disabled = false;
+        this.elements.btnVoice.disabled = false;
+    }
+
+    async handlePayNow() {
+        if (!this.currentMentor || !this.currentMentor.id) {
+            return this.showToast('Select a mentor before payment', 'error');
+        }
+
+        const amount = this.currentBooking?.hourlyPrice || this.currentMentor.hourly_price || 0;
+        if (!amount) {
+            return this.showToast('Invalid mentor price', 'error');
+        }
+
+        try {
+            const orderRes = await fetch('/api/mentors/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ mentorId: this.currentMentor.id, amount })
+            });
+
+            const orderData = await orderRes.json();
+            if (!orderData.orderId) throw new Error('Failed to create order');
+
+            const options = {
+                key: 'rzp_test_SYW8QFaHP8GPNq',
+                amount: orderData.amount,
+                currency: 'INR',
+                name: 'WINJOB Mentorship',
+                description: `Mentor Session with ${this.currentMentor.full_name}`,
+                order_id: orderData.orderId,
+                handler: async (response) => {
+                    const verifyRes = await fetch('/api/mentors/payment-success', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            mentorId: this.currentMentor.id,
+                            amount,
+                            bookingId: this.currentBooking?.id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id
+                        })
+                    });
+                    const result = await verifyRes.json();
+                    if (!result.success) throw new Error(result.message || 'Payment verification failed');
+                    window.location.href = `mychat.html?bookingId=${result.bookingId}&mentorId=${this.currentMentor.id}`;
+                },
+                theme: { color: '#6a0dad' }
+            };
+            const rzp = new Razorpay(options);
+            rzp.open();
+        } catch (error) {
+            console.error('❌ Payment error:', error);
+            this.showToast('Payment failed', 'error');
         }
     }
 
@@ -1596,7 +1862,9 @@
 
         this.elements.chatList.innerHTML = this.chatRooms
         .sort((a, b) => new Date(b.lastMessageTime) - new Date(a.lastMessageTime))
-        .map(chat => `
+        .map(chat => {
+            const preview = chat.lastMessage ? this.decryptMessage(chat.lastMessage) : 'No messages';
+            return `
             <div class="chat-item ${this.currentChat?.roomId === chat.roomId ? 'active' : ''}" 
                 onclick="app.selectChat(${chat.roomId}, '${chat.mentorId}', '${chat.bookingId}')">
             <img src="${chat.mentorAvatar || 'https://via.placeholder.com/48'}" 
@@ -1608,12 +1876,13 @@
                 <span class="chat-time">${this.formatTime(chat.lastMessageTime)}</span>
                 </div>
                 <div class="chat-message ${chat.unreadCount > 0 ? 'unseen' : ''}">
-                ${this.escapeHtml(chat.lastMessage || 'No messages')}
+                ${this.escapeHtml(preview)}
                 </div>
             </div>
             ${chat.unreadCount > 0 ? `<div class="unread-badge">${chat.unreadCount}</div>` : ''}
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     async selectChat(roomId, mentorId, bookingId) {
@@ -1633,7 +1902,8 @@
 
         if (!response.ok) throw new Error('Failed to load mentor details');
 
-        this.currentMentor = await response.json();
+        const mentorData = await response.json();
+        this.currentMentor = mentorData.mentor || mentorData;
 
         // Update UI
         this.elements.mentorName.textContent = this.currentMentor.full_name || 'Mentor';
@@ -1641,6 +1911,10 @@
 
         // Load messages
         await this.loadMessages(roomId);
+
+        // Load booking state
+        await this.loadBookingDetails(bookingId);
+        this.updateSessionState();
 
         // Join room
         this.socket.emit('joinChatRoom', { roomId, bookingId });
@@ -1730,6 +2004,10 @@
         const message = text || this.elements.messageInput.value.trim();
         
         if (!message || !this.currentChat) return;
+        if (!this.currentBooking || this.currentBooking.remainingSeconds <= 0) {
+            this.showToast('Pay to start or resume your session.', 'error');
+            return;
+        }
 
         try {
         const encryptedMessage = this.encryptMessage(message);
@@ -1853,6 +2131,11 @@
     // ========================================
 
     async startCall(callType) {
+        if (!this.currentBooking || this.currentBooking.remainingSeconds <= 0) {
+            this.showToast('Session inactive. Pay to continue.', 'error');
+            return;
+        }
+
         try {
         this.callType = callType;
         
@@ -2221,6 +2504,10 @@
         });
 
         this.elements.btnEndCall?.addEventListener('click', () => this.endCall());
+
+        // Pay now buttons
+        this.elements.btnPayNow?.addEventListener('click', () => this.handlePayNow());
+        this.elements.btnPayNowOverlay?.addEventListener('click', () => this.handlePayNow());
 
         // Composer buttons
         this.elements.btnEmoji?.addEventListener('click', () => {

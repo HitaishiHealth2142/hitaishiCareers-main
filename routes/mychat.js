@@ -99,12 +99,30 @@ module.exports = function (app, io) {
                cr.mentor_id as mentorId,
                cr.created_at as createdAt,
                m.full_name as mentorName,
-               m.profile_image_url as mentorAvatar
+               m.profile_image_url as mentorAvatar,
+               COALESCE(last_messages.lastMessage, '') AS lastMessage,
+               COALESCE(last_messages.lastMessageTime, cr.created_at) AS lastMessageTime,
+               COALESCE(unread_counts.unreadCount, 0) AS unreadCount
         FROM mentor_chat_rooms cr
         JOIN mentors m ON cr.mentor_id = m.id
+        LEFT JOIN (
+          SELECT m.room_id, m.encrypted_message AS lastMessage, m.created_at AS lastMessageTime
+          FROM mentor_messages m
+          JOIN (
+            SELECT room_id, MAX(created_at) AS max_created_at
+            FROM mentor_messages
+            GROUP BY room_id
+          ) latest ON latest.room_id = m.room_id AND latest.max_created_at = m.created_at
+        ) last_messages ON last_messages.room_id = cr.id
+        LEFT JOIN (
+          SELECT room_id, COUNT(*) AS unreadCount
+          FROM mentor_messages
+          WHERE is_seen = 0 AND receiver_id = ?
+          GROUP BY room_id
+        ) unread_counts ON unread_counts.room_id = cr.id
         WHERE cr.user_id = ?
-        ORDER BY cr.created_at DESC
-      `, [userId]);
+        ORDER BY lastMessageTime DESC, cr.created_at DESC
+      `, [userId, userId]);
 
       res.json({ success: true, chats });
     } catch (error) {
@@ -132,16 +150,34 @@ module.exports = function (app, io) {
       const userId = req.user.id;
       const { roomId, message, messageType = "text", fileUrl = null } = req.body;
 
+      const [room] = await query(
+        'SELECT * FROM mentor_chat_rooms WHERE id = ? AND user_id = ?',
+        [roomId, userId]
+      );
+      if (!room) {
+        return res.status(403).json({ success: false, message: 'Invalid chat room' });
+      }
+
+      const [booking] = await query(
+        'SELECT * FROM mentor_bookings WHERE id = ?',
+        [room.booking_id]
+      );
+      if (!booking || booking.payment_status !== 'paid' || !booking.session_end || new Date(booking.session_end) < new Date()) {
+        return res.status(403).json({ success: false, message: 'Session inactive or expired' });
+      }
+
+      const receiverId = room.mentor_id;
       const messageId = uuidv4();
       await query(`
         INSERT INTO mentor_messages
-        (id, uuid, room_id, sender_id, sender_type, message_type, encrypted_message, file_url, is_seen)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (id, uuid, room_id, sender_id, receiver_id, sender_type, message_type, encrypted_message, file_url, is_seen)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
         messageId,
         uuidv4(),
         roomId,
         userId,
+        receiverId,
         "user",
         messageType,
         sanitize(message),
@@ -221,6 +257,28 @@ module.exports = function (app, io) {
     try {
       await query(`DELETE FROM mentor_messages WHERE room_id = ?`, [req.params.roomId]);
       res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
+  async function getRoomByBooking(req, res) {
+    try {
+      const userId = req.user.id;
+      const { bookingId } = req.params;
+
+      const [room] = await query(
+        `SELECT id as roomId, booking_id as bookingId, mentor_id as mentorId
+         FROM mentor_chat_rooms
+         WHERE booking_id = ? AND user_id = ?`,
+        [bookingId, userId]
+      );
+
+      if (!room) {
+        return res.status(404).json({ success: false, message: 'Chat room not found for booking' });
+      }
+
+      res.json({ success: true, room });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }

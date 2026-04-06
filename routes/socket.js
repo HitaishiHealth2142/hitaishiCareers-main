@@ -76,6 +76,16 @@ module.exports = function(io, app) {
           timestamp
         } = data;
 
+        const [booking] = await query(
+          'SELECT session_end, payment_status FROM mentor_bookings WHERE id = ?',
+          [socket.bookingId]
+        );
+
+        if (!booking || booking.payment_status !== 'paid' || !booking.session_end || new Date(booking.session_end) < new Date()) {
+          socket.emit('error', { message: 'Session inactive or expired' });
+          return;
+        }
+
         // Save to database
         const messageId = uuidv4();
         await query(`
@@ -143,7 +153,7 @@ module.exports = function(io, app) {
     // WEBRTC - CALL INITIATION
     // ========================================
 
-    socket.on('callUser', (data) => {
+    socket.on('callUser', async (data) => {
       try {
         const {
           to,
@@ -151,6 +161,16 @@ module.exports = function(io, app) {
           callType,
           offer
         } = data;
+
+        const [booking] = await query(
+          'SELECT session_end, payment_status FROM mentor_bookings WHERE id = ?',
+          [socket.bookingId]
+        );
+
+        if (!booking || booking.payment_status !== 'paid' || !booking.session_end || new Date(booking.session_end) < new Date()) {
+          socket.emit('error', { message: 'Session inactive or expired' });
+          return;
+        }
 
         const targetSocketId = activeUsers.get(to);
         if (targetSocketId) {

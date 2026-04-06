@@ -7,8 +7,14 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const protectMentorRoute = require('../middleware/mentorAuthMiddleware');
+const Razorpay = require('razorpay');
 const { query } = require('../db');
 const { protectRoute: verifyUser } = require('../middleware/authMiddleware');
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
+});
 
 // ==========================================
 // MULTER CONFIGURATION
@@ -98,9 +104,15 @@ async function initializeMentorTables() {
     await query(createMentorsTableSQL);
     await query(createBookingsTableSQL);
 
+    // Add session and payment metadata if missing from existing table
+    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS session_start DATETIME DEFAULT NULL`);
+    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS session_end DATETIME DEFAULT NULL`);
+    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS amount DECIMAL(10,2) DEFAULT NULL`);
+    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS session_status VARCHAR(50) DEFAULT 'pending'`);
+    await query(`ALTER TABLE mentor_bookings ADD COLUMN IF NOT EXISTS room_id INT DEFAULT NULL`);
+
     console.log("✅ Mentors table initialized");
     console.log("✅ Mentor bookings table initialized");
-
   } catch (error) {
     console.error("❌ Table initialization error:", error);
   }
@@ -725,6 +737,54 @@ router.get('/:id', async (req, res) => {
 });
 
 // ==========================================
+// GET /api/mentors/booking/:bookingId
+// ==========================================
+router.get('/booking/:bookingId', verifyUser, async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const userId = req.user.id;
+
+    const [booking] = await query(
+      `SELECT b.*, m.full_name, m.profile_image_url, m.title, m.current_company, m.hourly_price, m.expertise, r.id AS roomId
+       FROM mentor_bookings b
+       JOIN mentors m ON b.mentor_id = m.id
+       LEFT JOIN mentor_chat_rooms r ON r.booking_id = b.id
+       WHERE b.id = ? AND b.user_id = ?`,
+      [bookingId, userId]
+    );
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    const now = new Date();
+    const endTime = booking.session_end ? new Date(booking.session_end) : null;
+    const sessionActive = booking.payment_status === 'paid' && endTime && endTime > now;
+    const remainingSeconds = sessionActive ? Math.floor((endTime - now) / 1000) : 0;
+
+    return res.status(200).json({
+      success: true,
+      booking: {
+        id: booking.id,
+        mentorId: booking.mentor_id,
+        mentorName: booking.full_name,
+        mentorAvatar: booking.profile_image_url,
+        hourlyPrice: booking.hourly_price,
+        paymentStatus: booking.payment_status,
+        sessionStatus: booking.session_status,
+        sessionStart: booking.session_start,
+        sessionEnd: booking.session_end,
+        remainingSeconds,
+        roomId: booking.roomId,
+      }
+    });
+  } catch (error) {
+    console.error('Booking detail error:', error);
+    res.status(500).json({ success: false, message: 'Failed to load booking details' });
+  }
+});
+
+// ==========================================
 // GET /api/mentor/dashboard/stats
 // ==========================================
 router.get('/dashboard/stats', protectMentorRoute, async (req, res) => {
@@ -741,22 +801,45 @@ router.get('/dashboard/stats', protectMentorRoute, async (req, res) => {
       });
     }
 
-    // Mock data for upcoming bookings (ready for sessions table integration)
-    const upcomingBookings = [];
-    const recentChats = [];
+    const bookings = await query(
+      `SELECT *,
+              CASE
+                WHEN payment_status = 'paid' AND session_end > NOW() THEN 'active'
+                WHEN payment_status = 'paid' AND session_end <= NOW() THEN 'completed'
+                ELSE 'pending'
+              END AS computed_status
+       FROM mentor_bookings
+       WHERE mentor_id = ?`,
+      [req.mentor.id]
+    );
 
-    // Calculate estimated earnings (mock)
-    const estimatedEarnings = (mentor.total_sessions || 0) * (mentor.hourly_price || 0);
+    const activeSessions = bookings.filter(b => b.computed_status === 'active').length;
+    const completedSessions = bookings.filter(b => b.computed_status === 'completed').length;
+    const totalEarnings = bookings.reduce((sum, booking) => sum + (parseFloat(booking.amount) || 0), 0);
+
+    const upcomingBookings = bookings
+      .filter(b => b.computed_status === 'active')
+      .slice(0, 3)
+      .map(b => ({
+        bookingId: b.id,
+        amount: parseFloat(b.amount) || 0,
+        sessionStart: b.session_start,
+        sessionEnd: b.session_end,
+        status: b.computed_status
+      }));
 
     return res.status(200).json({
       success: true,
       stats: {
         totalSessions: mentor.total_sessions || 0,
         rating: mentor.rating || 0,
-        upcomingBookings: upcomingBookings,
-        recentChats: recentChats,
-        estimatedEarnings: estimatedEarnings,
-        profileCompletion: 85, // Example
+        activeSessions,
+        upcomingBookings,
+        completedSessions,
+        estimatedEarnings: totalEarnings,
+        profileCompletion: Math.round(
+          ([mentor.title, mentor.current_company, mentor.experience_years, mentor.bio, mentor.linkedin_url, mentor.profile_image_url, mentor.hourly_price, mentor.expertise, mentor.available_slots].filter(Boolean).length / 9) * 100
+        )
       },
     });
   } catch (error) {
@@ -793,16 +876,76 @@ router.post('/payment-success', verifyUser, async (req, res) => {
     const {
       mentorId,
       razorpay_order_id,
-      razorpay_payment_id
+      razorpay_payment_id,
+      amount,
+      bookingId: existingBookingId
     } = req.body;
 
-    await query(`
-      INSERT INTO mentor_bookings
-      (user_id, mentor_id, razorpay_order_id, razorpay_payment_id, payment_status)
-      VALUES (?, ?, ?, ?, 'paid')
-    `, [userId, mentorId, razorpay_order_id, razorpay_payment_id]);
+    if (!mentorId || !razorpay_order_id || !razorpay_payment_id || !amount) {
+      return res.status(400).json({ success: false, message: 'Missing payment or mentor details' });
+    }
 
-    res.json({ success: true });
+    const [mentor] = await query('SELECT * FROM mentors WHERE id = ?', [mentorId]);
+    if (!mentor) {
+      return res.status(404).json({ success: false, message: 'Mentor not found' });
+    }
+
+    const sessionStart = new Date();
+    const sessionEnd = new Date(sessionStart.getTime() + 60 * 60 * 1000);
+
+    let bookingInsertId;
+    if (existingBookingId) {
+      const [existingBooking] = await query(
+        'SELECT * FROM mentor_bookings WHERE id = ? AND user_id = ?',
+        [existingBookingId, userId]
+      );
+      if (existingBooking) {
+        await query(
+          `UPDATE mentor_bookings
+           SET razorpay_order_id = ?, razorpay_payment_id = ?, amount = ?, payment_status = 'paid',
+               session_start = ?, session_end = ?, session_status = 'active', updated_at = CURRENT_TIMESTAMP
+           WHERE id = ?`,
+          [razorpay_order_id, razorpay_payment_id, amount, sessionStart, sessionEnd, existingBookingId]
+        );
+        bookingInsertId = existingBookingId;
+      }
+    }
+
+    if (!bookingInsertId) {
+      const result = await query(
+        `INSERT INTO mentor_bookings
+         (user_id, mentor_id, razorpay_order_id, razorpay_payment_id, payment_status, amount, session_start, session_end, session_status)
+         VALUES (?, ?, ?, ?, 'paid', ?, ?, ?, 'active')`,
+        [userId, mentorId, razorpay_order_id, razorpay_payment_id, parseFloat(amount), sessionStart, sessionEnd]
+      );
+      bookingInsertId = result.insertId;
+    }
+
+    // Ensure chat room exists for this booking
+    const [existingRoom] = await query(
+      'SELECT id FROM mentor_chat_rooms WHERE booking_id = ?',
+      [bookingInsertId]
+    );
+
+    let roomId;
+    if (existingRoom) {
+      roomId = existingRoom.id;
+    } else {
+      const roomResult = await query(
+        `INSERT INTO mentor_chat_rooms (uuid, booking_id, user_id, mentor_id)
+         VALUES (?, ?, ?, ?)`,
+        [uuidv4(), bookingInsertId, userId, mentorId]
+      );
+      roomId = roomResult.insertId;
+    }
+
+    // Update mentor total sessions and keep earnings consistent
+    await query(
+      `UPDATE mentors SET total_sessions = total_sessions + 1 WHERE id = ?`,
+      [mentorId]
+    );
+
+    res.json({ success: true, bookingId: bookingInsertId, roomId });
 
   } catch (error) {
     console.error("Payment save error:", error);

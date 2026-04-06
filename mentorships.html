@@ -1843,7 +1843,7 @@
             const result = await verifyRes.json();
 
             if (result.success) {
-              window.location.href = `mychat.html?mentorId=${mentorId}`;
+              window.location.href = `mychat.html?bookingId=${result.bookingId}&mentorId=${mentorId}`;
             }
           },
 
