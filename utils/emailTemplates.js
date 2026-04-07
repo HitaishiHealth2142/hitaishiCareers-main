@@ -98,7 +98,7 @@ const getUserRegistrationEmail = (user) => {
         </div>
         <div class="footer">
             <p>© 2026 WinJob. All rights reserved.</p>
-            <p><a href="${BASE_URL}/help">Help Center</a> | <a href="${BASE_URL}/privacy">Privacy Policy</a> | <a href="${BASE_URL}/terms">Terms</a></p>
+            <p><a href="${BASE_URL}/help.html">Help Center</a> | <a href="${BASE_URL}/privacy.html">Privacy Policy</a> | <a href="${BASE_URL}/terms">Terms</a></p>
             <p style="margin-top: 15px; color: #aaa;">Questions? Contact us at ${SUPPORT_EMAIL}</p>
         </div>
     `;
@@ -133,7 +133,7 @@ const getUserProfileUpdateEmail = (user) => {
             </div>
 
             <div class="security-alert">
-                <strong>🔒 Security Notice:</strong> If this update wasn't made by you, please <a href="${BASE_URL}/login" style="color: #e67e22; font-weight: bold;">reset your password immediately</a> and contact our support team.
+                <strong>🔒 Security Notice:</strong> If this update wasn't made by you, please <a href="${BASE_URL}/login.html" style="color: #e67e22; font-weight: bold;">reset your password immediately</a> and contact our support team.
             </div>
 
             <p class="section-text"><strong>Profile changes include:</strong></p>
@@ -147,7 +147,7 @@ const getUserProfileUpdateEmail = (user) => {
         </div>
         <div class="footer">
             <p>© 2026 WinJob. All rights reserved.</p>
-            <p><a href="${BASE_URL}/help">Help Center</a> | <a href="${BASE_URL}/privacy">Privacy Policy</a> | <a href="${BASE_URL}/terms">Terms</a></p>
+            <p><a href="${BASE_URL}/help.html">Help Center</a> | <a href="${BASE_URL}/privacy.html">Privacy Policy</a> | <a href="${BASE_URL}/terms.html">Terms</a></p>
             <p style="margin-top: 15px; color: #aaa;">Questions? Contact us at ${SUPPORT_EMAIL}</p>
         </div>
     `;
@@ -181,8 +181,8 @@ const getCompanyRegistrationEmail = (company) => {
             </ol>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="${BASE_URL}/employerlogin" class="button">Access Employer Dashboard</a>
-                <a href="${BASE_URL}/careers" class="button button-secondary">Post Your First Job</a>
+                <a href="${BASE_URL}/employerlogin.html" class="button">Access Employer Dashboard</a>
+                <a href="${BASE_URL}/employer.html" class="button button-secondary">Post Your First Job</a>
             </div>
 
             <div class="info-box">
@@ -200,7 +200,7 @@ const getCompanyRegistrationEmail = (company) => {
         </div>
         <div class="footer">
             <p>© 2026 WinJob. All rights reserved.</p>
-            <p><a href="${BASE_URL}/help">Help Center</a> | <a href="${BASE_URL}/privacy">Privacy Policy</a> | <a href="${BASE_URL}/terms">Terms</a></p>
+            <p><a href="${BASE_URL}/help.html">Help Center</a> | <a href="${BASE_URL}/privacy.html">Privacy Policy</a> | <a href="${BASE_URL}/terms.html">Terms</a></p>
             <p style="margin-top: 15px; color: #aaa;">Questions? Contact us at ${SUPPORT_EMAIL}</p>
         </div>
     `;
@@ -240,7 +240,7 @@ const getCompanyProfileUpdateEmail = (company) => {
             </ul>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="${BASE_URL}/employerlogin" class="button">View Dashboard</a>
+                <a href="${BASE_URL}/employerlogin.html" class="button">View Dashboard</a>
             </div>
 
             <div class="info-box">
@@ -250,7 +250,7 @@ const getCompanyProfileUpdateEmail = (company) => {
         </div>
         <div class="footer">
             <p>© 2026 WinJob. All rights reserved.</p>
-            <p><a href="${BASE_URL}/help">Help Center</a> | <a href="${BASE_URL}/privacy">Privacy Policy</a> | <a href="${BASE_URL}/terms">Terms</a></p>
+            <p><a href="${BASE_URL}/help.html">Help Center</a> | <a href="${BASE_URL}/privacy.html">Privacy Policy</a> | <a href="${BASE_URL}/terms.html">Terms</a></p>
             <p style="margin-top: 15px; color: #aaa;">Questions? Contact us at ${SUPPORT_EMAIL}</p>
         </div>
     `;
@@ -286,8 +286,8 @@ const getJobPostedEmail = (job) => {
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="${BASE_URL}/jobs/${job.jobId}" class="button">View Job Posting</a>
-                <a href="${BASE_URL}/employerlogin/applicants/${job.jobId}" class="button button-secondary">View Applicants</a>
+                <a href="${BASE_URL}/jobs.html/${job.jobId}" class="button">View Job Posting</a>
+                <a href="${BASE_URL}/employerlogin.html/applicants/${job.jobId}" class="button button-secondary">View Applicants</a>
             </div>
 
             <p class="section-text"><strong>What Happens Next?</strong></p>
@@ -310,7 +310,7 @@ const getJobPostedEmail = (job) => {
         </div>
         <div class="footer">
             <p>© 2026 WinJob. All rights reserved.</p>
-            <p><a href="${BASE_URL}/help">Help Center</a> | <a href="${BASE_URL}/privacy">Privacy Policy</a> | <a href="${BASE_URL}/terms">Terms</a></p>
+            <p><a href="${BASE_URL}/help.html">Help Center</a> | <a href="${BASE_URL}/privacy.html">Privacy Policy</a> | <a href="${BASE_URL}/terms.html">Terms</a></p>
             <p style="margin-top: 15px; color: #aaa;">Questions? Contact us at ${SUPPORT_EMAIL}</p>
         </div>
     `;
@@ -367,7 +367,7 @@ const getJobApplicationConfirmationEmail = (application) => {
         </div>
         <div class="footer">
             <p>© 2026 WinJob. All rights reserved.</p>
-            <p><a href="${BASE_URL}/help">Help Center</a> | <a href="${BASE_URL}/privacy">Privacy Policy</a> | <a href="${BASE_URL}/terms">Terms</a></p>
+            <p><a href="${BASE_URL}/help.html">Help Center</a> | <a href="${BASE_URL}/privacy.html">Privacy Policy</a> | <a href="${BASE_URL}/terms.html">Terms</a></p>
             <p style="margin-top: 15px; color: #aaa;">Questions? Contact us at ${SUPPORT_EMAIL}</p>
         </div>
     `;
@@ -424,7 +424,7 @@ const getJobApplicationAlertEmail = (application) => {
         </div>
         <div class="footer">
             <p>© 2026 WinJob. All rights reserved.</p>
-            <p><a href="${BASE_URL}/help">Help Center</a> | <a href="${BASE_URL}/privacy">Privacy Policy</a> | <a href="${BASE_URL}/terms">Terms</a></p>
+            <p><a href="${BASE_URL}/help.html">Help Center</a> | <a href="${BASE_URL}/privacy.html">Privacy Policy</a> | <a href="${BASE_URL}/terms.html">Terms</a></p>
             <p style="margin-top: 15px; color: #aaa;">Questions? Contact us at ${SUPPORT_EMAIL}</p>
         </div>
     `;
@@ -482,7 +482,7 @@ const getPasswordChangeEmail = (user, ipAddress = 'IP address unavailable') => {
         </div>
         <div class="footer">
             <p>© 2026 WinJob. All rights reserved.</p>
-            <p><a href="${BASE_URL}/help">Help Center</a> | <a href="${BASE_URL}/privacy">Privacy Policy</a> | <a href="${BASE_URL}/terms">Terms</a></p>
+            <p><a href="${BASE_URL}/help.html">Help Center</a> | <a href="${BASE_URL}/privacy.html">Privacy Policy</a> | <a href="${BASE_URL}/terms.html">Terms</a></p>
             <p style="margin-top: 15px; color: #aaa;">This is a security notification email. Do not reply to this email.</p>
         </div>
     `;
