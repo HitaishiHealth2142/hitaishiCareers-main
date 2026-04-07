@@ -447,6 +447,8 @@
          
 
                 showCustomAlert('✅ ' + result.message, 'success');
+                // Store email in sessionStorage for cross-page authentication state
+                sessionStorage.setItem("email", result.user.email);
                 window.location.href = 'userProfile.html'; // Redirect to profile
             } else {
                 showCustomAlert('❌ ' + (result.error || 'Registration failed.'), 'danger');
@@ -529,6 +531,8 @@
                 if (response.ok) {
 
                     showCustomAlert('✅ ' + result.message, 'success');
+                    // Store email in sessionStorage for cross-page authentication state
+                    sessionStorage.setItem("email", result.user.email);
                     window.location.href = 'userProfile.html'; // Redirect to profile since the user is auto-logged in
                 } else {
                     showCustomAlert('❌ ' + (result.error || 'Registration failed.'), 'danger');

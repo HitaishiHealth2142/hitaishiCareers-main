@@ -355,6 +355,9 @@
       if (res.ok) {
         showCustomAlert("✅ Login successful with Google!", 'success');
         
+        // Store email in sessionStorage for cross-page authentication state
+        sessionStorage.setItem("email", result.user.email);
+        
         // Redirect to profile
         window.location.href = "userProfile.html";
       } else {
@@ -431,6 +434,8 @@
         if (res.ok) {
           
           showCustomAlert("✅ " + result.message, 'success');
+          // Store email in sessionStorage for cross-page authentication state
+          sessionStorage.setItem("email", result.user.email);
           // Redirect
           window.location.href = "userProfile.html";
         } else {
