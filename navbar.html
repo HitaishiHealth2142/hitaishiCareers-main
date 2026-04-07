@@ -909,6 +909,32 @@
                 display: flex !important;
             }
         }
+
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: #ffffff;
+                padding: 15px;
+                border-radius: 12px;
+                margin-top: 10px;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            }
+
+            .navbar-nav .nav-link {
+                color: #222 !important;
+                padding: 12px 0;
+            }
+
+            .navbar .dropdown-menu {
+                border: none;
+                box-shadow: none;
+                padding-left: 15px;
+            }
+
+            #navbarProfileImage {
+                width: 36px;
+                height: 36px;
+            }
+        }
     </style>
 
     <!-- ============================================
@@ -932,16 +958,16 @@
                 <a href="https://facebook.com" target="_blank" title="Facebook">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="https://twitter.com" target="_blank" title="Twitter">
+                <a href="https://x.com/hitaishiWinJob" target="_blank" title="Twitter">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="https://instagram.com" target="_blank" title="Instagram">
+                <a href="https://www.instagram.com/hitaishi_winjob/" target="_blank" title="Instagram">
                     <i class="fab fa-instagram"></i>
                 </a>
                 <a href="https://linkedin.com" target="_blank" title="LinkedIn">
                     <i class="fab fa-linkedin-in"></i>
                 </a>
-                <a href="https://youtube.com" target="_blank" title="YouTube">
+                <a href="https://www.youtube.com/@WinJob2142" target="_blank" title="YouTube">
                     <i class="fab fa-youtube"></i>
                 </a>
             </div>
@@ -1100,8 +1126,13 @@
                     <li class="nav-item">
                         <div class="profile-icon-container">
                             <a href="userProfile.html" class="profile-icon-btn" id="profileIconBtn" title="Profile">
+                                <img 
+                                    id="profile-avatar"
+                                    src=""
+                                    alt="Profile"
+                                    class="rounded-circle"
+                                />
                                 <i class="fas fa-user" id="profile-icon"></i>
-                                <img id="profile-avatar" alt="Profile" />
                             </a>
                         </div>
                     </li>
@@ -1109,7 +1140,14 @@
             </div>
         </div>
     </nav>
-
+    <script>
+        window.updateNavbarProfile = function (imageUrl) {
+        const img = document.getElementById("navbarProfileImage");
+        if (img) {
+            img.src = imageUrl;
+        }
+        };
+    </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -1166,27 +1204,22 @@
         // PROFILE PICTURE LOADER
         // ============================================
         function updateNavbarProfile(profilePhoto) {
-            try {
-                const profileIcon = document.getElementById('profile-icon');
-                const profileAvatar = document.getElementById('profile-avatar');
-                
-                if (!profileIcon || !profileAvatar) {
-                    console.warn('Profile elements not found in navbar');
-                    return;
-                }
+            const profileIcon = document.getElementById("profile-icon");
+            const profileAvatar = document.getElementById("profile-avatar");
 
-                if (profilePhoto) {
-                    profileIcon.classList.add('d-none');
-                    profileAvatar.src = profilePhoto;
-                    profileAvatar.classList.remove('d-none');
-                } else {
-                    profileAvatar.classList.add('d-none');
-                    profileIcon.classList.remove('d-none');
-                }
-            } catch (error) {
-                console.error('Error updating navbar profile:', error);
+            if (!profileIcon || !profileAvatar) return;
+
+            if (profilePhoto && profilePhoto.trim() !== "") {
+                profileAvatar.src = profilePhoto;
+                profileAvatar.style.display = "block";
+                profileIcon.style.display = "none";
+            } else {
+                profileAvatar.style.display = "none";
+                profileIcon.style.display = "block";
             }
         }
+
+        window.updateNavbarProfile = updateNavbarProfile;
 
         // ============================================
         // ACTIVE LINK HIGHLIGHTING

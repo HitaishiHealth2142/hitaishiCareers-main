@@ -6,6 +6,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // Import jsonwebtoken
 const { query } = require('../db');
+const { sendEmailAsync, sendUserRegistrationEmail } = require('../services/emailService');
 const router = express.Router();
 
 
@@ -126,6 +127,12 @@ router.post('/user/register', upload.single('profileImage'), async (req, res) =>
     const result = await query(insertUserQuery, [fullName, email, mobileNumber, passwordHash, profileImageUrl, 'local']);
 
     console.log(`✅ User registered successfully with ID: ${result.insertId}`);
+
+    // --- Send welcome email in background (non-blocking) ---
+    sendEmailAsync(() => sendUserRegistrationEmail({
+      fullName,
+      email
+    }));
 
     // --- Auto-login: Generate JWT ---
     const payload = {
@@ -303,6 +310,7 @@ router.get('/jobseekers', async (req, res) => {
 
 
 // --- UPDATED Logout Route ---
+
 router.post('/logout', (req, res) => {
     // To log out, we clear the JWT HttpOnly cookie.
     res.cookie('token', '', {

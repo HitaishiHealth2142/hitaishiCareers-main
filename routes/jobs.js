@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const { query } = require("../db");
 const { protectEmployerRoute } = require("../middleware/authMiddleware"); // Import employer protection
+const { sendEmailAsync, sendJobPostedEmail } = require("../services/emailService");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
@@ -145,6 +146,24 @@ router.post("/post", protectEmployerRoute, async (req, res) => {
           responsibilities, job_type, work_location, industry
       ]
     );
+
+    // --- Send job posted notification email to company in background ---
+    sendEmailAsync(() => sendJobPostedEmail({
+      jobId: id,
+      jobTitle: job_title,
+      companyName: req.company.name,
+      postedByEmail: posted_by_email,
+      requiredSkills: required_skills,
+      city,
+      state,
+      country,
+      salaryMin: salary_min,
+      salaryMax: salary_max,
+      salaryCurrency: salary_currency,
+      salaryPeriod: salary_period,
+      requiredExperience: required_experience
+    }));
+
     res.json({ success: true, job_id: id });
   } catch (err) {
     console.error("Job posting failed:", err);

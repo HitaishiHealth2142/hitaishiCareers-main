@@ -6,6 +6,7 @@ const fs = require('fs');
 const { v4: uuidv4} = require('uuid');
 const { query } = require('../db');
 const bcrypt = require('bcryptjs');
+const { sendEmailAsync, sendUserProfileUpdateEmail, sendPasswordChangeEmail } = require('../services/emailService');
 
 
 // --- Basic input sanitization (XSS prevention) ---
@@ -181,6 +182,16 @@ router.post('/update', upload.single('profilePhoto'), async (req, res) => {
       const values = [...Object.values(updates), email];
       await query(`UPDATE users SET ${fields} WHERE email = ?`, values);
     }
+
+    // --- Send profile update confirmation email in background ---
+    const user = await query('SELECT full_name FROM users WHERE email = ?', [email]);
+    if (user.length > 0) {
+      sendEmailAsync(() => sendUserProfileUpdateEmail({
+        fullName: user[0].full_name,
+        email
+      }));
+    }
+
     res.json({ success: true, message: 'Profile updated successfully' });
   } catch (err) {
     console.error('❌ Error updating profile:', err);
@@ -247,6 +258,12 @@ router.post('/update-password', async (req, res) => {
       'UPDATE users SET password_hash = ? WHERE email = ?',
       [hashed, email]
     );
+
+    // --- Send password change security alert email in background ---
+    sendEmailAsync(() => sendPasswordChangeEmail({
+      fullName: user.full_name,
+      email
+    }));
 
     res.json({
       success: true,

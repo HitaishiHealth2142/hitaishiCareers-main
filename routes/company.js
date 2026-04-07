@@ -8,6 +8,7 @@ const path = require('path');
 const { query } = require("../db");
 // Import the new employer-specific middleware
 const { protectEmployerRoute } = require('../middleware/authMiddleware');
+const { sendEmailAsync, sendCompanyRegistrationEmail, sendCompanyProfileUpdateEmail } = require('../services/emailService');
 
 const router = express.Router();
 const saltRounds = 10;
@@ -54,6 +55,13 @@ router.post("/register", (req, res) => {
             const logoUrl = req.file ? `/uploads/logos/${req.file.filename}` : null;
             await query(`INSERT INTO companies (id, user_email, password_hash, company_name, website, description, logo_url, contact_person, contact_phone, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [id, email, hashed, company_name, website, description, logoUrl, contact_person, contact_phone, address]);
+
+            // --- Send company onboarding email in background ---
+            sendEmailAsync(() => sendCompanyRegistrationEmail({
+              companyName: company_name,
+              email
+            }));
+
             res.status(201).json({ success: true, message: "Registration successful!" });
         } catch (dbErr) {
             console.error("Company registration failed:", dbErr);
@@ -151,6 +159,13 @@ router.patch("/profile", protectEmployerRoute, upload, async (req, res) => {
         await query(sql, values);
         
         const updatedProfile = await query(`SELECT id, user_email, company_name, website, description, logo_url, contact_person, contact_phone, address FROM companies WHERE id = ?`, [id]);
+
+        // --- Send company profile update confirmation email in background ---
+        sendEmailAsync(() => sendCompanyProfileUpdateEmail({
+          companyName: updatedProfile[0].company_name,
+          email: updatedProfile[0].user_email
+        }));
+
         res.json({ success: true, message: "Profile updated successfully!", profile: updatedProfile[0] });
     } catch (err) {
         console.error("Failed to update company profile:", err);

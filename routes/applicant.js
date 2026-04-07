@@ -1,6 +1,7 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
 const { query } = require("../db");
+const { sendEmailAsync, sendJobApplicationConfirmationEmail, sendJobApplicationAlertEmail } = require("../services/emailService");
 
 const router = express.Router();
 
@@ -99,6 +100,34 @@ router.post("/apply", protectRoute, async (req, res) => {
             `INSERT INTO job_applications (id, job_id, user_id, company_id, user_profile_snapshot) VALUES (?, ?, ?, ?, ?)`,
             [applicationId, jobId, userId, companyId, JSON.stringify(profileSnapshot)]
         );
+
+        // --- Fetch job and company details for email sending ---
+        const [jobDetails] = await query(
+            `SELECT j.job_title, j.posted_by_email, c.company_name FROM jobs j JOIN companies c ON j.company_id = c.id WHERE j.id = ?`,
+            [jobId]
+        );
+
+        // --- Send application confirmation email to candidate in background ---
+        sendEmailAsync(() => sendJobApplicationConfirmationEmail({
+          applicationId,
+          candidateName: user.full_name,
+          candidateEmail: userEmail,
+          jobTitle: jobDetails.job_title,
+          companyName: jobDetails.company_name,
+          appliedAt: new Date()
+        }));
+
+        // --- Send application alert email to employer in background ---
+        sendEmailAsync(() => sendJobApplicationAlertEmail({
+          applicationId,
+          jobId,
+          candidateName: user.full_name,
+          candidateEmail: userEmail,
+          candidatePhone: user.mobile_number,
+          jobTitle: jobDetails.job_title,
+          employerEmail: jobDetails.posted_by_email,
+          appliedAt: new Date()
+        }));
 
         res.status(201).json({ success: true, message: "Application submitted successfully!", applicationId });
 
