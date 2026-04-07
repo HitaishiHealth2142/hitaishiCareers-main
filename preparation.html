@@ -83,14 +83,11 @@
         const data = await res.json();
         const profilePhoto = data.personalDetails?.profilePhoto;
 
-        if (profilePhoto) {
-          document.getElementById("profile-icon")?.classList.add("d-none");
-          const avatar = document.getElementById("profile-avatar");
-          avatar.src = profilePhoto;
-          avatar.classList.remove("d-none");
+        if (profilePhoto && typeof window.updateNavbarProfile === 'function') {
+          window.updateNavbarProfile(profilePhoto);
         }
       } catch (err) {
-        console.error("Navbar profile load error:", err);
+        console.warn("Profile loading skipped:", err.message);
       }
     }
   </script>

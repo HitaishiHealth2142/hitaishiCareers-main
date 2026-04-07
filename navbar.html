@@ -9,6 +9,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding-top: 120px;
+            overflow-x: hidden;
         }
 
         /* ============================================
@@ -114,6 +115,7 @@
             right: 0;
             z-index: 1040;
             width: 100%;
+            overflow: visible;
         }
 
         .navbar-brand {
@@ -184,6 +186,8 @@
             align-items: center;
             gap: 6px;
             white-space: nowrap;
+            text-decoration: none;
+            border-radius: 4px;
         }
         .main-navbar .nav-link {
             color: #2c3e50 !important;
@@ -291,6 +295,10 @@
             display: block;
         }
 
+        .dropdown-menu.show {
+            display: block !important;
+        }
+
         /* LANGUAGE SELECTOR */
         .language-selector {
             position: relative;
@@ -387,6 +395,8 @@
             justify-content: center;
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            text-decoration: none;
+            position: relative;
         }
 
         .profile-icon-btn:hover {
@@ -399,6 +409,18 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
+        }
+
+        #profile-icon {
+            font-size: 20px;
+        }
+
+        #profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: none;
         }
 
         /* MOBILE MENU TOGGLE */
@@ -468,7 +490,7 @@
 
         @media (max-width: 992px) {
             body {
-                padding-top: 150px;
+                padding-top: 100px;
             }
 
             .top-info-bar .container {
@@ -490,7 +512,8 @@
             }
 
             .main-navbar {
-                top: 95px;
+                top: 47px;
+                padding: 10px 0;
             }
 
             .navbar-brand {
@@ -502,9 +525,17 @@
             }
 
             .navbar-collapse {
-                margin-top: 15px;
-                padding-top: 15px;
-                border-top: 2px solid #ecf0f1;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                width: 100%;
+                flex-direction: column;
+                background: white;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+                padding: 15px;
+                margin: 0;
+                border-top: none !important;
             }
 
             .nav-item {
@@ -512,9 +543,10 @@
             }
 
             .nav-link {
-                padding: 12px 18px !important;
-                border-radius: 8px;
-                margin: 4px 0;
+                padding: 12px 15px !important;
+                border-radius: 6px;
+                margin: 3px 0;
+                font-size: 14px;
             }
 
             .nav-link::after {
@@ -531,32 +563,44 @@
                 background: #f8f9fa;
                 border-radius: 0;
                 margin: 0;
+                display: none !important;
+                padding: 10px 0;
+            }
+
+            .dropdown-menu.show {
+                display: block !important;
             }
 
             .dropdown-menu.three-columns {
                 grid-template-columns: 1fr;
                 min-width: 100%;
-                gap: 15px;
-                padding: 15px 18px;
+                gap: 10px;
+                padding: 10px 0;
             }
 
             .dropdown-column {
-                padding: 0;
+                padding: 10px 15px;
+            }
+
+            .dropdown-item {
+                padding: 8px 12px;
+                margin-bottom: 3px;
+                font-size: 13px;
             }
 
             .navbar-nav.ms-auto {
-                flex-direction: row;
+                flex-direction: column;
                 border-top: 2px solid #ecf0f1;
-                margin-top: 15px;
-                padding-top: 15px;
+                margin-top: 10px;
+                padding-top: 10px;
                 width: 100%;
-                justify-content: space-around;
+                gap: 10px;
             }
 
             .language-selector {
                 width: 100%;
-                justify-content: center;
-                margin: 10px 0;
+                justify-content: flex-start;
+                margin: 5px 0;
             }
 
             .language-dropdown {
@@ -573,8 +617,8 @@
 
             .profile-icon-container {
                 width: 100%;
-                justify-content: center;
-                margin-top: 10px;
+                justify-content: flex-start;
+                margin-top: 5px;
             }
         }
 
@@ -589,6 +633,7 @@
 
             .main-navbar {
                 top: 0;
+                padding: 8px 0;
             }
 
             .navbar-brand-img {
@@ -610,10 +655,36 @@
 
             .nav-link {
                 font-size: 13px;
+                padding: 10px 12px !important;
             }
 
             .dropdown-menu.three-columns {
                 grid-template-columns: 1fr;
+            }
+
+            .dropdown-column {
+                padding: 8px 12px;
+            }
+
+            .navbar-collapse {
+                padding: 12px;
+            }
+
+            .navbar-nav.ms-auto {
+                flex-direction: column;
+                margin-top: 12px;
+                padding-top: 12px;
+                gap: 8px;
+            }
+
+            .language-selector {
+                margin: 0;
+                padding: 8px 0;
+            }
+
+            .profile-icon-container {
+                margin-top: 0;
+                padding: 8px 0;
             }
 
             .social-icons {
@@ -638,6 +709,12 @@
 
             .navbar-brand {
                 margin-right: auto;
+                margin-left: 5px;
+            }
+
+            .navbar-brand-img {
+                width: 32px;
+                height: 32px;
             }
 
             .nav-link {
@@ -658,6 +735,111 @@
 
             .dropdown-menu.three-columns {
                 grid-template-columns: 1fr;
+            }
+
+            .dropdown-column {
+                padding: 8px 10px;
+            }
+
+            .dropdown-column-title {
+                font-size: 12px;
+                margin-bottom: 8px;
+            }
+
+            .dropdown-item {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .navbar-collapse {
+                padding: 10px;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .navbar-nav.ms-auto {
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 10px;
+                padding-top: 10px;
+                border-top: 1px solid #e0e0e0;
+            }
+
+            .language-selector {
+                width: 100%;
+            }
+
+            .profile-icon-container {
+                width: 100%;
+            }
+
+            .top-info-bar .container {
+                padding: 8px 10px;
+            }
+
+            .main-navbar .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            body {
+                padding-top: 60px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .navbar-brand-img {
+                width: 28px;
+                height: 28px;
+            }
+
+            .nav-link {
+                padding: 8px 8px !important;
+                font-size: 11px;
+            }
+
+            .profile-icon-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+
+            .language-btn {
+                font-size: 14px;
+                padding: 4px 6px;
+            }
+
+            .navbar-toggler {
+                padding: 4px;
+            }
+
+            .navbar-collapse {
+                padding: 8px;
+            }
+
+            .dropdown-column-title {
+                font-size: 11px;
+            }
+
+            .dropdown-item {
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+
+            body {
+                padding-top: 55px;
+            }
+
+            .top-info-item {
+                gap: 4px;
+            }
+
+            .top-info-item a {
+                font-size: 11px;
             }
         }
 
@@ -718,7 +900,10 @@
             align-items: center;
             justify-content: space-between;
             flex-wrap: nowrap;
+            padding-left: 15px;
+            padding-right: 15px;
         }
+
         @media (min-width: 993px) {
             .navbar-collapse {
                 display: flex !important;
@@ -915,7 +1100,8 @@
                     <li class="nav-item">
                         <div class="profile-icon-container">
                             <a href="userProfile.html" class="profile-icon-btn" id="profileIconBtn" title="Profile">
-                                <i class="fas fa-user"></i>
+                                <i class="fas fa-user" id="profile-icon"></i>
+                                <img id="profile-avatar" alt="Profile" />
                             </a>
                         </div>
                     </li>
@@ -934,21 +1120,73 @@
         // ============================================
         // NAVBAR COLLAPSE ON MOBILE
         // ============================================
-        const navLinks = document.querySelectorAll('.navbar-nav a.nav-link');
+        const navLinks = document.querySelectorAll('.navbar-nav a.nav-link:not(.dropdown-toggle)');
         const navbarToggle = document.querySelector('.navbar-toggler');
         const navbarCollapse = document.querySelector('.navbar-collapse');
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
 
         navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                // Don't close menu for dropdown toggles
-                if (!this.classList.contains('dropdown-toggle')) {
-                    navbarToggle.classList.remove('show');
-                    if (navbarCollapse.classList.contains('show')) {
-                        navbarToggle.click();
-                    }
+            link.addEventListener('click', function(e) {
+                if (navbarCollapse.classList.contains('show')) {
+                    navbarToggle.click();
                 }
             });
         });
+
+        // ============================================
+        // MOBILE DROPDOWN MENU TOGGLE
+        // ============================================
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const dropdownMenu = this.nextElementSibling;
+                
+                // Close other dropdowns
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    if (menu !== dropdownMenu) {
+                        menu.classList.remove('show');
+                    }
+                });
+
+                // Toggle current dropdown
+                dropdownMenu.classList.toggle('show');
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+
+        // ============================================
+        // PROFILE PICTURE LOADER
+        // ============================================
+        function updateNavbarProfile(profilePhoto) {
+            try {
+                const profileIcon = document.getElementById('profile-icon');
+                const profileAvatar = document.getElementById('profile-avatar');
+                
+                if (!profileIcon || !profileAvatar) {
+                    console.warn('Profile elements not found in navbar');
+                    return;
+                }
+
+                if (profilePhoto) {
+                    profileIcon.classList.add('d-none');
+                    profileAvatar.src = profilePhoto;
+                    profileAvatar.classList.remove('d-none');
+                } else {
+                    profileAvatar.classList.add('d-none');
+                    profileIcon.classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('Error updating navbar profile:', error);
+            }
+        }
 
         // ============================================
         // ACTIVE LINK HIGHLIGHTING
@@ -987,6 +1225,60 @@
 
             lastScrollTop = scrollTop;
         });
+
+        // ============================================
+        // LANGUAGE SELECTOR
+        // ============================================
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const languageOptions = document.querySelectorAll('.language-option');
+
+        if (languageBtn) {
+            languageBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+        }
+
+        languageOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all options
+                languageOptions.forEach(opt => opt.classList.remove('active'));
+                
+                // Add active class to clicked option
+                this.classList.add('active');
+                
+                // Close dropdown
+                languageDropdown.classList.remove('show');
+            });
+        });
+
+        // Close language dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.language-selector')) {
+                languageDropdown.classList.remove('show');
+            }
+        });
+
+        // ============================================
+        // FIX NAV COLLAPSE ON WINDOW RESIZE
+        // ============================================
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                if (window.innerWidth > 992 && navbarCollapse.classList.contains('show')) {
+                    navbarToggle.click();
+                }
+            }, 250);
+        });
+
+        // ============================================
+        // EXPOSE PROFILE UPDATE FUNCTION GLOBALLY
+        // ============================================
+        window.updateNavbarProfile = updateNavbarProfile;
     </script>
 
     <!-- Hidden Google Translate Container (for API integration) -->
