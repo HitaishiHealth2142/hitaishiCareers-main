@@ -950,6 +950,7 @@
         let otpTimer = null;
         const expandedCards = new Set(); // Track expanded cards globally
         
+        
         // Chart instances
         let charts = {
             users: null,
@@ -1581,6 +1582,34 @@
             setupSkillFilter('jobsSkillsFilter', 'jobsFilter', 'jobsContainer', 'jobs');
         }
 
+        async function loadUserSkillsFilter() {
+            try {
+                const response = await fetch(`${BASE_URL}/admin/dashboard/user-skills`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!data.success) return;
+
+                const dropdown = document.getElementById('usersSkillsFilter');
+                dropdown.innerHTML = '<option value="">All Skills</option>';
+
+                data.skills.forEach(skill => {
+                    const option = document.createElement('option');
+                    option.value = skill;
+                    option.textContent = skill;
+                    dropdown.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Error loading user skills:', error);
+            }
+        }
+
+
         function setupSkillFilter(dropdownId, searchInputId, containerId, section) {
             const dropdown = document.getElementById(dropdownId);
             const searchInput = document.getElementById(searchInputId);
@@ -1733,9 +1762,10 @@
                 await loadJobs();
                 await loadMentors();
                 await loadApplications();
+                await loadUserSkillsFilter();
 
                 // Build and populate skill filters
-                buildSkillsFilter();
+                // buildSkillsFilter();
 
                 // Render charts after a brief delay to ensure DOM is ready
                 setTimeout(() => {

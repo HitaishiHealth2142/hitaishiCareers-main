@@ -261,7 +261,7 @@ router.get('/dashboard/all-users', protectAdminRoute, async (req, res) => {
   try {
     const users = await query(
       `SELECT id, full_name, email, mobile_number, gender, experience_level, 
-              profile_image_url, created_at FROM users ORDER BY created_at DESC`
+              profile_image_url, skills, created_at FROM users ORDER BY created_at DESC`
     );
 
     res.json({
@@ -288,9 +288,9 @@ router.get('/dashboard/users/filter-by-skill/:skill', protectAdminRoute, async (
       `SELECT id, full_name, email, mobile_number, gender,
               experience_level, profile_image_url, skills, created_at
        FROM users
-       WHERE JSON_SEARCH(skills, 'one', ?) IS NOT NULL
+       WHERE LOWER(skills) LIKE LOWER(?)
        ORDER BY created_at DESC`,
-      [skill]
+      [`%${skill}%`]
     );
 
     res.json({
@@ -301,6 +301,51 @@ router.get('/dashboard/users/filter-by-skill/:skill', protectAdminRoute, async (
   } catch (err) {
     console.error('Error filtering users by skill:', err);
     res.status(500).json({ error: 'Server error while filtering users by skill.' });
+  }
+});
+
+
+// ==========================================
+// GET /api/admin/dashboard/user-skills
+// Get all unique user skills for dropdown filter
+// ==========================================
+router.get('/dashboard/user-skills', protectAdminRoute, async (req, res) => {
+  try {
+    const users = await query(`SELECT skills FROM users WHERE skills IS NOT NULL`);
+
+    const skillsSet = new Set();
+
+    users.forEach(user => {
+      try {
+        const parsedSkills =
+          typeof user.skills === 'string'
+            ? JSON.parse(user.skills)
+            : user.skills;
+
+        if (Array.isArray(parsedSkills)) {
+          parsedSkills.forEach(skill => {
+            const skillName =
+              typeof skill === 'object' ? skill.name : skill;
+
+            if (skillName) {
+              skillsSet.add(skillName.trim());
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Skill parse error:', error);
+      }
+    });
+
+    res.json({
+      success: true,
+      skills: Array.from(skillsSet).sort()
+    });
+  } catch (err) {
+    console.error('Error fetching skills:', err);
+    res.status(500).json({
+      error: 'Server error while fetching skills'
+    });
   }
 });
 
