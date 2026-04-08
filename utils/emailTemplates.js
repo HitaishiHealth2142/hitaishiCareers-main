@@ -489,6 +489,71 @@ const getPasswordChangeEmail = (user, ipAddress = 'IP address unavailable') => {
     return emailWrapper(content);
 };
 
+// ==========================================
+// 9. ADMIN OTP EMAIL
+// ==========================================
+const getAdminOTPEmail = (data) => {
+    const content = `
+        <div class="header">
+            <div class="header-logo">🔐 WinJob</div>
+            <p style="font-size: 14px; opacity: 0.95;">Admin Portal - One-Time Password</p>
+        </div>
+        <div class="content">
+            <p class="section-text">Hello Admin,</p>
+            <p class="section-text">Your One-Time Password (OTP) for WinJob Admin Portal has been generated. This code is required to complete your login.</p>
+            
+            <div class="info-box">
+                <div class="info-box-title">🔑 Your OTP Code</div>
+                <div style="background: #f0f4ff; padding: 20px; border-radius: 8px; text-align: center; margin: 15px 0;">
+                    <p style="font-size: 14px; color: #555; margin-bottom: 10px; letter-spacing: 2px;">
+                        <span style="font-family: 'Courier New', monospace; font-size: 32px; font-weight: bold; color: #5B9BFF; letter-spacing: 4px;">
+                            ${data.otp}
+                        </span>
+                    </p>
+                    <p style="font-size: 12px; color: #e67e22; margin: 0;">
+                        ⏱️ Valid for only <strong>${data.expiresIn} seconds</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="security-alert">
+                <strong>⚠️ Important Security Notice:</strong>
+                <ul style="margin-left: 10px; font-size: 13px; color: #333;">
+                    <li>Never share this OTP with anyone</li>
+                    <li>WinJob staff will never ask for your OTP</li>
+                    <li>This code expires in ${data.expiresIn} seconds</li>
+                    <li>If you didn't request this OTP, ignore this email</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Return to your login and enter the OTP above to proceed.</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-title">🛡️ Admin Security</div>
+                <p style="font-size: 13px; color: #555;">
+                    Your admin account is protected by advanced security measures including:
+                    <ul style="margin-left: 15px; margin-top: 8px;">
+                        <li>Two-factor authentication (OTP)</li>
+                        <li>Login date/time tracking</li>
+                        <li>Encrypted password storage</li>
+                        <li>Session management</li>
+                    </ul>
+                </p>
+            </div>
+
+            <p class="section-text"><strong>Did Not Request This?</strong> If you did not attempt to login to the admin portal, please contact the security team immediately at ${SUPPORT_EMAIL}</p>
+        </div>
+        <div class="footer">
+            <p>© 2026 WinJob. All rights reserved.</p>
+            <p>This is an automated security email. Do not reply - contact ${SUPPORT_EMAIL} for assistance.</p>
+            <p style="margin-top: 15px; color: #aaa;">This email was sent to ensure the security of your admin account.</p>
+        </div>
+    `;
+    return emailWrapper(content);
+};
+
 module.exports = {
     getUserRegistrationEmail,
     getUserProfileUpdateEmail,
@@ -497,5 +562,6 @@ module.exports = {
     getJobPostedEmail,
     getJobApplicationConfirmationEmail,
     getJobApplicationAlertEmail,
-    getPasswordChangeEmail
+    getPasswordChangeEmail,
+    getAdminOTPEmail
 };

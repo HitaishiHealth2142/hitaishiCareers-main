@@ -106,10 +106,10 @@ router.get("/all", async (_req, res) => {
         const companies = await query(
             `SELECT id, company_name, logo_url FROM companies ORDER BY company_name ASC`
         );
-        res.json({ companies });
+        res.json({ success: true, companies });
     } catch (err) {
         console.error("Failed to fetch all companies:", err);
-        res.status(500).json({ error: "Failed to fetch companies." });
+        res.status(500).json({ success: false, error: "Failed to fetch companies." });
     }
 });
 

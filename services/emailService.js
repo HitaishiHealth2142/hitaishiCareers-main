@@ -213,6 +213,25 @@ const sendPasswordChangeEmail = async (user, ipAddress = null) => {
     return await sendEmail(mailOptions);
 };
 
+/**
+ * Send admin OTP email for authentication
+ * Called when admin requests login OTP
+ */
+const sendAdminOTPEmail = async (adminData) => {
+    if (!adminData.email) {
+        console.error('❌ sendAdminOTPEmail: Admin email is required');
+        return;
+    }
+
+    const mailOptions = {
+        to: adminData.email,
+        subject: 'WinJob Admin Portal - One-Time Password (OTP) 🔐',
+        html: emailTemplates.getAdminOTPEmail(adminData)
+    };
+
+    return await sendEmail(mailOptions);
+};
+
 // ==========================================
 // BACKGROUND EMAIL SENDER (Non-blocking)
 // ==========================================
@@ -272,6 +291,7 @@ module.exports = {
     sendJobApplicationConfirmationEmail,
     sendJobApplicationAlertEmail,
     sendPasswordChangeEmail,
+    sendAdminOTPEmail,
 
     // Transporter for advanced usage if needed
     transporter

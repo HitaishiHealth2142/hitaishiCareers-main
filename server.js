@@ -15,7 +15,9 @@ const jobsRoute = require('./routes/jobs');
 const applicantRoute = require('./routes/applicant');
 const companyRoute = require('./routes/company');
 const mentorsRoute = require('./routes/mentors');
+const adminRoute = require('./routes/admin');
 const { protectRoute, protectEmployerRoute } = require('./middleware/authMiddleware');
+const { protectAdminRoute } = require('./middleware/adminAuthMiddleware');
 
 
 const app = express();
@@ -136,6 +138,7 @@ app.use('/api/jobs', jobsRoute);
 app.use('/api/applicant', applicantRoute);
 app.use('/api/company', companyRoute);
 app.use('/api/mentors', mentorsRoute);
+app.use('/api/admin', adminRoute);
 
 // ========================================
 // FRONTEND ROUTES
@@ -143,6 +146,10 @@ app.use('/api/mentors', mentorsRoute);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
 app.get('/mychat', (req, res) => {
