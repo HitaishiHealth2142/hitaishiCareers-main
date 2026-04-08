@@ -275,6 +275,35 @@ router.get('/dashboard/all-users', protectAdminRoute, async (req, res) => {
   }
 });
 
+
+// ==========================================
+// GET /api/admin/dashboard/users/filter-by-skill/:skill
+// Filter users by skill (PROTECTED)
+// ==========================================
+router.get('/dashboard/users/filter-by-skill/:skill', protectAdminRoute, async (req, res) => {
+  try {
+    const { skill } = req.params;
+
+    const users = await query(
+      `SELECT id, full_name, email, mobile_number, gender,
+              experience_level, profile_image_url, skills, created_at
+       FROM users
+       WHERE JSON_SEARCH(skills, 'one', ?) IS NOT NULL
+       ORDER BY created_at DESC`,
+      [skill]
+    );
+
+    res.json({
+      success: true,
+      totalCount: users.length,
+      users
+    });
+  } catch (err) {
+    console.error('Error filtering users by skill:', err);
+    res.status(500).json({ error: 'Server error while filtering users by skill.' });
+  }
+});
+
 // ==========================================
 // GET /api/admin/dashboard/user/:userId
 // Get detailed user profile (PROTECTED)

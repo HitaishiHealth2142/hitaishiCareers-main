@@ -1150,57 +1150,71 @@
             let html = '';
 
             if (type === 'user') {
+                const skills = Array.isArray(item.skills)
+                    ? item.skills.map(skill =>
+                        typeof skill === 'object' ? skill.name : skill
+                    ).join(', ')
+                    : 'N/A';
+
                 html = `
-                    ${item.profile_image_url ? `<div style="margin-bottom: 20px; text-align: center;"><img src="${item.profile_image_url}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>` : ''}
+                    ${item.profileImage ? `
+                        <div style="margin-bottom:20px;text-align:center;">
+                            <img src="${item.profileImage}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;">
+                        </div>` : ''}
+
                     <div class="detail-item">
                         <div class="detail-label">Full Name</div>
-                        <div class="detail-value">${item.full_name}</div>
+                        <div class="detail-value">${item.fullName || 'N/A'}</div>
                     </div>
+
                     <div class="detail-item">
                         <div class="detail-label">Email</div>
-                        <div class="detail-value">${item.email}</div>
+                        <div class="detail-value">${item.email || 'N/A'}</div>
                     </div>
+
                     <div class="detail-item">
                         <div class="detail-label">Phone</div>
-                        <div class="detail-value">${item.mobile_number || 'N/A'}</div>
+                        <div class="detail-value">${item.mobileNumber || 'N/A'}</div>
                     </div>
+
                     <div class="detail-item">
                         <div class="detail-label">Gender</div>
                         <div class="detail-value">${item.gender || 'N/A'}</div>
                     </div>
+
                     <div class="detail-item">
                         <div class="detail-label">Experience Level</div>
-                        <div class="detail-value">${item.experience_level || 'N/A'}</div>
+                        <div class="detail-value">${item.experienceLevel || 'N/A'}</div>
                     </div>
+
                     <div class="detail-item">
                         <div class="detail-label">Expected CTC</div>
-                        <div class="detail-value">${item.ctc_expected || 'N/A'}</div>
+                        <div class="detail-value">${item.ctcExpected || 'N/A'}</div>
                     </div>
+
                     <div class="detail-item">
                         <div class="detail-label">Notice Period</div>
-                        <div class="detail-value">${item.notice_period || 'N/A'}</div>
+                        <div class="detail-value">${item.noticePeriod || 'N/A'}</div>
                     </div>
-                    ${item.professional_details ? `
-                    <div class="detail-item">
-                        <div class="detail-label">Professional Details</div>
-                        <div class="detail-value">${JSON.stringify(item.professional_details).substring(0, 200)}...</div>
-                    </div>
-                    ` : ''}
-                    ${item.skills ? `
+
                     <div class="detail-item">
                         <div class="detail-label">Skills</div>
-                        <div class="detail-value">${Array.isArray(item.skills) ? item.skills.join(', ') : 'N/A'}</div>
+                        <div class="detail-value">${skills}</div>
                     </div>
-                    ` : ''}
-                    ${item.resume_url ? `
+
+                    ${item.resumeUrl ? `
                     <div class="detail-item">
                         <div class="detail-label">Resume</div>
-                        <div class="detail-value"><a href="${item.resume_url}" target="_blank">View Resume</a></div>
-                    </div>
-                    ` : ''}
+                        <div class="detail-value">
+                            <a href="${item.resumeUrl}" target="_blank">View Resume</a>
+                        </div>
+                    </div>` : ''}
+
                     <div class="detail-item">
                         <div class="detail-label">Registered</div>
-                        <div class="detail-value">${new Date(item.created_at).toLocaleString()}</div>
+                        <div class="detail-value">
+                            ${item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}
+                        </div>
                     </div>
                 `;
             } else if (type === 'company') {
@@ -1608,10 +1622,33 @@
             }
             
             // Add event listeners
-            dropdown.addEventListener('change', applyFilters);
-            if (searchInput) {
-                searchInput.addEventListener('keyup', applyFilters);
-            }
+            dropdown.addEventListener('change', async function () {
+                const selectedSkill = this.value;
+
+                if (!selectedSkill) {
+                    renderUsers(allData.users);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        `${BASE_URL}/admin/dashboard/users/filter-by-skill/${encodeURIComponent(selectedSkill)}`,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${currentToken}`
+                            }
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (!data.success) return;
+
+                    renderUsers(data.users);
+                } catch (error) {
+                    console.error('Skill filter error:', error);
+                }
+            });
         }
 
         // ===== DASHBOARD FUNCTIONS =====
