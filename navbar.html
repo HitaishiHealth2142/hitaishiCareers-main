@@ -536,6 +536,7 @@
                 padding: 15px;
                 margin: 0;
                 border-top: none !important;
+                display: flex !important;
             }
 
             .nav-item {
@@ -872,29 +873,25 @@
             line-height: 1.6;
         }
 
-        .navbar-collapse {
-            display: flex !important;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: nowrap;
-            width: 100%;
+
+
+        @media (min-width: 992px) {
+            .navbar-nav.me-auto {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .navbar-nav.ms-auto {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 12px;
+                margin-left: auto;
+            }
         }
 
-        .navbar-nav.me-auto {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            flex-wrap: nowrap;
-            gap: 6px;
-        }
-
-        .navbar-nav.ms-auto {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 12px;
-            margin-left: auto;
-        }
         .main-navbar .container {
             display: flex;
             align-items: center;
@@ -904,37 +901,8 @@
             padding-right: 15px;
         }
 
-        @media (min-width: 993px) {
-            .navbar-collapse {
-                display: flex !important;
-            }
-        }
 
-        @media (max-width: 991px) {
-            .navbar-collapse {
-                background: #ffffff;
-                padding: 15px;
-                border-radius: 12px;
-                margin-top: 10px;
-                box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            }
-
-            .navbar-nav .nav-link {
-                color: #222 !important;
-                padding: 12px 0;
-            }
-
-            .navbar .dropdown-menu {
-                border: none;
-                box-shadow: none;
-                padding-left: 15px;
-            }
-
-            #navbarProfileImage {
-                width: 36px;
-                height: 36px;
-            }
-        }
+ 
     </style>
 
     <!-- ============================================

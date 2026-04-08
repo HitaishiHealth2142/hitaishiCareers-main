@@ -507,7 +507,7 @@ router.get('/dashboard/job/:jobId', protectAdminRoute, async (req, res) => {
 router.get('/dashboard/all-mentors', protectAdminRoute, async (req, res) => {
   try {
     const mentors = await query(
-      `SELECT id, full_name, email, title, current_company, experience_years,
+      `SELECT id, full_name, email, title, current_company, experience_years,hourly_price,
               is_verified, rating, total_sessions, profile_image_url, created_at
        FROM mentors ORDER BY created_at DESC`
     );
