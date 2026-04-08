@@ -641,6 +641,39 @@ router.patch('/dashboard/mentor/:mentorId/reject', protectAdminRoute, async (req
 });
 
 // ==========================================
+// GET /api/admin/dashboard/all-applications
+// Get all job applications (PROTECTED)
+// ==========================================
+router.get('/dashboard/all-applications', protectAdminRoute, async (req, res) => {
+  try {
+    const applications = await query(`
+      SELECT 
+        ja.id,
+        ja.job_id,
+        ja.user_id,
+        ja.company_id,
+        ja.status,
+        ja.applied_at,
+        ja.user_profile_snapshot,
+        j.job_title,
+        c.company_name
+      FROM job_applications ja
+      JOIN jobs j ON ja.job_id = j.id
+      JOIN companies c ON ja.company_id = c.id
+      ORDER BY ja.applied_at DESC
+    `);
+
+    res.json({
+      success: true,
+      applications: applications
+    });
+  } catch (err) {
+    console.error('Error fetching applications:', err);
+    res.status(500).json({ error: 'Server error while fetching applications.' });
+  }
+});
+
+// ==========================================
 // GET /api/admin/dashboard/stats
 // Get dashboard statistics (PROTECTED)
 // ==========================================
