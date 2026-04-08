@@ -1578,8 +1578,8 @@
             populateSkillDropdown('jobsSkillsFilter', Array.from(jobsSkillsSet).sort());
             
             // Setup filter listeners
-            setupSkillFilter('usersSkillsFilter', 'usersFilter', 'usersContainer', 'users');
-            setupSkillFilter('jobsSkillsFilter', 'jobsFilter', 'jobsContainer', 'jobs');
+            // setupSkillFilter('usersSkillsFilter', 'usersFilter', 'usersContainer', 'users');
+            // setupSkillFilter('jobsSkillsFilter', 'jobsFilter', 'jobsContainer', 'jobs');
         }
 
         async function loadUserSkillsFilter() {
@@ -1614,70 +1614,51 @@
             const dropdown = document.getElementById(dropdownId);
             const searchInput = document.getElementById(searchInputId);
             const container = document.getElementById(containerId);
-            
+
             if (!dropdown || !container) return;
-            
+
             function applyFilters() {
-                const selectedSkill = dropdown.value;
+                const selectedSkill = dropdown.value.toLowerCase();
                 const searchTerm = (searchInput?.value || '').toLowerCase();
                 const cards = container.querySelectorAll('.card');
-                
+
                 cards.forEach(card => {
                     let show = true;
-                    
-                    // Check text search
+
+                    // search filter
                     if (searchTerm) {
-                        const cardText = card.innerText.toLowerCase();
-                        show = cardText.includes(searchTerm);
+                        const searchable = card.getAttribute('data-searchable')?.toLowerCase() || '';
+                        show = searchable.includes(searchTerm);
                     }
-                    
-                    // Check skill filter
+
+                    // skill filter
                     if (show && selectedSkill) {
                         const skillsAttr = card.getAttribute('data-skills');
-                        if (skillsAttr) {
-                            try {
-                                const cardSkills = Array.isArray(skillsAttr) ? skillsAttr : JSON.parse(skillsAttr);
-                                show = cardSkills.includes(selectedSkill);
-                            } catch (e) {
-                                show = false;
-                            }
-                        } else {
+
+                        try {
+                            const parsedSkills = JSON.parse(skillsAttr || '[]');
+
+                            const skillNames = parsedSkills.map(skill =>
+                                typeof skill === 'object'
+                                    ? skill.name?.toLowerCase()
+                                    : String(skill).toLowerCase()
+                            );
+
+                            show = skillNames.includes(selectedSkill);
+                        } catch (error) {
                             show = false;
                         }
                     }
-                    
-                    card.style.display = show ? 'block' : 'none';
+
+                    card.style.display = show ? '' : 'none';
                 });
             }
-            
-            // Add event listeners
-            dropdown.addEventListener('change', async function () {
-                const selectedSkill = this.value;
 
-                if (!selectedSkill) {
-                    renderUsers(allData.users);
-                    return;
-                }
+            dropdown.onchange = applyFilters;
 
-                try {
-                    const response = await fetch(
-                        `${BASE_URL}/admin/dashboard/users/filter-by-skill/${encodeURIComponent(selectedSkill)}`,
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${currentToken}`
-                            }
-                        }
-                    );
-
-                    const data = await response.json();
-
-                    if (!data.success) return;
-
-                    renderUsers(data.users);
-                } catch (error) {
-                    console.error('Skill filter error:', error);
-                }
-            });
+            if (searchInput) {
+                searchInput.oninput = applyFilters;
+            }
         }
 
         // ===== DASHBOARD FUNCTIONS =====
@@ -1790,13 +1771,27 @@
                 if (!response.ok) throw new Error(data.error);
 
                 allData.users = data.users || [];
+
                 renderUsers(allData.users);
+
+                // search input filter
                 setupFilter('usersFilter', 'users');
+
+                // IMPORTANT: re-bind skill dropdown after cards render
+                setupSkillFilter(
+                    'usersSkillsFilter',
+                    'usersFilter',
+                    'usersContainer',
+                    'users'
+                );
+
             } catch (error) {
                 console.error('Error loading users:', error);
-                document.getElementById('usersContainer').innerHTML = '<div class="empty-state">Error loading users</div>';
+                document.getElementById('usersContainer').innerHTML =
+                    '<div class="empty-state">Error loading users</div>';
             }
         }
+                
 
         function renderUsers(users) {
             const container = document.getElementById('usersContainer');
@@ -1900,14 +1895,26 @@
                 if (!response.ok) throw new Error(data.error);
 
                 allData.jobs = data.jobs || [];
+
                 renderJobs(allData.jobs);
+
                 setupFilter('jobsFilter', 'jobs');
+
+                setupSkillFilter(
+                    'jobsSkillsFilter',
+                    'jobsFilter',
+                    'jobsContainer',
+                    'jobs'
+                );
+
             } catch (error) {
                 console.error('Error loading jobs:', error);
-                document.getElementById('jobsContainer').innerHTML = '<div class="empty-state">Error loading jobs</div>';
+                document.getElementById('jobsContainer').innerHTML =
+                    '<div class="empty-state">Error loading jobs</div>';
             }
         }
-
+                
+        
         function renderJobs(jobs) {
             const container = document.getElementById('jobsContainer');
             if (jobs.length === 0) {
