@@ -8,7 +8,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding-top: 120px;
+            padding-top: 70px;
             overflow-x: hidden;
         }
 
@@ -27,6 +27,7 @@
             right: 0;
             z-index: 1050;
             width: 100%;
+            display: none;
         }
 
         .top-info-bar .container {
@@ -110,7 +111,7 @@
             padding: 12px 0;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             position: fixed;
-            top: 47px;
+            top: 0;
             left: 0;
             right: 0;
             z-index: 1040;
@@ -212,6 +213,15 @@
 
         .nav-link:hover::after {
             width: 80%;
+        }
+
+        /* NAVBAR COLLAPSE DEFAULT STATE */
+        .navbar-collapse {
+            display: none !important;
+        }
+
+        .navbar-collapse.show {
+            display: flex !important;
         }
 
         /* DROPDOWN MENU STYLING */
@@ -490,7 +500,7 @@
 
         @media (max-width: 992px) {
             body {
-                padding-top: 100px;
+                padding-top: 70px;
             }
 
             .top-info-bar .container {
@@ -512,7 +522,7 @@
             }
 
             .main-navbar {
-                top: 47px;
+                top: 0;
                 padding: 10px 0;
             }
 
@@ -525,8 +535,8 @@
             }
 
             .navbar-collapse {
-                position: absolute;
-                top: 100%;
+                position: fixed;
+                top: 70px;
                 left: 0;
                 right: 0;
                 width: 100%;
@@ -536,6 +546,16 @@
                 padding: 15px;
                 margin: 0;
                 border-top: none !important;
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 1030;
+            }
+
+            .navbar-collapse:not(.show) {
+                display: none !important;
+            }
+
+            .navbar-collapse.show {
                 display: flex !important;
             }
 
@@ -668,6 +688,7 @@
             }
 
             .navbar-collapse {
+                top: 65px;
                 padding: 12px;
             }
 
@@ -704,6 +725,10 @@
         }
 
         @media (max-width: 576px) {
+            body {
+                padding-top: 60px;
+            }
+
             .navbar-brand-content {
                 display: none;
             }
@@ -753,8 +778,9 @@
             }
 
             .navbar-collapse {
+                top: 60px;
                 padding: 10px;
-                max-height: 70vh;
+                max-height: calc(100vh - 60px);
                 overflow-y: auto;
             }
 
@@ -786,13 +812,13 @@
                 padding-left: 10px;
                 padding-right: 10px;
             }
-
-            body {
-                padding-top: 60px;
-            }
         }
 
         @media (max-width: 360px) {
+            body {
+                padding-top: 55px;
+            }
+
             .navbar-brand-img {
                 width: 28px;
                 height: 28px;
@@ -819,6 +845,7 @@
             }
 
             .navbar-collapse {
+                top: 55px;
                 padding: 8px;
             }
 
@@ -831,16 +858,16 @@
                 padding: 6px 8px;
             }
 
-            body {
-                padding-top: 55px;
-            }
-
             .top-info-item {
                 gap: 4px;
             }
 
             .top-info-item a {
                 font-size: 11px;
+            }
+
+            .main-navbar {
+                padding: 6px 0;
             }
         }
 
@@ -890,6 +917,20 @@
                 gap: 12px;
                 margin-left: auto;
             }
+
+            .navbar-collapse {
+                display: flex !important;
+                position: static !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                top: auto !important;
+                max-height: none !important;
+            }
+
+            .navbar-toggler {
+                display: none;
+            }
         }
 
         .main-navbar .container {
@@ -918,7 +959,7 @@
                 <div class="divider"></div>
                 <div class="top-info-item">
                     <i class="fas fa-envelope"></i>
-                    <a href="mailto:support@winjob.com">support@winjob.com</a>
+                    <a href="mailto:support@winjob.in">support@winjob.in</a>
                 </div>
             </div>
 
