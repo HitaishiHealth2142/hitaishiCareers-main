@@ -1369,73 +1369,19 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="footer-section">
-    <div class="container-lg">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <h4 class="footer-title">
-            <i class="fas fa-graduation-cap"></i> WinJob Mentorship
-          </h4>
-          <p class="footer-desc">Connect with industry experts and accelerate your career growth through personalized mentorship.</p>
-          <div class="footer-socials">
-            <a href="#" class="social-link" title="LinkedIn">
-              <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="#" class="social-link" title="Twitter">
-              <i class="fab fa-twitter"></i>
-            </a>
-            <a href="#" class="social-link" title="GitHub">
-              <i class="fab fa-github"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h5 class="footer-subtitle">Quick Links</h5>
-          <ul class="footer-links">
-            <li><a href="#">Find Mentors</a></li>
-            <li><a href="#">Become a Mentor</a></li>
-            <li><a href="#">How It Works</a></li>
-            <li><a href="#">Blog</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h5 class="footer-subtitle">Resources</h5>
-          <ul class="footer-links">
-            <li><a href="#">Documentation</a></li>
-            <li><a href="#">Community</a></li>
-            <li><a href="#">Support</a></li>
-            <li><a href="#">FAQ</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h5 class="footer-subtitle">Company</h5>
-          <ul class="footer-links">
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-divider"></div>
-
-      <div class="footer-bottom">
-        <p class="footer-copyright">&copy; 2024 WinJob Mentorship. All rights reserved.</p>
-        <div class="footer-badges">
-          <span class="badge-item">
-            <i class="fas fa-shield-alt"></i> Secure & Verified
-          </span>
-          <span class="badge-item">
-            <i class="fas fa-award"></i> Industry Trusted
-          </span>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <div id="footer-container"></div>
+  <script>
+    async function loadFooter() {
+      try {
+        const response = await fetch('footer.html');
+        const footerHTML = await response.text();
+        document.getElementById('footer-container').innerHTML = footerHTML;
+      } catch (error) {
+        console.error('Error loading footer:', error);
+      }
+    }
+    loadFooter();
+  </script>
 
   <!-- SCROLL TO TOP BUTTON -->
   <button id="scrollTopBtn" class="scroll-top-btn" aria-label="Scroll to top">
