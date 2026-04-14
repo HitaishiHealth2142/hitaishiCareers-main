@@ -1209,26 +1209,19 @@
 </head>
 <body>
   <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-lg">
-      <a class="navbar-brand" href="#">
-        <i class="fas fa-graduation-cap"></i>
-        WinJob Mentorship
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="mentorsLogin.html">
-              <i class="fas fa-chalkboard-user"></i> Become a Mentor
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <div id="navbar-container"></div>
+  <script>
+    async function loadNavbar() {
+      try {
+        const response = await fetch('navbar.html');
+        const navbarHTML = await response.text();
+        document.getElementById('navbar-container').innerHTML = navbarHTML;
+      } catch (error) {
+        console.error('Error loading navbar:', error);
+      }
+    }
+    loadNavbar();
+  </script>
 
   <!-- HERO SECTION -->
   <section class="hero-section">
@@ -1385,7 +1378,7 @@
 
   <!-- SCROLL TO TOP BUTTON -->
   <button id="scrollTopBtn" class="scroll-top-btn" aria-label="Scroll to top">
-    <i class="fas fa-arrow-up"></i>
+    <i class="fas fa-arrow-up" style="margin: auto;"></i>
   </button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
