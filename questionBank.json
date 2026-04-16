@@ -1,0 +1,158 @@
+{
+  "Fullstack": [
+    {
+      "question": "Tell me about yourself and your experience as a full-stack developer.",
+      "hint": "Focus on the technologies you've used (frontend/backend) and mention a specific project result.",
+      "keywords": ["experience", "frontend", "backend", "project", "stack", "react", "node"]
+    },
+    {
+      "question": "Explain the difference between React state and props with a real example.",
+      "hint": "Think about data ownership: state is internal/private, props are external/passed down.",
+      "keywords": ["state", "props", "component", "data", "parent", "internal", "immutable"]
+    },
+    {
+      "question": "How does Node.js handle asynchronous operations and what is the event loop?",
+      "hint": "Mention non-blocking I/O and how tasks are queued and processed.",
+      "keywords": ["asynchronous", "event loop", "non-blocking", "callback", "promises", "queue"]
+    },
+    {
+      "question": "What is RESTful API design and how have you implemented it in your projects?",
+      "hint": "Discuss HTTP methods (GET, POST, etc.) and statelessness.",
+      "keywords": ["rest", "api", "http", "methods", "stateless", "json", "endpoint"]
+    },
+    {
+      "question": "Describe your experience with database design — what databases have you used and why?",
+      "hint": "Compare SQL vs NoSQL or mention normalization/schema design.",
+      "keywords": ["database", "sql", "nosql", "schema", "normalization", "mongodb", "mysql"]
+    },
+    {
+      "question": "How do you manage authentication and authorization in a full-stack web application?",
+      "hint": "Mention JWT, sessions, or OAuth and the difference between AuthN and AuthZ.",
+      "keywords": ["authentication", "authorization", "jwt", "session", "token", "oauth"]
+    },
+    {
+      "question": "Explain the component lifecycle in React and when you would use useEffect.",
+      "hint": "Discuss mounting, updating, and unmounting, and side-effect management.",
+      "keywords": ["lifecycle", "useeffect", "mount", "unmount", "hook", "side-effect"]
+    },
+    {
+      "question": "What is CORS, why does it occur, and how do you handle it in Express.js?",
+      "hint": "Explain how browsers restrict cross-origin requests for security.",
+      "keywords": ["cors", "cross-origin", "browser", "security", "middleware", "origin"]
+    },
+    {
+      "question": "Describe a challenging full-stack project you built and the key problems you solved.",
+      "hint": "Use the STAR method: Situation, Task, Action, Result.",
+      "keywords": ["challenge", "problem", "solution", "star", "project", "impact"]
+    },
+    {
+      "question": "How do you optimize the performance of a React application for production?",
+      "hint": "Mention lazy loading, memoization (useMemo), or decreasing bundle size.",
+      "keywords": ["performance", "optimization", "lazy loading", "memo", "bundle", "speed"]
+    }
+  ],
+  "Data Science": [
+    {
+      "question": "Tell me about yourself and your experience in data science or machine learning.",
+      "hint": "Highlight your analytical skills and the types of models you've built.",
+      "keywords": ["experience", "analytical", "models", "data", "ml", "python"]
+    },
+    {
+      "question": "What is the difference between supervised, unsupervised, and reinforcement learning?",
+      "hint": "Focus on labeled vs unlabeled data and feedback loops.",
+      "keywords": ["supervised", "unsupervised", "reinforcement", "labeled", "training"]
+    },
+    {
+      "question": "How would you handle missing or null values in a large dataset?",
+      "hint": "Discuss imputation, removal, or using models that handle NaNs.",
+      "keywords": ["missing", "null", "imputation", "nan", "dataset", "cleaning"]
+    },
+    {
+      "question": "What is overfitting and how do you prevent it in a machine learning model?",
+      "hint": "Mention regularization, cross-validation, or simpler model architectures.",
+      "keywords": ["overfitting", "regularization", "cross-validation", "dropout", "generalization"]
+    },
+    {
+      "question": "Describe an end-to-end machine learning project you have worked on.",
+      "hint": "Stages: Data collection -> Cleaning -> Modeling -> Deployment.",
+      "keywords": ["end-to-end", "pipeline", "data", "modeling", "evaluation", "deployment"]
+    },
+    {
+      "question": "What is the difference between precision and recall, and when do you prioritize one over the other?",
+      "hint": "Example: Disease detection (Recall) vs Spam filtering (Precision).",
+      "keywords": ["precision", "recall", "f1-score", "accuracy", "classifier"]
+    },
+    {
+      "question": "Explain how gradient descent works and why it is important in model training.",
+      "hint": "Mention cost functions and finding the global minimum.",
+      "keywords": ["gradient descent", "optimization", "cost function", "weights", "learning rate"]
+    },
+    {
+      "question": "What libraries do you use for data visualization and why do you prefer them?",
+      "hint": "Discuss Matplotlib, Seaborn, or Plotly and their specific use cases.",
+      "keywords": ["visualization", "matplotlib", "seaborn", "plotly", "dashboard", "insights"]
+    },
+    {
+      "question": "Explain the concept of feature engineering and give an example from your experience.",
+      "hint": "Discuss creating new features from raw data to improve model performance.",
+      "keywords": ["feature engineering", "raw data", "transformation", "encoding", "relevance"]
+    },
+    {
+      "question": "How would you deploy a trained machine learning model to a production environment?",
+      "hint": "Mention Flask, FastAPI, Docker, or cloud services like AWS SageMaker.",
+      "keywords": ["deployment", "flask", "fastapi", "docker", "cloud", "api"]
+    }
+  ],
+  "Backend": [
+    {
+      "question": "Tell me about yourself and your backend development experience.",
+      "hint": "Focus on server-side logic, databases, and architectural patterns.",
+      "keywords": ["experience", "server-side", "logic", "database", "architecture", "api"]
+    },
+    {
+      "question": "What is the difference between REST and GraphQL APIs? When would you choose one over the other?",
+      "hint": "Compare over-fetching vs single-endpoint flexibility.",
+      "keywords": ["rest", "graphql", "api", "endpoint", "query", "payload"]
+    },
+    {
+      "question": "How does Spring Boot handle dependency injection and what is Inversion of Control?",
+      "hint": "Explain how the framework manages object creation and lifecycle.",
+      "keywords": ["spring boot", "injection", "ioc", "container", "beans", "lifecycle"]
+    },
+    {
+      "question": "What is the difference between JPA and Hibernate? When do you use each?",
+      "hint": "JPA is the specification (interface), Hibernate is the implementation.",
+      "keywords": ["jpa", "hibernate", "orm", "database", "specification", "implementation"]
+    },
+    {
+      "question": "Describe how you would design a microservices architecture for a large-scale application.",
+      "hint": "Discuss service discovery, API gateways, and specialized databases.",
+      "keywords": ["microservices", "architecture", "gateway", "discovery", "decoupled", "scalability"]
+    },
+    {
+      "question": "How do you handle database transactions and ensure data consistency in your applications?",
+      "hint": "Mention ACID properties and transaction management (@Transactional).",
+      "keywords": ["transactions", "acid", "consistency", "isolation", "callback", "rollback"]
+    },
+    {
+      "question": "What role does Docker play in your development workflow and how do you containerize a Java app?",
+      "hint": "Explain environment consistency and building images with Dockerfiles.",
+      "keywords": ["docker", "container", "image", "workflow", "dockerfile", "deployment"]
+    },
+    {
+      "question": "How do you ensure the security of a backend REST API — what are common vulnerabilities to guard against?",
+      "hint": "Mention SQL injection, XSS, and using libraries like Spring Security.",
+      "keywords": ["security", "sql injection", "xss", "auth", "encryption", "owasp"]
+    },
+    {
+      "question": "Describe a time when you identified and resolved a slow or inefficient database query.",
+      "hint": "Discuss indexing, execution plans, or query refactoring.",
+      "keywords": ["query", "optimization", "index", "performance", "slow", "profiling"]
+    },
+    {
+      "question": "How do you handle API versioning in a production REST API?",
+      "hint": "Discuss URL versioning (/v1/) vs header-based versioning.",
+      "keywords": ["versioning", "api", "production", "url", "header", "compatibility"]
+    }
+  ]
+}

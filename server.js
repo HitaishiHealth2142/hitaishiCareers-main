@@ -16,6 +16,7 @@ const applicantRoute = require('./routes/applicant');
 const companyRoute = require('./routes/company');
 const mentorsRoute = require('./routes/mentors');
 const adminRoute = require('./routes/admin');
+const aiInterviewRoute = require('./routes/aiInterview');
 const { protectRoute, protectEmployerRoute } = require('./middleware/authMiddleware');
 const { protectAdminRoute } = require('./middleware/adminAuthMiddleware');
 
@@ -139,6 +140,7 @@ app.use('/api/applicant', applicantRoute);
 app.use('/api/company', companyRoute);
 app.use('/api/mentors', mentorsRoute);
 app.use('/api/admin', adminRoute);
+app.use('/api/ai', aiInterviewRoute);
 
 // ========================================
 // FRONTEND ROUTES

@@ -1,0 +1,5 @@
+# John Doe
+## Full Stack Developer
+Experience with React, Node.js, and Express.
+Skills: JavaScript, HTML, CSS, SQL.
+Objective: To build premium web applications.

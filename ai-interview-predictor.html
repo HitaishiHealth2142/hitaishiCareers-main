@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Predictor - WinJob Premium</title>
+    
+    <!-- Bootstrap & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-purple: #6a11cb;
+            --secondary-purple: #2575fc;
+            --premium-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --light-purple: #f3f0ff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .premium-hero {
+            background: var(--premium-gradient);
+            color: white;
+            padding: 80px 0;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+        }
+
+        .card-premium {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card-premium:hover {
+            transform: translateY(-5px);
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-purple);
+            background: var(--light-purple);
+        }
+
+        .btn-premium {
+            background: var(--premium-gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+        }
+
+        .plan-card {
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .plan-card.active {
+            border-color: var(--primary-purple);
+            background: var(--light-purple);
+        }
+
+        .badge-premium {
+            background: #ffd700;
+            color: #333;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        #recorder-visualizer {
+            height: 100px;
+            width: 100%;
+            background: #222;
+            border-radius: 15px;
+            margin: 15px 0;
+            display: none;
+            overflow: hidden;
+        }
+
+        .listening-indicator {
+            display: none;
+            color: var(--primary-purple);
+            font-weight: 600;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.5; }
+        }
+
+        .transcript-text {
+            border-left: 3px solid var(--primary-purple);
+            padding-left: 15px;
+            font-style: italic;
+            min-height: 50px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .pulse {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-purple);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 1; }
+            70% { transform: scale(1.1); opacity: 0.3; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: var(--light-purple);
+            color: var(--primary-purple);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-overlay" id="loader">
+        <div class="pulse"></div>
+        <h4 class="mt-4">AI Analyzing Resume...</h4>
+        <p class="text-muted">Extracting skills & generating questions</p>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="premium-hero">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold">AI Interview Predictor</h1>
+            <p class="lead">Upload your resume and get industry-specific interview questions predicted for you.</p>
+            <div class="mt-4">
+                <span class="badge-premium"><i class="fas fa-crown"></i> PREMIUM FEATURE</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="container" style="margin-top: -40px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Upload Card -->
+                <div class="card card-premium p-4 mb-4" id="upload-section">
+                    <div class="upload-area" id="drop-zone">
+                        <i class="fas fa-file-upload fa-3x mb-3 text-muted"></i>
+                        <h4>Drag & Drop Resume</h4>
+                        <p class="text-muted">Supports PDF, DOCX (Max 5MB)</p>
+                        <input type="file" id="resume-file" hidden accept=".pdf,.docx">
+                        <button class="btn btn-premium mt-2" onclick="document.getElementById('resume-file').click()">Select File</button>
+                    </div>
+                </div>
+
+                <!-- Questions Display (Hidden by default) -->
+                <div class="card card-premium p-4 mb-4 d-none" id="questions-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 id="role-title">Detected Role: <span class="text-primary">Loading...</span></h3>
+                        <span class="badge bg-success" id="plan-badge">Free Plan</span>
+                    </div>
+
+                    <div id="questions-list" class="mb-4">
+                        <!-- Questions will be injected here -->
+                    </div>
+
+                    <div id="premium-upsell" class="alert alert-info text-center d-none">
+                        <h5>Want more questions & answer hints?</h5>
+                        <p>Upgrade your plan to unlock full potential.</p>
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-4">
+                                <div class="card p-3 plan-card" onclick="selectPlan(49, this)">
+                                    <h6>Starter</h6>
+                                    <h3>₹49</h3>
+                                    <small>10 Questions</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card p-3 plan-card" onclick="selectPlan(99, this)">
+                                    <h6>Pro</h6>
+                                    <h3>₹99</h3>
+                                    <small>Hints + AI Scoring</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card p-3 plan-card" onclick="selectPlan(299, this)">
+                                    <h6>Ultimate</h6>
+                                    <h3>₹299</h3>
+                                    <small>Voice Interview</small>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-premium mt-3 w-100" id="pay-btn" disabled>Upgrade Now</button>
+                    </div>
+                </div>
+
+                <!-- Mock Interview Mode (Hidden by default) -->
+                <div class="card card-premium p-4 mb-4 d-none" id="interview-section">
+                    <h3 class="text-center mb-4">Mock Interview Session</h3>
+                    <div class="text-center">
+                        <h5 id="current-question">Question will appear here...</h5>
+                        <div id="hint-area" class="alert alert-warning py-2 small d-none">
+                            <i class="fas fa-lightbulb"></i> <strong>Hint:</strong> <span id="hint-text"></span>
+                        </div>
+                        <div class="my-4">
+                            <button class="btn btn-outline-primary" onclick="speakQuestion()"><i class="fas fa-volume-up"></i> Listen</button>
+                            <button class="btn btn-danger" id="record-btn"><i class="fas fa-microphone"></i> Start Answer</button>
+                        </div>
+                        <div id="recorder-visualizer">
+                            <canvas id="visualizer-canvas"></canvas>
+                        </div>
+                        <div class="listening-indicator" id="listening-text"><i class="fas fa-circle text-danger"></i> Agent is listening...</div>
+                        <div id="interview-feedback" class="mt-4 text-start"></div>
+                    </div>
+                </div>
+
+                <!-- Past Sessions -->
+                <div class="mt-5">
+                    <h4 class="mb-3">Your Interview History</h4>
+                    <div class="accordion" id="history-accordion">
+                        <div class="text-center text-muted">No sessions found.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Razorpay script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        const email = localStorage.getItem("email") || sessionStorage.getItem("email");
+        if (!email) {
+            window.location.href = "login.html";
+        }
+
+        let currentSessionId = null;
+        let selectedPlanPrice = 0;
+        let selectedPlanName = ''; // To track selected plan name
+        let questions = [];
+        let hints = [];
+        let currentPlan = 'free';
+        let currentQuestionIdx = 0;
+        let mediaRecorder;
+        let audioChunks = [];
+        let audioContext, analyser, dataArray, animationId;
+
+        // --- Resume Upload ---
+        document.getElementById('resume-file').onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('resume', file);
+            formData.append('email', email);
+
+            document.getElementById('loader').style.display = 'flex';
+            try {
+                const res = await fetch('/api/ai/resume-analyze', { method: 'POST', body: formData });
+                const data = await res.json();
+                
+                if (data.success) {
+                    currentSessionId = data.sessionId;
+                    questions = data.questions;
+                    currentPlan = data.plan;
+                    renderQuestions(data);
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
+        };
+
+        function renderQuestions(data) {
+            document.getElementById('upload-section').classList.add('d-none');
+            document.getElementById('questions-section').classList.remove('d-none');
+            document.getElementById('role-title').innerHTML = `Detected Role: <span class="text-primary">${data.detectedRole}</span>`;
+            document.getElementById('plan-badge').innerText = data.plan.toUpperCase() + " Plan";
+
+            // --- Feature Gating: Question Limit ---
+            let displayCount = data.questions.length;
+            if (data.plan === 'free') displayCount = 3;
+            else if (data.plan === 'starter') displayCount = 10;
+            
+            const visibleQuestions = data.questions.slice(0, displayCount);
+            const list = document.getElementById('questions-list');
+            
+            list.innerHTML = visibleQuestions.map((q, i) => `
+                <div class="alert alert-light border mb-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Q${i + 1}:</strong> ${q}
+                        ${(data.plan === 'pro' || data.plan === 'ultimate') ? `<div class="text-muted small mt-1"><i class="fas fa-info-circle"></i> Click practice to see hints</div>` : ''}
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="startInterview(${i})">Practice</button>
+                </div>
+            `).join('');
+
+            if (data.plan === 'free' || (data.plan === 'starter' && data.totalQuestions > 10)) {
+                document.getElementById('premium-upsell').classList.remove('d-none');
+            } else {
+                document.getElementById('premium-upsell').classList.add('d-none');
+            }
+        }
+
+        // --- Razorpay Payment ---
+        function selectPlan(price, element) {
+            selectedPlanPrice = price;
+            selectedPlanName = price === 49 ? 'starter' : price === 99 ? 'pro' : 'ultimate';
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('pay-btn').disabled = false;
+            document.getElementById('pay-btn').innerHTML = `Upgrade to ${selectedPlanName.toUpperCase()} - ₹${price}`;
+        }
+
+        document.getElementById('pay-btn').onclick = async () => {
+            const btn = document.getElementById('pay-btn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> SECURING PAYMENT...`;
+
+            try {
+                const userName = localStorage.getItem("userName") || "Valued User";
+                const res = await fetch('/api/ai/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        amount: selectedPlanPrice, 
+                        sessionId: currentSessionId,
+                        email: email,
+                        name: userName,
+                        planName: selectedPlanName
+                    })
+                });
+                const orderData = await res.json();
+                if (!orderData.success) throw new Error(orderData.error);
+                
+                const { order } = orderData;
+                
+                // Get Razorpay Key from backend
+                const configRes = await fetch('/api/ai/config/razorpay');
+                const { key } = await configRes.json();
+
+            const options = {
+                key: key,
+                amount: order.amount,
+                currency: "INR",
+                order_id: order.id,
+                handler: async function (response) {
+                    const vRes = await fetch('/api/ai/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ...response, sessionId: currentSessionId, plan: selectedPlanPrice })
+                    });
+                    if ((await vRes.json()).success) {
+                        alert("Plan upgraded!");
+                        location.reload();
+                    }
+                }
+            };
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response){
+                    alert("Payment Failed: " + response.error.description);
+                });
+                rzp.open();
+            } catch (err) {
+                console.error("Payment Error:", err);
+                alert("Could not initialize payment: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        };
+
+        // --- Interview & TTS ---
+        async function startInterview(idx) {
+            // Feature Gate: Voice Recording check
+            if (currentPlan !== 'ultimate') {
+                const confirmUpgrade = confirm("Voice Mock Interview and AI Scoring is restricted to the Ultimate Plan. Would you like to upgrade?");
+                if (confirmUpgrade) {
+                    document.getElementById('interview-section').classList.add('d-none');
+                    document.getElementById('questions-section').classList.remove('d-none');
+                    document.getElementById('premium-upsell').scrollIntoView();
+                    return;
+                }
+            }
+
+            currentQuestionIdx = idx;
+            document.getElementById('questions-section').classList.add('d-none');
+            document.getElementById('interview-section').classList.remove('d-none');
+            document.getElementById('current-question').innerText = questions[idx];
+            
+            // Feature Gate: Hints (Only for Pro and Ultimate)
+            if (currentPlan === 'pro' || currentPlan === 'ultimate') {
+                const res = await fetch(`/api/ai/past-sessions?email=${email}`);
+                const data = await res.json();
+                const session = data.sessions.find(s => s.id === currentSessionId);
+                if (session && session.answer_hints) {
+                    const allHints = JSON.parse(session.answer_hints);
+                    document.getElementById('hint-text').innerText = allHints[idx] || "Think about practical application.";
+                    document.getElementById('hint-area').classList.remove('d-none');
+                }
+            } else {
+                document.getElementById('hint-area').classList.add('d-none');
+            }
+
+            speakQuestion();
+        }
+
+        function speakQuestion() {
+            const text = document.getElementById('current-question').innerText;
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 0.9;
+            window.speechSynthesis.speak(utter);
+        }
+
+        // --- Recording & Visualizer ---
+        document.getElementById('record-btn').onclick = async () => {
+            const btn = document.getElementById('record-btn');
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                stopRecording();
+                btn.innerHTML = `<i class="fas fa-microphone"></i> Start Answer`;
+                btn.classList.replace('btn-secondary', 'btn-danger');
+            } else {
+                startRecording();
+                btn.innerHTML = `<i class="fas fa-stop"></i> Stop Recording`;
+                btn.classList.replace('btn-danger', 'btn-secondary');
+            }
+        };
+
+        async function startRecording() {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            
+            // Visualizer Setup
+            document.getElementById('recorder-visualizer').style.display = 'block';
+            document.getElementById('listening-text').style.display = 'block';
+            setupVisualizer(stream);
+
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = sendAudio;
+            mediaRecorder.start();
+        }
+
+        function stopRecording() {
+            mediaRecorder.stop();
+            document.getElementById('listening-text').style.display = 'none';
+            if (animationId) cancelAnimationFrame(animationId);
+            if (audioContext) audioContext.close();
+        }
+
+        function setupVisualizer(stream) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            const source = audioContext.createMediaStreamSource(stream);
+            source.connect(analyser);
+            analyser.fftSize = 256;
+            const bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+
+            const canvas = document.getElementById('visualizer-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+
+            function draw() {
+                animationId = requestAnimationFrame(draw);
+                analyser.getByteFrequencyData(dataArray);
+                ctx.fillStyle = '#222';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let x = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    const barHeight = dataArray[i] / 2;
+                    ctx.fillStyle = `rgb(106, 17, 203)`; // Primary purple
+                    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                    x += barWidth + 1;
+                }
+            }
+            draw();
+        }
+
+        async function sendAudio() {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const formData = new FormData();
+            formData.append('audio', audioBlob);
+            formData.append('sessionId', currentSessionId);
+            formData.append('questionIndex', currentQuestionIdx);
+
+            document.getElementById('interview-feedback').innerHTML = `
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary"></div>
+                    <p class="mt-2">Agent is transcribing your answer...</p>
+                </div>
+            `;
+
+            const res = await fetch('/api/ai/voice-interview', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                renderFeedback(data);
+            }
+        }
+
+        function renderFeedback(data) {
+            const feedbackArea = document.getElementById('interview-feedback');
+            feedbackArea.innerHTML = `
+                <div class="card p-3 bg-light shadow-sm">
+                    <h6 class="text-primary"><i class="fas fa-quote-left"></i> Predicted Transcript:</h6>
+                    <p id="typewriter-transcript" class="transcript-text mb-3"></p>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <strong>AI Score:</strong> 
+                        <div class="progress flex-grow-1" style="height: 12px; border-radius: 10px;">
+                            <div class="progress-bar bg-primary" style="width: 0%"></div>
+                        </div>
+                        <span id="score-text">0/100</span>
+                    </div>
+                    <div id="ai-feedback-text" class="alert alert-info py-2 small d-none">
+                        <i class="fas fa-robot"></i> <strong>AI Feedback:</strong> <span></span>
+                    </div>
+                    <button class="btn btn-sm btn-primary mt-3 w-100" onclick="location.reload()">Continue to Next Question</button>
+                </div>
+            `;
+
+            // Start Typewriter Reveal
+            typeWriter(data.transcript, 'typewriter-transcript', () => {
+                // Animate Score and Feedback after transcript
+                const progressBar = feedbackArea.querySelector('.progress-bar');
+                progressBar.style.transition = "width 1s ease";
+                progressBar.style.width = data.score + "%";
+                document.getElementById('score-text').innerText = data.score + "/100";
+                
+                const feedbackBox = document.getElementById('ai-feedback-text');
+                feedbackBox.querySelector('span').innerText = data.feedback;
+                feedbackBox.classList.remove('d-none');
+            });
+        }
+
+        function typeWriter(text, elementId, callback) {
+            const element = document.getElementById(elementId);
+            const words = text.split(' ');
+            let i = 0;
+            
+            function addWord() {
+                if (i < words.length) {
+                    element.innerHTML += words[i] + ' ';
+                    i++;
+                    setTimeout(addWord, 50); // Speed of typing
+                } else {
+                    if (callback) callback();
+                }
+            }
+            addWord();
+        }
+
+        // --- Load History ---
+        async function loadHistory() {
+            const res = await fetch(`/api/ai/past-sessions?email=${email}`);
+            const data = await res.json();
+            if (data.success && data.sessions.length) {
+                const accordion = document.getElementById('history-accordion');
+                accordion.innerHTML = data.sessions.map((s, i) => {
+                    let qCount = 0;
+                    try { 
+                        const qs = typeof s.questions === 'string' ? JSON.parse(s.questions) : s.questions;
+                        qCount = Array.isArray(qs) ? qs.length : 0;
+                    } catch(e) { qCount = 0; }
+
+                    return `
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${i}">
+                                ${s.detected_role} - ${new Date(s.created_at).toLocaleDateString()} (Score: ${s.score || 0})
+                            </button>
+                        </h2>
+                        <div id="collapse${i}" class="accordion-collapse collapse" data-bs-parent="#history-accordion">
+                            <div class="accordion-body">
+                                <strong>Plan:</strong> ${s.plan} <br>
+                                <strong>Questions:</strong> ${qCount}
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+            }
+        }
+        loadHistory();
+    </script>
+</body>
+</html>
