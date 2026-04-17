@@ -445,15 +445,6 @@
         let mediaRecorder;
         let audioChunks = [];
         let audioContext, analyser, dataArray, animationId;
-        
-        // Speech Recognition variables
-        let recognition = null;
-        if ('webkitSpeechRecognition' in window) {
-            recognition = new webkitSpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
-        }
 
         // Silence detection variables
         let silenceStartTime = null;
@@ -673,29 +664,6 @@
                 mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
                 mediaRecorder.onstop = sendAudio;
                 mediaRecorder.start();
-                
-                // Real-time Speech-to-Text
-                if (recognition) {
-                    recognition.onresult = (event) => {
-                        let finalTranscript = '';
-                        let interimTranscript = '';
-                        for (let i = event.resultIndex; i < event.results.length; ++i) {
-                            if (event.results[i].isFinal) {
-                                finalTranscript += event.results[i][0].transcript;
-                            } else {
-                                interimTranscript += event.results[i][0].transcript;
-                            }
-                        }
-                        const currentText = finalTranscript || interimTranscript;
-                        if (currentText) {
-                            document.getElementById('live-transcript-text').innerText = currentText;
-                            // Reset silence timer whenever sound/speech is detected
-                            silenceStartTime = null;
-                        }
-                    };
-                    recognition.onerror = (event) => console.error("Recognition Error:", event.error);
-                    recognition.start();
-                }
 
                 if (isAutomatedMode) {
                     console.log("🚀 Automated Interview: Starting Silence Monitoring...");

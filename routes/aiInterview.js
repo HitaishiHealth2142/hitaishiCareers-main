@@ -346,6 +346,10 @@ router.post('/voice-interview', upload.single('audio'), async (req, res) => {
       const transcript = stdout.trim() || "";
       if (!transcript) {
           console.warn('⚠️ Transcription returned empty text.');
+          return res.status(500).json({ 
+              error: 'Transcription failed - no audio detected', 
+              details: 'The audio file could not be transcribed. Please try again with clearer audio.'
+          });
       }
       
       // Better Scoring Logic
@@ -376,7 +380,17 @@ router.post('/voice-interview', upload.single('audio'), async (req, res) => {
                        totalScore > 50 ? "Good effort. Try to incorporate more specific technical keywords mentioned in the hint." : 
                        "The response was a bit brief. Try to elaborate more on your practical experience.";
 
-      let answers = JSON.parse(session.answers || '[]');
+      let answers = [];
+      try {
+        if (session.answers && session.answers.trim() !== "") {
+          answers = JSON.parse(session.answers);
+        }
+      } catch (parseErr) {
+        console.error("❌ JSON Parse Error on session.answers:", parseErr.message);
+        console.error("Raw Value:", session.answers);
+        answers = [];
+      }
+      
       answers[qIdx] = { transcript, score: totalScore, feedback };
 
       await query(
