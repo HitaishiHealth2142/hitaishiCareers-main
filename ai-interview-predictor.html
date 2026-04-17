@@ -243,6 +243,86 @@
 </head>
 <body>
 
+  <!-- Header/Navbar -->
+  <div id="navbar-container"></div>
+  <script>
+    document.addEventListener("DOMContentLoaded", loadSharedNavbar);
+
+    async function loadSharedNavbar() {
+      try {
+        const response = await fetch("navbar.html");
+        const navbarHTML = await response.text();
+
+        document.getElementById("navbar-container").innerHTML = navbarHTML;
+
+        // wait DOM render after injection
+        requestAnimationFrame(() => {
+          initializeNavbarBootstrap();
+          loadNavbarProfile();
+        });
+
+      } catch (error) {
+        console.error("Navbar load failed:", error);
+      }
+    }
+
+    function initializeNavbarBootstrap() {
+      const toggler = document.querySelector(".navbar-toggler");
+      const collapse = document.querySelector(".navbar-collapse");
+
+      if (toggler && collapse) {
+        toggler.addEventListener("click", function() {
+          collapse.classList.toggle("show");
+        });
+      }
+
+      // Close navbar on link click (mobile)
+      const navLinks = document.querySelectorAll('.navbar-nav a.nav-link:not(.dropdown-toggle)');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          if (collapse.classList.contains('show')) {
+            toggler.click();
+          }
+        });
+      });
+
+      // Dropdown functionality
+      const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+      dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          const dropdownMenu = this.nextElementSibling;
+
+          // Close other dropdowns
+          document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            if (menu !== dropdownMenu) {
+              menu.classList.remove('show');
+            }
+          });
+
+          // Toggle current dropdown
+          dropdownMenu.classList.toggle('show');
+        });
+      });
+
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+          document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('show');
+          });
+        }
+      });
+    }
+
+    function loadNavbarProfile() {
+      const profilePhoto = localStorage.getItem("profilePhoto") || sessionStorage.getItem("profilePhoto");
+      if (profilePhoto && window.updateNavbarProfile) {
+        window.updateNavbarProfile(profilePhoto);
+      }
+    }
+  </script>
+
     <div class="loading-overlay" id="loader">
         <div class="pulse"></div>
         <h4 class="mt-4">AI Analyzing Resume...</h4>
