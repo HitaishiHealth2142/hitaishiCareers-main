@@ -105,6 +105,52 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // ─────────────────────────────────────────────
+// PYTHON COMMAND DETECTION
+// ─────────────────────────────────────────────
+const getPythonCommand = () => {
+    return new Promise((resolve) => {
+        const { exec } = require('child_process');
+        const fs = require('fs');
+        const path = require('path');
+
+        // 1. Try standard commands
+        exec('python --version', (err, stdout) => {
+            // Verify it's not the "Python was not found" message from Microsoft Store
+            if (!err && !stdout.includes('Microsoft Store')) return resolve('python');
+            
+            exec('py --version', (err) => {
+                if (!err) return resolve('py');
+                
+                exec('python3 --version', (err) => {
+                    if (!err) return resolve('python3');
+                    
+                    // 2. Try common Windows absolute paths as fallback
+                    if (process.platform === 'win32') {
+                        const localAppData = process.env.LOCALAPPDATA;
+                        if (localAppData) {
+                            const pythonDir = path.join(localAppData, 'Programs', 'Python');
+                            if (fs.existsSync(pythonDir)) {
+                                const versions = fs.readdirSync(pythonDir);
+                                if (versions.length > 0) {
+                                    const fullPath = path.join(pythonDir, versions[0], 'python.exe');
+                                    if (fs.existsSync(fullPath)) return resolve(`"${fullPath}"`);
+                                }
+                            }
+                        }
+                    }
+                    resolve('python'); 
+                });
+            });
+        });
+    });
+};
+let pythonCmd = 'python';
+getPythonCommand().then(cmd => {
+    pythonCmd = cmd;
+    console.log(`🐍 Detected Python Command: ${pythonCmd}`);
+});
+
+// ─────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────
 const loadQuestions = () => {
@@ -164,7 +210,7 @@ const detectRole = (text) => {
 // ─────────────────────────────────────────────
 router.post('/resume-analyze', upload.single('resume'), async (req, res) => {
   try {
-    const { email, name } = req.body;
+    const { email, name, plan, paymentId, orderId } = req.body;
     if (!req.file || !email) return res.status(400).json({ error: 'Resume and email required' });
 
     const resumeText = await extractText(req.file);
@@ -176,20 +222,25 @@ router.post('/resume-analyze', upload.single('resume'), async (req, res) => {
     const questions = roleQs.map(q => q.question);
     const hints = roleQs.map(q => q.hint);
 
+    const finalPlan = plan || 'free';
+
     const result = await query(
       `INSERT INTO ai_interview_sessions 
-       (email, name, resume_text, detected_role, plan, questions, answers, answer_hints) 
-       VALUES (?, ?, ?, ?, 'free', ?, '[]', ?)`,
-      [email, name || 'User', resumeText, role, JSON.stringify(questions), JSON.stringify(hints)]
+       (email, name, resume_text, detected_role, plan, questions, answers, answer_hints, payment_id, order_id) 
+       VALUES (?, ?, ?, ?, ?, ?, '[]', ?, ?, ?)`,
+      [email, name || 'User', resumeText, role, finalPlan, JSON.stringify(questions), JSON.stringify(hints), paymentId || null, orderId || null]
     );
+
+    let displayCount = 10;
+    if (finalPlan === 'free') displayCount = 3;
 
     res.json({
       success: true,
       sessionId: result.insertId,
       detectedRole: role,
-      questions: questions.slice(0, 3), // Free plan default
+      questions: questions.slice(0, displayCount),
       totalQuestions: questions.length,
-      plan: 'free'
+      plan: finalPlan
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -272,23 +323,43 @@ router.post('/verify-payment', async (req, res) => {
 // ─────────────────────────────────────────────
 router.post('/voice-interview', upload.single('audio'), async (req, res) => {
   try {
-    const { sessionId, questionIndex } = req.body;
-    if (!req.file) return res.status(400).json({ error: 'Audio required' });
+    const sId = parseInt(req.body.sessionId);
+    const qIdx = parseInt(req.body.questionIndex);
+    
+    if (!req.file) {
+        console.error('❌ Voice Interview: No audio file received.');
+        return res.status(400).json({ error: 'Audio required' });
+    }
 
     const scriptPath = path.join(__dirname, '../scripts/transcribe.py');
-    execFile('python', [scriptPath, req.file.path], async (error, stdout, stderr) => {
-      if (error) return res.status(500).json({ error: stderr || error.message });
+    console.log(`🎙️ Analyzing Audio: ${req.file.path} for Session ${sId}`);
+
+    execFile(pythonCmd, [scriptPath, req.file.path], async (error, stdout, stderr) => {
+      if (error) {
+          console.error('❌ Transcription Process Error:', stderr || error.message);
+          return res.status(500).json({ 
+              error: 'Transcription failed', 
+              details: stderr || error.message 
+          });
+      }
       
-      const transcript = stdout.trim();
+      const transcript = stdout.trim() || "";
+      if (!transcript) {
+          console.warn('⚠️ Transcription returned empty text.');
+      }
       
       // Better Scoring Logic
-      const session = await query("SELECT * FROM ai_interview_sessions WHERE id = ?", [sessionId]);
-      if (!session.length) return res.status(404).json({ error: 'Session not found' });
+      const sessions = await query("SELECT * FROM ai_interview_sessions WHERE id = ?", [sId]);
+      if (!sessions.length) {
+          console.error(`❌ Session ${sId} not found in DB.`);
+          return res.status(404).json({ error: 'Session not found' });
+      }
       
-      const role = session[0].detected_role;
+      const session = sessions[0];
+      const role = session.detected_role;
       const bank = loadQuestions();
       const roleData = bank[role] || bank['Fullstack'] || [];
-      const currentQData = roleData[questionIndex] || {};
+      const currentQData = roleData[qIdx] || {};
       const targetKeywords = currentQData.keywords || [];
 
       // Scoring factors
@@ -298,29 +369,30 @@ router.post('/voice-interview', upload.single('audio'), async (req, res) => {
       });
 
       const keywordScore = (keywordMatches / Math.max(1, targetKeywords.length)) * 60;
-      const lengthScore = Math.min(40, (transcript.split(' ').length / 50) * 40); // Target 50+ words
+      const lengthScore = Math.min(40, (transcript.split(' ').length / 50) * 40); 
       
       const totalScore = Math.round(keywordScore + lengthScore);
       const feedback = totalScore > 80 ? "Excellent response with strong technical alignment!" : 
                        totalScore > 50 ? "Good effort. Try to incorporate more specific technical keywords mentioned in the hint." : 
                        "The response was a bit brief. Try to elaborate more on your practical experience.";
 
-      let answers = JSON.parse(session[0].answers || '[]');
-      answers[questionIndex] = { transcript, score: totalScore, feedback };
+      let answers = JSON.parse(session.answers || '[]');
+      answers[qIdx] = { transcript, score: totalScore, feedback };
 
       await query(
         "UPDATE ai_interview_sessions SET answers = ? WHERE id = ?", 
-        [JSON.stringify(answers), sessionId]
+        [JSON.stringify(answers), sId]
       );
 
-      // Average score update
       const allScores = answers.filter(a => a).map(a => a.score);
       const avgScore = Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length);
-      await query("UPDATE ai_interview_sessions SET score = ? WHERE id = ?", [avgScore, sessionId]);
+      await query("UPDATE ai_interview_sessions SET score = ? WHERE id = ?", [avgScore, sId]);
 
+      console.log(`✅ Transcription Success: Score ${totalScore}`);
       res.json({ success: true, transcript, score: totalScore, feedback });
     });
   } catch (err) {
+    console.error('❌ Voice Interview Route Crash:', err);
     res.status(500).json({ error: err.message });
   }
 });
