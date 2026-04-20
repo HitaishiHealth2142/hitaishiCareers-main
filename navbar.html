@@ -210,10 +210,10 @@
             transition: width 0.3s ease;
         }
         .nav-link.active {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: #fff !important;
-            border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            color: #f1c40f !important;
+            border-bottom: 2px solid #f1c40f !important;
+            background: transparent !important;
+            box-shadow: none !important;
         }
 
         .nav-link:hover::after{
@@ -561,6 +561,12 @@
                 border-radius: 6px;
                 margin: 3px 0;
                 font-size: 14px;
+            }
+
+            .nav-link.active {
+                background: rgba(241, 196, 15, 0.1) !important;
+                color: #f1c40f !important;
+                border-bottom: 2px solid #f1c40f !important;
             }
 
             .nav-link::after {
@@ -1246,39 +1252,56 @@
         function setActiveLink() {
             let currentPage = window.location.pathname;
 
-            // Normalize (get only file name)
+            // Example:
+            // /jobs.html -> jobs.html
+            // / -> ""
             currentPage = currentPage.substring(currentPage.lastIndexOf('/') + 1);
 
-            // Handle homepage cases
+            // If homepage
             if (currentPage === "" || currentPage === "/") {
                 currentPage = "index.html";
             }
 
-            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+            // Remove query params or hash
+            currentPage = currentPage.split("?")[0].split("#")[0];
+
+            // Remove all active classes
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove("active");
+            });
+
+            // Match and activate
+            document.querySelectorAll('.nav-link').forEach(link => {
                 let linkPage = link.getAttribute("href");
 
                 if (!linkPage || linkPage === "#") return;
 
-                // Remove query params
-                linkPage = linkPage.split("?")[0];
+                linkPage = linkPage.substring(linkPage.lastIndexOf('/') + 1);
+                linkPage = linkPage.split("?")[0].split("#")[0];
 
                 if (currentPage === linkPage) {
                     link.classList.add("active");
 
-                    // Highlight parent dropdown also
+                    // If inside dropdown → highlight parent too
                     const parentDropdown = link.closest(".dropdown");
                     if (parentDropdown) {
                         const parentLink = parentDropdown.querySelector(".nav-link");
                         if (parentLink) parentLink.classList.add("active");
                     }
-
-                } else {
-                    link.classList.remove("active");
                 }
             });
         }
+                
+        // Run on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            setActiveLink();
+            
+            // Also run on hash/state changes (for single-page apps)
+            window.addEventListener("hashchange", setActiveLink);
+        });
 
-        window.addEventListener("DOMContentLoaded", setActiveLink);
+        // Fallback: run shortly after DOM ready
+        setTimeout(setActiveLink, 100);
 
         // ============================================
         // NAVBAR SCROLL EFFECT
