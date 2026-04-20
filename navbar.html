@@ -27,7 +27,7 @@
             right: 0;
             z-index: 1050;
             width: 100%;
-            display: none;
+            display: block;
         }
 
         .top-info-bar .container {
@@ -111,7 +111,7 @@
             padding: 12px 0;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             position: fixed;
-            top: 0;
+            top: 45px;
             left: 0;
             right: 0;
             z-index: 1040;
@@ -202,18 +202,25 @@
         .nav-link::after {
             content: '';
             position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 6px;
+            left: 0;
             width: 0;
             height: 2px;
-            background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+            background: linear-gradient(90deg, #3498db, #2980b9);
             transition: width 0.3s ease;
         }
+        .nav-link.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: #fff !important;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
 
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 80%;
+        .nav-link:hover::after{
+            width: 100%;
+        }
+        .nav-link.active:hover::after {
+            width: 0;
         }
 
         /* NAVBAR COLLAPSE DEFAULT STATE */
@@ -446,23 +453,8 @@
             outline: none;
             box-shadow: none;
         }
-
         .navbar-toggler-icon {
-            background-image: none;
-            position: relative;
-            width: 24px;
-            height: 24px;
-        }
-
-        .navbar-toggler-icon::before,
-        .navbar-toggler-icon::after {
-            content: '';
-            position: absolute;
-            width: 24px;
-            height: 2px;
-            background: #2c3e50;
-            left: 0;
-            transition: all 0.3s ease;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2844, 62, 80, 0.9%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
         }
 
         .navbar-toggler-icon::before {
@@ -1252,20 +1244,41 @@
         // ACTIVE LINK HIGHLIGHTING
         // ============================================
         function setActiveLink() {
-            const currentLocation = location.pathname;
-            const navLinks = document.querySelectorAll('.navbar-nav a.nav-link');
+            let currentPage = window.location.pathname;
 
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentLocation) {
-                    link.classList.add('active');
+            // Normalize (get only file name)
+            currentPage = currentPage.substring(currentPage.lastIndexOf('/') + 1);
+
+            // Handle homepage cases
+            if (currentPage === "" || currentPage === "/") {
+                currentPage = "index.html";
+            }
+
+            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+                let linkPage = link.getAttribute("href");
+
+                if (!linkPage || linkPage === "#") return;
+
+                // Remove query params
+                linkPage = linkPage.split("?")[0];
+
+                if (currentPage === linkPage) {
+                    link.classList.add("active");
+
+                    // Highlight parent dropdown also
+                    const parentDropdown = link.closest(".dropdown");
+                    if (parentDropdown) {
+                        const parentLink = parentDropdown.querySelector(".nav-link");
+                        if (parentLink) parentLink.classList.add("active");
+                    }
+
                 } else {
-                    link.classList.remove('active');
+                    link.classList.remove("active");
                 }
             });
         }
 
-        // Call on page load
-        window.addEventListener('load', setActiveLink);
+        window.addEventListener("DOMContentLoaded", setActiveLink);
 
         // ============================================
         // NAVBAR SCROLL EFFECT
@@ -1343,4 +1356,5 @@
 
     <!-- Hidden Google Translate Container (for API integration) -->
     <div id="google_translate_element" style="display: none;"></div>
+
 </header>
