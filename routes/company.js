@@ -6,9 +6,10 @@ const { v4: uuidv4 } = require("uuid");
 const multer = require('multer');
 const path = require('path');
 const { query } = require("../db");
-// Import the new employer-specific middleware
-const { protectEmployerRoute } = require('../middleware/authMiddleware');
+// Import unified middleware
+const { protect } = require('../middleware/auth');
 const { sendEmailAsync, sendCompanyRegistrationEmail, sendCompanyProfileUpdateEmail } = require('../services/emailService');
+
 
 const router = express.Router();
 const saltRounds = 10;
@@ -43,12 +44,12 @@ const upload = multer({ storage: storage, limits: { fileSize: 2000000 } }).singl
 // POST /api/company/register (UNPROTECTED)
 router.post("/register", (req, res) => {
     upload(req, res, async (err) => {
-        if (err) return res.status(400).json({ success: false, error: err.message });
+        if (err) return res.status(400).json({ success: false, message: err.message });
         try {
             const { company_name, email, password, website, description, contact_person, contact_phone, address } = req.body;
-            if (!company_name || !email || !password) return res.status(400).json({ success: false, error: "Company name, email, and password are required." });
+            if (!company_name || !email || !password) return res.status(400).json({ success: false, message: "Company name, email, and password are required." });
             const existingCompany = await query('SELECT id FROM companies WHERE user_email = ?', [email]);
-            if (existingCompany.length > 0) return res.status(409).json({ success: false, error: "This email address is already registered." });
+            if (existingCompany.length > 0) return res.status(409).json({ success: false, message: "This email address is already registered." });
             
             const id = uuidv4();
             const hashed = await bcrypt.hash(password, saltRounds);
@@ -65,7 +66,7 @@ router.post("/register", (req, res) => {
             res.status(201).json({ success: true, message: "Registration successful!" });
         } catch (dbErr) {
             console.error("Company registration failed:", dbErr);
-            res.status(500).json({ success: false, error: "An internal server error occurred." });
+            res.status(500).json({ success: false, message: "An internal server error occurred." });
         }
     });
 });
@@ -74,14 +75,14 @@ router.post("/register", (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (!email || !password) return res.status(400).json({ success: false, error: "Email and password are required." });
+        if (!email || !password) return res.status(400).json({ success: false, message: "Email and password are required." });
         
         const rows = await query(`SELECT * FROM companies WHERE user_email = ?`, [email]);
-        if (!rows.length) return res.status(401).json({ success: false, error: "Invalid credentials." });
+        if (!rows.length) return res.status(401).json({ success: false, message: "Invalid credentials." });
         
         const company = rows[0];
         const match = await bcrypt.compare(password, company.password_hash);
-        if (!match) return res.status(401).json({ success: false, error: "Invalid credentials." });
+        if (!match) return res.status(401).json({ success: false, message: "Invalid credentials." });
         
         // Create a JWT with a specific 'role' for employers
         const payload = { id: company.id, role: "company", name: company.company_name };
@@ -96,7 +97,7 @@ router.post("/login", async (req, res) => {
 
     } catch (err) {
         console.error("Employer Login failed:", err);
-        res.status(500).json({ success: false, error: "Login failed due to a server error." });
+        res.status(500).json({ success: false, message: "Login failed due to a server error." });
     }
 });
 
@@ -109,30 +110,30 @@ router.get("/all", async (_req, res) => {
         res.json({ success: true, companies });
     } catch (err) {
         console.error("Failed to fetch all companies:", err);
-        res.status(500).json({ success: false, error: "Failed to fetch companies." });
+        res.status(500).json({ success: false, message: "Failed to fetch companies." });
     }
 });
 
 
-// GET /api/company/profile (PROTECTED by protectEmployerRoute in server.js)
-router.get("/profile", protectEmployerRoute, async (req, res) => {
+// GET /api/company/profile (PROTECTED by protect(['company']) in server.js)
+router.get("/profile", protect(['company']), async (req, res) => {
     try {
-        // req.company is set by protectEmployerRoute
-        const { id } = req.company; 
+        // req.user is set by protect(['company'])
+        const { id } = req.user; 
         const rows = await query(`SELECT id, user_email, company_name, website, description, logo_url, contact_person, contact_phone, address FROM companies WHERE id = ?`, [id]);
-        if (!rows.length) return res.status(404).json({ error: "Company profile not found." });
+        if (!rows.length) return res.status(404).json({ success: false, message: "Company profile not found." });
         res.json(rows[0]);
     } catch (err) {
         console.error("Failed to fetch company profile:", err);
-        res.status(500).json({ error: "Failed to fetch company profile." });
+        res.status(500).json({ success: false, message: "Failed to fetch company profile." });
     }
 });
 
-// PATCH /api/company/profile (PROTECTED by protectEmployerRoute in server.js)
-router.patch("/profile", protectEmployerRoute, upload, async (req, res) => {
+// PATCH /api/company/profile (PROTECTED by protect(['company']) in server.js)
+router.patch("/profile", protect(['company']), upload, async (req, res) => {
     try {
-        // req.company is set by protectEmployerRoute
-        const { id } = req.company;
+        // req.user is set by protect(['company'])
+        const { id } = req.user;
         const { company_name, website, description, contact_person, contact_phone, address } = req.body;
         
         let fieldsToUpdate = [];

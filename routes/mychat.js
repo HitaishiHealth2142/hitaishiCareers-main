@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const { query } = require("../db");
-const { protectRoute } = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/auth");
 
 module.exports = function (app, io) {
   const router = express.Router();
@@ -31,8 +31,8 @@ module.exports = function (app, io) {
           id CHAR(36) PRIMARY KEY,
           uuid VARCHAR(36) NOT NULL UNIQUE,
           room_id INT NOT NULL,
-          sender_id INT NOT NULL,
-          receiver_id VARCHAR(36) DEFAULT NULL,
+          sender_id VARCHAR(50) NOT NULL,
+          receiver_id VARCHAR(50) DEFAULT NULL,
           sender_type ENUM('user','mentor') DEFAULT 'user',
           message_type ENUM('text','image','file','voice') DEFAULT 'text',
           encrypted_message LONGTEXT,
@@ -47,8 +47,8 @@ module.exports = function (app, io) {
           id CHAR(36) PRIMARY KEY,
           uuid VARCHAR(36) NOT NULL UNIQUE,
           room_id INT NOT NULL,
-          caller_id INT NOT NULL,
-          receiver_id VARCHAR(36) NOT NULL,
+          caller_id VARCHAR(50) NOT NULL,
+          receiver_id VARCHAR(50) NOT NULL,
           call_type ENUM('audio','video') DEFAULT 'audio',
           duration INT DEFAULT 0,
           call_status ENUM('completed','missed','rejected') DEFAULT 'completed',
@@ -120,9 +120,9 @@ module.exports = function (app, io) {
           WHERE is_seen = 0 AND receiver_id = ?
           GROUP BY room_id
         ) unread_counts ON unread_counts.room_id = cr.id
-        WHERE cr.user_id = ?
+        WHERE cr.user_id = ? OR cr.mentor_id = ?
         ORDER BY lastMessageTime DESC, cr.created_at DESC
-      `, [userId, userId]);
+      `, [userId, userId, userId]);
 
       res.json({ success: true, chats });
     } catch (error) {
@@ -151,8 +151,8 @@ module.exports = function (app, io) {
       const { roomId, message, messageType = "text", fileUrl = null } = req.body;
 
       const [room] = await query(
-        'SELECT * FROM mentor_chat_rooms WHERE id = ? AND user_id = ?',
-        [roomId, userId]
+        'SELECT * FROM mentor_chat_rooms WHERE id = ? AND (user_id = ? OR mentor_id = ?)',
+        [roomId, userId, userId]
       );
       if (!room) {
         return res.status(403).json({ success: false, message: 'Invalid chat room' });
@@ -166,7 +166,7 @@ module.exports = function (app, io) {
         return res.status(403).json({ success: false, message: 'Session inactive or expired' });
       }
 
-      const receiverId = room.mentor_id;
+      const receiverId = (req.user.role === 'user') ? room.mentor_id : room.user_id;
       const messageId = uuidv4();
       await query(`
         INSERT INTO mentor_messages
@@ -178,7 +178,7 @@ module.exports = function (app, io) {
         roomId,
         userId,
         receiverId,
-        "user",
+        (req.user.role === 'mentor' ? 'mentor' : 'user'),
         messageType,
         sanitize(message),
         fileUrl,
@@ -262,32 +262,10 @@ module.exports = function (app, io) {
     }
   }
 
-  async function getRoomByBooking(req, res) {
-    try {
-      const userId = req.user.id;
-      const { bookingId } = req.params;
-
-      const [room] = await query(
-        `SELECT id as roomId, booking_id as bookingId, mentor_id as mentorId
-         FROM mentor_chat_rooms
-         WHERE booking_id = ? AND user_id = ?`,
-        [bookingId, userId]
-      );
-
-      if (!room) {
-        return res.status(404).json({ success: false, message: 'Chat room not found for booking' });
-      }
-
-      res.json({ success: true, room });
-    } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-    }
-  }
-
   // ========================================
   // ROUTES
   // ========================================
-  router.use(protectRoute);
+  router.use(protect(['user', 'mentor']));
 
   router.get("/list", getChatList);
   router.get("/messages/:roomId", getMessages);

@@ -73,19 +73,19 @@ router.get('/profile', async (req, res) => {
         // Use the email from the session if available, otherwise check query params.
         const userEmail = req.user.email;
         if (!userEmail) return res.status(401).json({
-            error: 'Not logged in or user email not provided'
+            message: 'Not logged in or user email not provided'
         });
 
         const rows = await query('SELECT * FROM users WHERE email=?', [userEmail]);
         if (!rows.length) return res.status(404).json({
-            error: 'User not found'
+            message: 'User not found'
         });
 
         res.json(rows[0]);
     } catch (err) {
         console.error("❌ Error fetching profile:", err);
         res.status(500).json({
-            error: 'Server error while fetching profile'
+            message: 'Server error while fetching profile'
         });
     }
 });
@@ -97,10 +97,10 @@ router.get('/full', async (req, res) => {
     // The 'protectRoute' middleware has already verified the user.
     // We get the email directly from req.user.
     const userEmail = req.user.email;
-    if (!userEmail) return res.status(401).json({ error: 'Authentication error' });
+    if (!userEmail) return res.status(401).json({ success: false, message: 'Authentication error' });
 
     const rows = await query('SELECT * FROM users WHERE email = ?', [userEmail]);
-    if (!rows.length) return res.status(404).json({ error: 'User not found' });
+    if (!rows.length) return res.status(404).json({ success: false, message: 'User not found' });
 
     const u = rows[0];
 
@@ -136,7 +136,7 @@ router.get('/full', async (req, res) => {
     res.json(payload);
   } catch (err) {
     console.error('❌ Error in /api/profile/full:', err);
-    res.status(500).json({ error: 'Server error while fetching full profile' });
+    res.status(500).json({ success: false, message: 'Server error while fetching full profile' });
   }
 });
 
@@ -144,7 +144,7 @@ router.get('/full', async (req, res) => {
 router.post('/update', upload.single('profilePhoto'), async (req, res) => {
   try {
     const email = req.user.email;
-    if (!email) return res.status(401).json({ error: 'Not authenticated' });
+    if (!email) return res.status(401).json({ success: false, message: 'Not authenticated' });
 
     // Sanitize all textual inputs before updating the database
     const updates = {};
@@ -195,7 +195,7 @@ router.post('/update', upload.single('profilePhoto'), async (req, res) => {
     res.json({ success: true, message: 'Profile updated successfully' });
   } catch (err) {
     console.error('❌ Error updating profile:', err);
-    res.status(500).json({ error: 'Server error while updating profile' });
+    res.status(500).json({ success: false, message: 'Server error while updating profile' });
   }
 });
 
@@ -204,10 +204,10 @@ router.post('/update', upload.single('profilePhoto'), async (req, res) => {
 router.post('/upload-resume', upload.single('resume'), async (req, res) => {
     try {
         const userEmail = req.user.email;
-        if (!userEmail) return res.status(401).json({ error: 'Not authenticated' });
+        if (!userEmail) return res.status(401).json({ success: false, message: 'Not authenticated' });
 
         if (!req.file) {
-            return res.status(400).json({ error: 'No resume file uploaded.' });
+            return res.status(400).json({ success: false, message: 'No resume file uploaded.' });
         }
 
         const resumeUrl = `/uploads/${req.file.filename}`;
@@ -215,8 +215,8 @@ router.post('/upload-resume', upload.single('resume'), async (req, res) => {
 
         res.json({ success: true, message: 'Resume uploaded successfully', url: resumeUrl });
     } catch (err) {
-        console.error("❌ Resume upload error:", err);
-        res.status(500).json({ error: 'Error uploading resume' });
+        console.error("❌ Resume upload message:", err);
+        res.status(500).json({ success: false, message: 'Error uploading resume' });
     }
 });
 
@@ -229,7 +229,7 @@ router.post('/update-password', async (req, res) => {
 
     if (!newPassword || newPassword.length < 6) {
       return res.status(400).json({
-        error: 'Password must be at least 6 characters'
+        message: 'Password must be at least 6 characters'
       });
     }
 
@@ -240,7 +240,7 @@ router.post('/update-password', async (req, res) => {
 
     if (!users.length) {
       return res.status(404).json({
-        error: 'User not found'
+        message: 'User not found'
       });
     }
 
@@ -248,7 +248,7 @@ router.post('/update-password', async (req, res) => {
 
     if (user.auth_provider === 'google') {
       return res.status(403).json({
-        error: 'Google login users cannot change password'
+        message: 'Google login users cannot change password'
       });
     }
 
@@ -271,9 +271,9 @@ router.post('/update-password', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Password update error:', err);
+    console.error('Password update message:', err);
     res.status(500).json({
-      error: 'Server error while updating password'
+      message: 'Server error while updating password'
     });
   }
 });

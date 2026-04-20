@@ -14,6 +14,8 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="navbar.css">
+  <script src="scripts/auth.js"></script>
+
   <!-- Simplified and necessary CSP -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:;">
 
@@ -352,11 +354,13 @@
       if (res.ok) {
         showCustomAlert("✅ Login successful with Google!", 'success');
         
-        // Store email in sessionStorage for cross-page authentication state
-        sessionStorage.setItem("email", result.user.email);
+        // Store tokens and user info
+        Auth.setTokens(result.accessToken, result.refreshToken);
+        Auth.setUser(result.user);
         
         // Redirect to profile
         window.location.href = "userProfile.html";
+
       } else {
         // Handle error (e.g., if Google account is not linked or if backend auth fails)
         showCustomAlert("❌ " + (result.error || "Google sign-in failed."), 'danger');
@@ -430,11 +434,16 @@
         const result = await res.json();
         if (res.ok) {
           
+          
           showCustomAlert("✅ " + result.message, 'success');
-          // Store email in sessionStorage for cross-page authentication state
-          sessionStorage.setItem("email", result.user.email);
+          
+          // Store tokens and user info
+          Auth.setTokens(result.accessToken, result.refreshToken);
+          Auth.setUser(result.user);
+
           // Redirect
           window.location.href = "userProfile.html";
+
         } else {
           showCustomAlert("❌ " + (result.error || "Login failed."), 'danger');
         }

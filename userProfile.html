@@ -17,6 +17,8 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="navbar.css">
+    <script src="scripts/auth.js"></script>
+
     <style>
         :root {
             --primary-color: #6a0dad;
@@ -890,48 +892,19 @@ link.addEventListener('click', function(e) {
 
     // === LOGOUT ===
     async function logout() {
-        try {
-            // Send logout request to clear HttpOnly cookie
-            const response = await fetch('/api/logout', {
-                method: 'POST',
-                credentials: 'include'
-            });
-            
-            // Always clear client-side storage (Cleanup)
-            localStorage.removeItem('jwt'); // No longer used, but good practice to clear just in case
-            sessionStorage.clear();
-
-            if (response.ok) {
-                window.location.href = 'login.html';
-            } else {
-                // If server response is not ok but we cleared client state, still redirect
-                showToast('Logged out, redirecting...', 'info');
-                setTimeout(() => { window.location.href = 'login.html'; }, 1000);
-            }
-        } catch (error) {
-            console.error('Error during logout:', error);
-            // On network error, clear client state and redirect anyway
-            localStorage.removeItem('jwt'); 
-            sessionStorage.clear();
-            showToast('An error occurred during logout. Redirecting...', 'danger');
-            setTimeout(() => { window.location.href = 'login.html'; }, 1000);
-        }
+        await Auth.logout();
     }
+
 
     // === LOAD PROFILE DATA ===
     async function loadProfileData() {
         try {
-            // Rely on the secure HttpOnly cookie (credentials: 'include')
-            const response = await fetch('/api/profile/full', { credentials: 'include' });
+            const response = await Auth.fetchWithAuth('/api/profile/full');
             
-            if (response.status === 401) {
-                // If the server rejects the cookie, redirect
-                localStorage.removeItem('jwt');
-                sessionStorage.clear();
-                window.location.href = 'login.html';
-                return;
+            if (!response.ok) {
+                if (response.status === 401) return; // Auth utility handles redirect
+                throw new Error('Failed to fetch profile data.');
             }
-            if (!response.ok) throw new Error('Failed to fetch profile data.');
 
             profileData = await response.json();
             populateAllSections();
@@ -941,6 +914,7 @@ link.addEventListener('click', function(e) {
             showToast('Error loading your profile. Please try refreshing.', 'danger');
         }
     }
+
 
     // === POPULATE PROFILE SECTIONS ===
     function populateAllSections() {
@@ -1087,22 +1061,16 @@ link.addEventListener('click', function(e) {
     async function saveData(endpoint, payload) {
         const isFormData = payload instanceof FormData;
         try {
-            const response = await fetch(endpoint, {
+            const response = await Auth.fetchWithAuth(endpoint, {
                 method: 'POST',
                 // Use default Content-Type for FormData, explicitly set for JSON
                 headers: isFormData ? {} : { 'Content-Type': 'application/json' },
-                body: isFormData ? payload : JSON.stringify(payload),
-                credentials: 'include' // Always include cookie for primary auth
+                body: isFormData ? payload : JSON.stringify(payload)
             });
 
-            if (response.status === 401) {
-                // If unauthorized mid-session, clear state and redirect
-                localStorage.removeItem('jwt');
-                sessionStorage.clear();
-                window.location.href = 'login.html';
-                return null;
-            }
             if (!response.ok) {
+                if (response.status === 401) return null; // Auth utility handles redirect
+
                  // Throwing the error here will catch the 413 error message from the proxy.
                  if (response.status === 413) {
                     throw new Error("File upload failed. The maximum allowed file size is 20MB. Please check your file size.");

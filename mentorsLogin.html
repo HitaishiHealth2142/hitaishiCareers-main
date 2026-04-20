@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mentor Login - WinJob</title>
+  <script src="scripts/auth.js"></script>
+
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -507,12 +509,11 @@
 
         const data = await response.json();
 
-        if (data.success) {
-          // Store token in localStorage for mobile/API usage
-          if (data.token) {
-            localStorage.setItem('mentorToken', data.token);
-            localStorage.setItem('mentor', JSON.stringify(data.mentor));
-          }
+        if (data.success && data.accessToken) {
+          // Store tokens and user info using the unified Auth utility
+          Auth.setTokens(data.accessToken, data.refreshToken);
+          Auth.setUser(data.user);
+
 
           document.getElementById('successMessage').classList.add('show');
           setTimeout(() => {
