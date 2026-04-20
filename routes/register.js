@@ -3,66 +3,9 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken'); // Import jsonwebtoken
 const { query } = require('../db');
-const { sendEmailAsync, sendUserRegistrationEmail } = require('../services/emailService');
+const authController = require('../controllers/authController');
 const router = express.Router();
-
-
-// Basic input sanitization to prevent stored XSS
-const sanitize = (str) => {
-  if (typeof str !== 'string') return '';
-  // Removes common HTML/scripting characters
-  return str.replace(/[<>\"'()]/g, ''); 
-};
-
-const saltRounds = 10;
-
-// --- Auto Create Users Table ---
-(async function initUsersTable() {
-  try {
-    await query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        full_name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL UNIQUE,
-        mobile_number VARCHAR(20) NOT NULL,
-        password_hash VARCHAR(255) DEFAULT NULL,
-        google_id VARCHAR(255) DEFAULT NULL,
-        profile_image_url VARCHAR(500) DEFAULT NULL,
-        auth_provider ENUM('local','google') DEFAULT 'local',
-
-        gender VARCHAR(20) DEFAULT NULL,
-        experience_level VARCHAR(100) DEFAULT NULL,
-        ctc_expected VARCHAR(100) DEFAULT NULL,
-        notice_period VARCHAR(100) DEFAULT NULL,
-
-        professional_details JSON DEFAULT NULL,
-        projects JSON DEFAULT NULL,
-        skills JSON DEFAULT NULL,
-        education JSON DEFAULT NULL,
-        certifications JSON DEFAULT NULL,
-        languages JSON DEFAULT NULL,
-
-        resume_url VARCHAR(500) DEFAULT NULL,
-        profile_uuid VARCHAR(100) DEFAULT NULL,
-
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-          ON UPDATE CURRENT_TIMESTAMP
-      )
-    `);
-
-    console.log("✅ users table is ready.");
-  } catch (err) {
-    console.error("❌ Error creating users table:", err.message);
-  }
-})();
-
-
-
-
 
 // --- Ensure 'uploads' directory exists ---
 const uploadDir = path.join(__dirname, '../uploads');
@@ -81,164 +24,19 @@ const storage = multer.diskStorage({
     }
 });
 
-// 🚨 UPDATED: Set file size limit to 20MB for registration image
 const upload = multer({
     storage: storage,
     limits: { 
         fileSize: 20 * 1024 * 1024, // 20 MB limit
     }
 });
-router.use(express.json());
-router.use(express.urlencoded({
-    extended: true
-}));
 
-// --- Secure Registration Route with Auto-Login ---
-router.post('/user/register', upload.single('profileImage'), async (req, res) => {
-  try {
-    // --- Sanitize and validate inputs ---
-    const fullName = sanitize(req.body.fullName);
-    const email = sanitize(req.body.email);
-    const mobileNumber = sanitize(req.body.mobileNumber);
-    const password = req.body.password; // Do NOT sanitize password
-    const profileImageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+// --- Secure Registration Route with centralized controller ---
+router.post('/user/register', upload.single('profileImage'), authController.register);
 
-    if (!fullName || !email || !mobileNumber || !password) {
-      return res.status(400).json({ error: 'All fields except profile image are required.' });
-    }
+// --- Secure Login Route with centralized controller ---
+router.post('/user/login', authController.login);
 
-    // --- Check if user already exists ---
-    const existingUser = await query('SELECT * FROM users WHERE email = ?', [email]);
-    if (existingUser.length > 0) {
-      if (existingUser[0].auth_provider === 'google') {
-        return res.status(409).json({ error: 'This email was used to sign up with Google. Please log in with Google.' });
-      }
-      return res.status(409).json({ error: 'This email address is already registered.' });
-    }
-
-    // --- Hash password securely ---
-    const passwordHash = await bcrypt.hash(password, saltRounds);
-
-    // --- Insert user into database ---
-    const insertUserQuery = `
-      INSERT INTO users (full_name, email, mobile_number, password_hash, profile_image_url, auth_provider)
-      VALUES (?, ?, ?, ?, ?, ?);
-    `;
-    const result = await query(insertUserQuery, [fullName, email, mobileNumber, passwordHash, profileImageUrl, 'local']);
-
-    console.log(`✅ User registered successfully with ID: ${result.insertId}`);
-
-    // --- Send welcome email in background (non-blocking) ---
-    sendEmailAsync(() => sendUserRegistrationEmail({
-      fullName,
-      email
-    }));
-
-    // --- Auto-login: Generate JWT ---
-    const payload = {
-      id: result.insertId,
-      email,
-      fullName
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
-
-    // --- Set secure, httpOnly cookie (Primary security for WEBSITE) ---
-    res.cookie('token', token, {
-      httpOnly: true,                    
-      secure: process.env.NODE_ENV === 'production', 
-      sameSite: 'strict',                
-      maxAge: 7 * 24 * 60 * 60 * 1000   
-    });
-
-    // --- MODIFIED: Include token in body for mobile app to save in localStorage ---
-    res.status(201).json({
-      success: true,
-      message: 'User registered successfully!',
-      token: token, // 💡 ADDED
-      user: {
-        id: result.insertId,
-        fullName,
-        email,
-        profileImage: profileImageUrl || null
-      }
-    });
-
-  } catch (error) {
-    console.error('❌ Error during registration:', error);
-    if (error.code === 'ER_DUP_ENTRY') {
-      return res.status(409).json({ error: 'This email address is already registered.' });
-    }
-    res.status(500).json({ error: 'An error occurred on the server.' });
-  }
-});
-
-// --- Secure Login Route (Redundant, but updated for consistency) ---
-router.post('/user/login', async (req, res) => {
-  try {    
-    const email = sanitize(req.body.email);
-    const password = req.body.password; // do NOT sanitize password
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required.' });
-    }
-
-    // --- Check if user exists ---
-    const users = await query('SELECT * FROM users WHERE email = ?', [email]);
-    if (users.length === 0) {
-      return res.status(401).json({ error: 'Invalid email or password.' });
-    }
-
-    const user = users[0];
-
-    // --- Prevent login if Google account ---
-    if (user.auth_provider === 'google') {
-      return res.status(403).json({
-        error: 'This account was registered with Google. Please use Google to log in.'
-      });
-    }
-
-    // --- Verify password ---
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalid email or password.' });
-    }
-
-    // --- Generate JWT ---
-    const payload = {
-      id: user.id,
-      email: user.email,
-      fullName: user.full_name
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
-
-    // --- Set JWT in secure HttpOnly cookie (Primary security for WEBSITE) ---
-    res.cookie('token', token, {
-      httpOnly: true,                    // Prevent JS access (XSS safe)
-      secure: process.env.NODE_ENV === 'production', // Use HTTPS only in prod
-      maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
-      sameSite: 'strict'                 // Prevent CSRF
-    });
-
-    // --- MODIFIED: Include token in body for mobile app to save in localStorage ---
-    res.status(200).json({
-      success: true,
-      message: 'Login successful!',
-      token: token, // 💡 ADDED
-      user: {
-        id: user.id,
-        fullName: user.full_name,
-        email: user.email,
-        profileImage: user.profile_image_url || null
-      }
-    });
-
-  } catch (error) {
-    console.error('❌ Error during login:', error);
-    res.status(500).json({ error: 'An error occurred on the server.' });
-  }
-});
 
 // --- UNPROTECTED: GET all users ---
 // **IMPORTANT**: Keep this route UNPROTECTED in your main server configuration.

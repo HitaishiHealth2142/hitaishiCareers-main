@@ -8,8 +8,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { query } = require('../db');
-const { protectAdminRoute } = require('../middleware/adminAuthMiddleware');
+const { protect } = require('../middleware/auth');
 const { sendEmailAsync, sendAdminOTPEmail } = require('../services/emailService');
+
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -87,20 +88,20 @@ router.post('/request-otp', async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required.' });
+      return res.status(400).json({ success: false, message: 'Email and password are required.' });
     }
 
     // Find admin by email
     const [admin] = await query('SELECT * FROM admins WHERE email = ?', [email]);
 
     if (!admin) {
-      return res.status(401).json({ error: 'Invalid admin credentials.' });
+      return res.status(401).json({ success: false, message: 'Invalid admin credentials.' });
     }
 
     // Verify password
     const passwordMatch = await bcrypt.compare(password, admin.password_hash);
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid admin credentials.' });
+      return res.status(401).json({ success: false, message: 'Invalid admin credentials.' });
     }
 
     // Generate OTP
@@ -132,7 +133,7 @@ router.post('/request-otp', async (req, res) => {
 
   } catch (err) {
     console.error('Error requesting OTP:', err);
-    res.status(500).json({ error: 'Server error while requesting OTP.' });
+    res.status(500).json({ success: false, message: 'Server error while requesting OTP.' });
   }
 });
 
@@ -145,13 +146,13 @@ router.post('/verify-otp', async (req, res) => {
     const { adminId, otp } = req.body;
 
     if (!adminId || !otp) {
-      return res.status(400).json({ error: 'Admin ID and OTP are required.' });
+      return res.status(400).json({ success: false, message: 'Admin ID and OTP are required.' });
     }
 
     // Get admin
     const [admin] = await query('SELECT * FROM admins WHERE id = ?', [adminId]);
     if (!admin) {
-      return res.status(404).json({ error: 'Admin not found.' });
+      return res.status(404).json({ success: false, message: 'Admin not found.' });
     }
 
     // Find valid OTP
@@ -164,12 +165,12 @@ router.post('/verify-otp', async (req, res) => {
     );
 
     if (!otpRecord) {
-      return res.status(401).json({ error: 'Invalid OTP.' });
+      return res.status(401).json({ success: false, message: 'Invalid OTP.' });
     }
 
     // Check if OTP is expired
     if (new Date() > otpRecord.expires_at) {
-      return res.status(401).json({ error: 'OTP expired. Request a new one.' });
+      return res.status(401).json({ success: false, message: 'OTP expired. Request a new one.' });
     }
 
     // Mark OTP as used
@@ -205,7 +206,7 @@ router.post('/verify-otp', async (req, res) => {
 
   } catch (err) {
     console.error('Error verifying OTP:', err);
-    res.status(500).json({ error: 'Server error while verifying OTP.' });
+    res.status(500).json({ success: false, message: 'Server error while verifying OTP.' });
   }
 });
 
@@ -213,15 +214,15 @@ router.post('/verify-otp', async (req, res) => {
 // GET /api/admin/profile
 // Get current admin profile (PROTECTED)
 // ==========================================
-router.get('/profile', protectAdminRoute, async (req, res) => {
+router.get('/profile', protect(['admin']), async (req, res) => {
   try {
     const [admin] = await query(
       'SELECT id, email, last_login FROM admins WHERE id = ?',
-      [req.admin.id]
+      [req.user.id]
     );
 
     if (!admin) {
-      return res.status(404).json({ error: 'Admin not found.' });
+      return res.status(404).json({ success: false, message: 'Admin not found.' });
     }
 
     res.json({
@@ -234,7 +235,7 @@ router.get('/profile', protectAdminRoute, async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching admin profile:', err);
-    res.status(500).json({ error: 'Server error while fetching profile.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching profile.' });
   }
 });
 
@@ -242,7 +243,7 @@ router.get('/profile', protectAdminRoute, async (req, res) => {
 // POST /api/admin/logout
 // Admin logout (PROTECTED)
 // ==========================================
-router.post('/logout', protectAdminRoute, (req, res) => {
+router.post('/logout', protect(['admin']), (req, res) => {
   res.cookie('adminToken', '', {
     httpOnly: true,
     expires: new Date(0),
@@ -257,7 +258,7 @@ router.post('/logout', protectAdminRoute, (req, res) => {
 // GET /api/admin/dashboard/all-users
 // Get all users/candidates (PROTECTED)
 // ==========================================
-router.get('/dashboard/all-users', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/all-users', protect(['admin']), async (req, res) => {
   try {
     const users = await query(
       `SELECT id, full_name, email, mobile_number, gender, experience_level, 
@@ -271,7 +272,7 @@ router.get('/dashboard/all-users', protectAdminRoute, async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching users:', err);
-    res.status(500).json({ error: 'Server error while fetching users.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching users.' });
   }
 });
 
@@ -280,7 +281,7 @@ router.get('/dashboard/all-users', protectAdminRoute, async (req, res) => {
 // GET /api/admin/dashboard/users/filter-by-skill/:skill
 // Filter users by skill (PROTECTED)
 // ==========================================
-router.get('/dashboard/users/filter-by-skill/:skill', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/users/filter-by-skill/:skill', protect(['admin']), async (req, res) => {
   try {
     const { skill } = req.params;
 
@@ -300,7 +301,7 @@ router.get('/dashboard/users/filter-by-skill/:skill', protectAdminRoute, async (
     });
   } catch (err) {
     console.error('Error filtering users by skill:', err);
-    res.status(500).json({ error: 'Server error while filtering users by skill.' });
+    res.status(500).json({ success: false, message: 'Server error while filtering users by skill.' });
   }
 });
 
@@ -309,7 +310,7 @@ router.get('/dashboard/users/filter-by-skill/:skill', protectAdminRoute, async (
 // GET /api/admin/dashboard/user-skills
 // Get all unique user skills for dropdown filter
 // ==========================================
-router.get('/dashboard/user-skills', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/user-skills', protect(['admin']), async (req, res) => {
   try {
     const users = await query(`SELECT skills FROM users WHERE skills IS NOT NULL`);
 
@@ -353,14 +354,14 @@ router.get('/dashboard/user-skills', protectAdminRoute, async (req, res) => {
 // GET /api/admin/dashboard/user/:userId
 // Get detailed user profile (PROTECTED)
 // ==========================================
-router.get('/dashboard/user/:userId', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/user/:userId', protect(['admin']), async (req, res) => {
   try {
     const { userId } = req.params;
 
     const [user] = await query('SELECT * FROM users WHERE id = ?', [userId]);
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found.' });
+      return res.status(404).json({ success: false, message: 'User not found.' });
     }
 
     // Parse JSON fields safely
@@ -399,7 +400,7 @@ router.get('/dashboard/user/:userId', protectAdminRoute, async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching user details:', err);
-    res.status(500).json({ error: 'Server error while fetching user details.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching user details.' });
   }
 });
 
@@ -407,7 +408,7 @@ router.get('/dashboard/user/:userId', protectAdminRoute, async (req, res) => {
 // GET /api/admin/dashboard/all-companies
 // Get all companies (PROTECTED)
 // ==========================================
-router.get('/dashboard/all-companies', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/all-companies', protect(['admin']), async (req, res) => {
   try {
     const companies = await query(
       `SELECT id, company_name, user_email, website, logo_url, 
@@ -421,7 +422,7 @@ router.get('/dashboard/all-companies', protectAdminRoute, async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching companies:', err);
-    res.status(500).json({ error: 'Server error while fetching companies.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching companies.' });
   }
 });
 
@@ -429,7 +430,7 @@ router.get('/dashboard/all-companies', protectAdminRoute, async (req, res) => {
 // GET /api/admin/dashboard/company/:companyId
 // Get detailed company profile (PROTECTED)
 // ==========================================
-router.get('/dashboard/company/:companyId', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/company/:companyId', protect(['admin']), async (req, res) => {
   try {
     const { companyId } = req.params;
 
@@ -441,7 +442,7 @@ router.get('/dashboard/company/:companyId', protectAdminRoute, async (req, res) 
     );
 
     if (!company) {
-      return res.status(404).json({ error: 'Company not found.' });
+      return res.status(404).json({ success: false, message: 'Company not found.' });
     }
 
     // Get jobs posted by this company
@@ -470,7 +471,7 @@ router.get('/dashboard/company/:companyId', protectAdminRoute, async (req, res) 
     });
   } catch (err) {
     console.error('Error fetching company details:', err);
-    res.status(500).json({ error: 'Server error while fetching company details.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching company details.' });
   }
 });
 
@@ -478,7 +479,7 @@ router.get('/dashboard/company/:companyId', protectAdminRoute, async (req, res) 
 // GET /api/admin/dashboard/all-jobs
 // Get all jobs (PROTECTED)
 // ==========================================
-router.get('/dashboard/all-jobs', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/all-jobs', protect(['admin']), async (req, res) => {
   try {
     const jobs = await query(
       `SELECT j.id, j.job_title, j.company_id, c.company_name, j.required_experience,
@@ -496,7 +497,7 @@ router.get('/dashboard/all-jobs', protectAdminRoute, async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching jobs:', err);
-    res.status(500).json({ error: 'Server error while fetching jobs.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching jobs.' });
   }
 });
 
@@ -504,7 +505,7 @@ router.get('/dashboard/all-jobs', protectAdminRoute, async (req, res) => {
 // GET /api/admin/dashboard/job/:jobId
 // Get detailed job info (PROTECTED)
 // ==========================================
-router.get('/dashboard/job/:jobId', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/job/:jobId', protect(['admin']), async (req, res) => {
   try {
     const { jobId } = req.params;
 
@@ -517,7 +518,7 @@ router.get('/dashboard/job/:jobId', protectAdminRoute, async (req, res) => {
     );
 
     if (!job) {
-      return res.status(404).json({ error: 'Job not found.' });
+      return res.status(404).json({ success: false, message: 'Job not found.' });
     }
 
     // Get applications count
@@ -570,7 +571,7 @@ router.get('/dashboard/job/:jobId', protectAdminRoute, async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching job details:', err);
-    res.status(500).json({ error: 'Server error while fetching job details.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching job details.' });
   }
 });
 
@@ -578,7 +579,7 @@ router.get('/dashboard/job/:jobId', protectAdminRoute, async (req, res) => {
 // GET /api/admin/dashboard/all-mentors
 // Get all mentors with approval status (PROTECTED)
 // ==========================================
-router.get('/dashboard/all-mentors', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/all-mentors', protect(['admin']), async (req, res) => {
   try {
     const mentors = await query(
       `SELECT id, full_name, email, title, current_company, experience_years,hourly_price,
@@ -593,7 +594,7 @@ router.get('/dashboard/all-mentors', protectAdminRoute, async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching mentors:', err);
-    res.status(500).json({ error: 'Server error while fetching mentors.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching mentors.' });
   }
 });
 
@@ -601,7 +602,7 @@ router.get('/dashboard/all-mentors', protectAdminRoute, async (req, res) => {
 // GET /api/admin/dashboard/mentor/:mentorId
 // Get detailed mentor profile (PROTECTED)
 // ==========================================
-router.get('/dashboard/mentor/:mentorId', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/mentor/:mentorId', protect(['admin']), async (req, res) => {
   try {
     const { mentorId } = req.params;
 
@@ -611,7 +612,7 @@ router.get('/dashboard/mentor/:mentorId', protectAdminRoute, async (req, res) =>
     );
 
     if (!mentor) {
-      return res.status(404).json({ error: 'Mentor not found.' });
+      return res.status(404).json({ success: false, message: 'Mentor not found.' });
     }
 
     // Get booking statistics
@@ -656,7 +657,7 @@ router.get('/dashboard/mentor/:mentorId', protectAdminRoute, async (req, res) =>
     });
   } catch (err) {
     console.error('Error fetching mentor details:', err);
-    res.status(500).json({ error: 'Server error while fetching mentor details.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching mentor details.' });
   }
 });
 
@@ -664,14 +665,14 @@ router.get('/dashboard/mentor/:mentorId', protectAdminRoute, async (req, res) =>
 // PATCH /api/admin/dashboard/mentor/:mentorId/approve
 // Approve mentor (PROTECTED)
 // ==========================================
-router.patch('/dashboard/mentor/:mentorId/approve', protectAdminRoute, async (req, res) => {
+router.patch('/dashboard/mentor/:mentorId/approve', protect(['admin']), async (req, res) => {
   try {
     const { mentorId } = req.params;
 
     const [mentor] = await query('SELECT * FROM mentors WHERE id = ?', [mentorId]);
 
     if (!mentor) {
-      return res.status(404).json({ error: 'Mentor not found.' });
+      return res.status(404).json({ success: false, message: 'Mentor not found.' });
     }
 
     await query('UPDATE mentors SET is_verified = TRUE WHERE id = ?', [mentorId]);
@@ -683,7 +684,7 @@ router.patch('/dashboard/mentor/:mentorId/approve', protectAdminRoute, async (re
     });
   } catch (err) {
     console.error('Error approving mentor:', err);
-    res.status(500).json({ error: 'Server error while approving mentor.' });
+    res.status(500).json({ success: false, message: 'Server error while approving mentor.' });
   }
 });
 
@@ -691,14 +692,14 @@ router.patch('/dashboard/mentor/:mentorId/approve', protectAdminRoute, async (re
 // PATCH /api/admin/dashboard/mentor/:mentorId/reject
 // Reject mentor (PROTECTED)
 // ==========================================
-router.patch('/dashboard/mentor/:mentorId/reject', protectAdminRoute, async (req, res) => {
+router.patch('/dashboard/mentor/:mentorId/reject', protect(['admin']), async (req, res) => {
   try {
     const { mentorId } = req.params;
 
     const [mentor] = await query('SELECT * FROM mentors WHERE id = ?', [mentorId]);
 
     if (!mentor) {
-      return res.status(404).json({ error: 'Mentor not found.' });
+      return res.status(404).json({ success: false, message: 'Mentor not found.' });
     }
 
     await query('UPDATE mentors SET is_verified = FALSE WHERE id = ?', [mentorId]);
@@ -710,7 +711,7 @@ router.patch('/dashboard/mentor/:mentorId/reject', protectAdminRoute, async (req
     });
   } catch (err) {
     console.error('Error rejecting mentor:', err);
-    res.status(500).json({ error: 'Server error while rejecting mentor.' });
+    res.status(500).json({ success: false, message: 'Server error while rejecting mentor.' });
   }
 });
 
@@ -718,7 +719,7 @@ router.patch('/dashboard/mentor/:mentorId/reject', protectAdminRoute, async (req
 // GET /api/admin/dashboard/all-applications
 // Get all job applications (PROTECTED)
 // ==========================================
-router.get('/dashboard/all-applications', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/all-applications', protect(['admin']), async (req, res) => {
   try {
     const applications = await query(`
       SELECT 
@@ -743,7 +744,7 @@ router.get('/dashboard/all-applications', protectAdminRoute, async (req, res) =>
     });
   } catch (err) {
     console.error('Error fetching applications:', err);
-    res.status(500).json({ error: 'Server error while fetching applications.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching applications.' });
   }
 });
 
@@ -751,7 +752,7 @@ router.get('/dashboard/all-applications', protectAdminRoute, async (req, res) =>
 // GET /api/admin/dashboard/stats
 // Get dashboard statistics (PROTECTED)
 // ==========================================
-router.get('/dashboard/stats', protectAdminRoute, async (req, res) => {
+router.get('/dashboard/stats', protect(['admin']), async (req, res) => {
   try {
     // Get counts
     const [userCount] = await query('SELECT COUNT(*) as count FROM users');
@@ -775,7 +776,7 @@ router.get('/dashboard/stats', protectAdminRoute, async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching dashboard stats:', err);
-    res.status(500).json({ error: 'Server error while fetching stats.' });
+    res.status(500).json({ success: false, message: 'Server error while fetching stats.' });
   }
 });
 

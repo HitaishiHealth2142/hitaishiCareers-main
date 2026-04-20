@@ -9,6 +9,8 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+    <script src="scripts/auth.js"></script>
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -258,11 +260,14 @@
 
                 const result = await response.json();
 
-                if (response.ok && result.success && result.token) {
-                    // Store the JWT in sessionStorage for subsequent authorized requests
-                    sessionStorage.setItem('authToken', result.token); 
+                if (response.ok && result.success && result.accessToken) {
+                    // Store tokens and user info using the move unified Auth utility
+                    Auth.setTokens(result.accessToken, result.refreshToken);
+                    Auth.setUser(result.user);
+                    
                     window.location.href = 'employer.html';
                 } else {
+
                     showMessage(result.error || `Error ${response.status}: Login failed.`);
                 }
             } catch (error) {

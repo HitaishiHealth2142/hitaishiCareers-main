@@ -6,6 +6,8 @@
   <title>Mentor Chat - WinJob</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="scripts/auth.js"></script>
+
   <style>
     :root {
       --primary: #6366f1;
@@ -603,16 +605,19 @@
       }
 
       async init() {
-        const token = localStorage.getItem('token') || this.getCookie('token');
-        const userStr = localStorage.getItem('user');
-
-        if (!token || !userStr) {
+        if (!Auth.isLoggedIn()) {
           window.location.href = 'login.html';
           return;
         }
 
-        this.user = JSON.parse(userStr);
+        this.user = Auth.getUser();
+        if (!this.user) {
+            window.location.href = 'login.html';
+            return;
+        }
+        
         this.initSocket();
+
         await this.loadContacts();
         this.setupEventListeners();
         this.autoSelectFromUrl();
@@ -626,8 +631,9 @@
           transports: ['websocket', 'polling'],
           auth: {
             userId: this.user.id,
-            token: localStorage.getItem('token') || this.getCookie('token')
+            token: Auth.getAccessToken()
           }
+
         });
 
         this.socket.on('connect', () => console.log('✅ Socket connected'));
@@ -639,10 +645,8 @@
 
       async loadContacts() {
         try {
-          const token = localStorage.getItem('token') || this.getCookie('token');
-          const response = await fetch('/api/chat/list', {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
+          const response = await Auth.fetchWithAuth('/api/chat/list');
+
 
           if (!response.ok) throw new Error('Failed to load contacts');
           const data = await response.json();
@@ -719,10 +723,8 @@
 
       async loadBookingDetails() {
         try {
-          const token = localStorage.getItem('token') || this.getCookie('token');
-          const response = await fetch(`/api/mentors/booking/${this.currentChat.bookingId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
+          const response = await Auth.fetchWithAuth(`/api/mentors/booking/${this.currentChat.bookingId}`);
+
 
           if (!response.ok) throw new Error('Failed to load booking');
           const data = await response.json();
@@ -734,10 +736,8 @@
 
       async loadMessages() {
         try {
-          const token = localStorage.getItem('token') || this.getCookie('token');
-          const response = await fetch(`/api/chat/messages/${this.currentChat.roomId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
+          const response = await Auth.fetchWithAuth(`/api/chat/messages/${this.currentChat.roomId}`);
+
 
           if (!response.ok) throw new Error('Failed to load messages');
           const data = await response.json();
@@ -779,11 +779,9 @@
         }
 
         try {
-          const token = localStorage.getItem('token') || this.getCookie('token');
-          const response = await fetch('/api/chat/send', {
+          const response = await Auth.fetchWithAuth('/api/chat/send', {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -792,6 +790,7 @@
               messageType: 'text'
             })
           });
+
 
           if (response.ok) {
             input.value = '';
@@ -911,12 +910,12 @@
         }
 
         try {
-          const orderRes = await fetch('/api/mentors/create-order', {
+          const orderRes = await Auth.fetchWithAuth('/api/mentors/create-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
             body: JSON.stringify({ mentorId: this.currentMentor.id, amount })
           });
+
 
           const orderData = await orderRes.json();
 
@@ -928,10 +927,9 @@
             description: `1-hour session with ${this.currentMentor.full_name}`,
             order_id: orderData.orderId,
             handler: async (response) => {
-              const verifyRes = await fetch('/api/mentors/payment-success', {
+              const verifyRes = await Auth.fetchWithAuth('/api/mentors/payment-success', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
                 body: JSON.stringify({
                   mentorId: this.currentMentor.id,
                   amount,
@@ -940,6 +938,7 @@
                   razorpay_payment_id: response.razorpay_payment_id
                 })
               });
+
 
               const result = await verifyRes.json();
               if (result.success) {

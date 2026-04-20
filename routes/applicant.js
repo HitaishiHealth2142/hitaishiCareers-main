@@ -1,11 +1,10 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
 const { query } = require("../db");
+const { protect } = require("../middleware/auth");
 const { sendEmailAsync, sendJobApplicationConfirmationEmail, sendJobApplicationAlertEmail } = require("../services/emailService");
 
 const router = express.Router();
-
-const {protectRoute, protectEmployerRoute} = require("../middleware/authMiddleware");
 
 // --- Database Table Initialization ---
 (async function initApplicationsTable() {
@@ -31,15 +30,15 @@ const {protectRoute, protectEmployerRoute} = require("../middleware/authMiddlewa
 })();
 
 // --- Route to apply for a job (Candidate/User only) ---
-router.post("/apply", protectRoute, async (req, res) => {
+router.post("/apply", protect(['user']), async (req, res) => {
     try {
         const { jobId } = req.body;
-        // req.user is set by protectRoute
+        // req.user is set by protect
         const userId = req.user.id; 
         const userEmail = req.user.email;
 
         if (!jobId) {
-            return res.status(400).json({ error: "Job ID is required." });
+            return res.status(400).json({ success: false, message: "Job ID is required." });
         }
 
         const [existingApplication] = await query(
@@ -47,12 +46,12 @@ router.post("/apply", protectRoute, async (req, res) => {
             [userId, jobId]
         );
         if (existingApplication) {
-            return res.status(409).json({ error: "You have already applied for this job." });
+            return res.status(409).json({ success: false, message: "You have already applied for this job." });
         }
 
         const [user] = await query('SELECT * FROM users WHERE email=?', [userEmail]);
         if (!user) {
-            return res.status(404).json({ error: "Could not find your user profile to submit." });
+            return res.status(404).json({ success: false, message: "Could not find your user profile to submit." });
         }
         
         const safeParse = (v) => {
@@ -91,7 +90,7 @@ router.post("/apply", protectRoute, async (req, res) => {
 
         const [jobData] = await query(`SELECT company_id FROM jobs WHERE id = ?`, [jobId]);
         if (!jobData) {
-            return res.status(404).json({ error: "Job not found. It may have been removed." });
+            return res.status(404).json({ success: false, message: "Job not found. It may have been removed." });
         }
         const companyId = jobData.company_id;
 
@@ -133,21 +132,21 @@ router.post("/apply", protectRoute, async (req, res) => {
 
     } catch (err) {
         console.error("Application submission failed:", err);
-        res.status(500).json({ error: "An internal server error occurred.", message: err.message });
+        res.status(500).json({ success: false, message: "An internal server error occurred." });
     }
 });
 
 // --- Route to get all applications for a specific job (Employer only) ---
-router.get("/:jobId", protectEmployerRoute, async (req, res) => {
+router.get("/:jobId", protect(['company']), async (req, res) => {
     try {
         const { jobId } = req.params;
-        // req.company is set by protectEmployerRoute. We must ensure the job belongs to this company.
-        const companyIdFromToken = req.company.id;
+        // req.user is set by protect. We must ensure the job belongs to this company.
+        const companyIdFromToken = req.user.id;
 
         const [job] = await query(`SELECT company_id FROM jobs WHERE id = ?`, [jobId]);
 
         if (!job || job.company_id !== companyIdFromToken) {
-            return res.status(403).json({ error: "Forbidden: You are not authorized to view applications for this job." });
+            return res.status(403).json({ success: false, message: "Forbidden: You are not authorized to view applications for this job." });
         }
 
         const applications = await query(
@@ -155,8 +154,6 @@ router.get("/:jobId", protectEmployerRoute, async (req, res) => {
             [jobId]
         );
         
-        // FIX: The user_profile_snapshot is stored as a JSON string in the database.
-        // It must be parsed into an object before being sent to the frontend.
         const applicants = applications
             .map(app => {
                 const snapshot = app.user_profile_snapshot;
@@ -176,7 +173,7 @@ router.get("/:jobId", protectEmployerRoute, async (req, res) => {
 
     } catch (err) {
         console.error("Failed to fetch applications:", err);
-        res.status(500).json({ error: "An internal server error occurred.", message: err.message });
+        res.status(500).json({ success: false, message: "An internal server error occurred." });
     }
 });
 

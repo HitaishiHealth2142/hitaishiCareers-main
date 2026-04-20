@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WinJob Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="scripts/auth.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -820,8 +822,9 @@
             </ul>
 
             <div class="sidebar-footer">
-                <button onclick="logout()" style="color: #ff0000;">🚪 Logout</button>
+                <button onclick="Auth.logout()" style="color: #ff0000;">🚪 Logout</button>
             </div>
+
         </aside>
 
         <!-- MAIN CONTENT -->
@@ -1069,8 +1072,10 @@
                     return;
                 }
 
-                currentToken = data.token;
-                localStorage.setItem('adminToken', currentToken);
+                // 🚨 CRITICAL: Use the unified Auth utility
+                Auth.setTokens(data.accessToken, data.refreshToken);
+                if (data.admin) Auth.setUser(data.admin);
+                
                 clearInterval(otpTimer);
                 loginSuccess();
             } catch (error) {
@@ -1084,6 +1089,7 @@
             document.getElementById('credentialsStep').classList.add('active');
             document.querySelectorAll('.otp-input').forEach(input => input.value = '');
         }
+
 
         function loginSuccess() {
             document.getElementById('loginContainer').style.display = 'none';
@@ -1133,16 +1139,16 @@
             detailContainer.innerHTML = '<div class="loading"><div class="spinner"></div>Loading details...</div>';
 
             try {
-                const response = await fetch(`${BASE_URL}${endpoint}`, {
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
+                // Use unified Auth.fetchWithAuth helper
+                const response = await Auth.fetchWithAuth(`${BASE_URL}${endpoint}`);
 
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error);
+                if (!response.ok) throw new Error(data.error || 'Failed to load details');
 
                 const html = renderDetailContent(type, data.user || data.company || data.job || data.mentor);
                 detailContainer.innerHTML = html;
             } catch (error) {
+
                 detailContainer.innerHTML = `<div style="color: red; padding: 20px;">Error loading details: ${error.message}</div>`;
             }
         }
@@ -1690,13 +1696,11 @@
 
         async function loadDashboardData() {
             try {
-                const response = await fetch(`${BASE_URL}/admin/dashboard/stats`, {
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
+                const response = await Auth.fetchWithAuth(`${BASE_URL}/admin/dashboard/stats`);
 
                 const data = await response.json();
 
-                if (!response.ok) throw new Error(data.error);
+                if (!response.ok) throw new Error(data.error || 'Failed to load stats');
 
                 const stats = data.stats;
                 document.getElementById('statsContainer').innerHTML = `
@@ -1763,12 +1767,11 @@
 
         async function loadUsers() {
             try {
-                const response = await fetch(`${BASE_URL}/admin/dashboard/all-users`, {
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
+                const response = await Auth.fetchWithAuth(`${BASE_URL}/admin/dashboard/all-users`);
 
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error);
+                if (!response.ok) throw new Error(data.error || 'Failed to load users');
+
 
                 allData.users = data.users || [];
 
@@ -1833,12 +1836,11 @@
 
         async function loadCompanies() {
             try {
-                const response = await fetch(`${BASE_URL}/admin/dashboard/all-companies`, {
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
+                const response = await Auth.fetchWithAuth(`${BASE_URL}/admin/dashboard/all-companies`);
 
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error);
+                if (!response.ok) throw new Error(data.error || 'Failed to load companies');
+
 
                 allData.companies = data.companies || [];
                 renderCompanies(allData.companies);
@@ -1887,12 +1889,11 @@
 
         async function loadJobs() {
             try {
-                const response = await fetch(`${BASE_URL}/admin/dashboard/all-jobs`, {
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
+                const response = await Auth.fetchWithAuth(`${BASE_URL}/admin/dashboard/all-jobs`);
 
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error);
+                if (!response.ok) throw new Error(data.error || 'Failed to load jobs');
+
 
                 allData.jobs = data.jobs || [];
 
@@ -1954,12 +1955,11 @@
 
         async function loadMentors() {
             try {
-                const response = await fetch(`${BASE_URL}/admin/dashboard/all-mentors`, {
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
+                const response = await Auth.fetchWithAuth(`${BASE_URL}/admin/dashboard/all-mentors`);
 
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error);
+                if (!response.ok) throw new Error(data.error || 'Failed to load mentors');
+
 
                 allData.mentors = data.mentors || [];
                 renderMentors(allData.mentors);
@@ -2017,12 +2017,11 @@
 
         async function loadApplications() {
             try {
-                const response = await fetch(`${BASE_URL}/admin/dashboard/all-applications`, {
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
+                const response = await Auth.fetchWithAuth(`${BASE_URL}/admin/dashboard/all-applications`);
 
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error);
+                if (!response.ok) throw new Error(data.error || 'Failed to load applications');
+
 
                 allData.applications = data.applications || [];
                 renderApplications(allData.applications);
@@ -2118,13 +2117,13 @@
             if (!confirm('Are you sure you want to approve this mentor?')) return;
 
             try {
-                const response = await fetch(`${BASE_URL}/admin/dashboard/mentor/${mentorId}/approve`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                const response = await Auth.fetchWithAuth(`${BASE_URL}/admin/dashboard/mentor/${mentorId}/approve`, {
+                    method: 'PATCH'
                 });
 
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error);
+                if (!response.ok) throw new Error(data.error || 'Failed to approve mentor');
+
 
                 alert('✓ Mentor approved successfully!');
                 loadMentors();
@@ -2138,13 +2137,13 @@
             if (!confirm('Are you sure you want to reject this mentor?')) return;
 
             try {
-                const response = await fetch(`${BASE_URL}/admin/dashboard/mentor/${mentorId}/reject`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                const response = await Auth.fetchWithAuth(`${BASE_URL}/admin/dashboard/mentor/${mentorId}/reject`, {
+                    method: 'PATCH'
                 });
 
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error);
+                if (!response.ok) throw new Error(data.error || 'Failed to reject mentor');
+
 
                 alert('✓ Mentor rejected successfully!');
                 loadMentors();
@@ -2177,12 +2176,11 @@
 
         // Initialize on page load
         window.addEventListener('load', () => {
-            const token = localStorage.getItem('adminToken');
-            if (token) {
-                currentToken = token;
+            if (Auth.isLoggedIn()) {
                 loginSuccess();
             }
         });
+
     </script>
 </body>
 </html>

@@ -6,10 +6,11 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const protectMentorRoute = require('../middleware/mentorAuthMiddleware');
+const { protect } = require('../middleware/auth');
 const Razorpay = require('razorpay');
+
 const { query } = require('../db');
-const { protectRoute: verifyUser } = require('../middleware/authMiddleware');
+
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -423,11 +424,11 @@ router.post('/logout', (req, res) => {
 // ==========================================
 // GET /api/mentor/profile
 // ==========================================
-router.get('/profile', protectMentorRoute, async (req, res) => {
+router.get('/profile', protect(['mentor']), async (req, res) => {
   try {
     const [mentor] = await query(
       'SELECT * FROM mentors WHERE id = ?',
-      [req.mentor.id]
+      [req.user.id]
     );
 
     if (!mentor) {
@@ -489,7 +490,7 @@ router.get('/profile', protectMentorRoute, async (req, res) => {
 // ==========================================
 // PATCH /api/mentor/profile
 // ==========================================
-router.patch('/profile', protectMentorRoute, upload.single('profile_image'), async (req, res) => {
+router.patch('/profile', protect(['mentor']), upload.single('profile_image'), async (req, res) => {
   try {
     const {
       full_name,
@@ -506,7 +507,7 @@ router.patch('/profile', protectMentorRoute, upload.single('profile_image'), asy
     // Get current mentor
     const [currentMentor] = await query(
       'SELECT * FROM mentors WHERE id = ?',
-      [req.mentor.id]
+      [req.user.id]
     );
 
     if (!currentMentor) {
@@ -565,7 +566,7 @@ router.patch('/profile', protectMentorRoute, upload.single('profile_image'), asy
       .map(key => `${key} = ?`)
       .join(', ');
     
-    const values = [...Object.values(updateData), req.mentor.id];
+    const values = [...Object.values(updateData), req.user.id];
 
     await query(
       `UPDATE mentors SET ${setClause} WHERE id = ?`,
@@ -575,7 +576,7 @@ router.patch('/profile', protectMentorRoute, upload.single('profile_image'), asy
     // Fetch updated mentor
     const [updatedMentor] = await query(
       'SELECT * FROM mentors WHERE id = ?',
-      [req.mentor.id]
+      [req.user.id]
     );
 
     const expertise_parsed = updatedMentor.expertise ? JSON.parse(updatedMentor.expertise) : [];
@@ -737,7 +738,7 @@ router.get('/:id', async (req, res) => {
 // ==========================================
 // GET /api/mentors/booking/:bookingId
 // ==========================================
-router.get('/booking/:bookingId', verifyUser, async (req, res) => {
+router.get('/booking/:bookingId', protect(['user']), async (req, res) => {
   try {
     const { bookingId } = req.params;
     const userId = req.user.id;
@@ -785,11 +786,11 @@ router.get('/booking/:bookingId', verifyUser, async (req, res) => {
 // ==========================================
 // GET /api/mentor/dashboard/stats
 // ==========================================
-router.get('/dashboard/stats', protectMentorRoute, async (req, res) => {
+router.get('/dashboard/stats', protect(['mentor']), async (req, res) => {
   try {
     const [mentor] = await query(
       'SELECT * FROM mentors WHERE id = ?',
-      [req.mentor.id]
+      [req.user.id]
     );
 
     if (!mentor) {
@@ -808,7 +809,7 @@ router.get('/dashboard/stats', protectMentorRoute, async (req, res) => {
               END AS computed_status
        FROM mentor_bookings
        WHERE mentor_id = ?`,
-      [req.mentor.id]
+      [req.user.id]
     );
 
     const activeSessions = bookings.filter(b => b.computed_status === 'active').length;
@@ -854,7 +855,7 @@ router.get('/dashboard/stats', protectMentorRoute, async (req, res) => {
 // ==========================================
 // POST /api/mentors/start-booking
 // ==========================================
-router.post('/start-booking', verifyUser, async (req, res) => {
+router.post('/start-booking', protect(['user']), async (req, res) => {
   try {
     const userId = req.user.id;
     const { mentorId } = req.body;
@@ -930,7 +931,7 @@ router.post('/start-booking', verifyUser, async (req, res) => {
 });
 
 // create order for mentorship session
-router.post('/create-order', verifyUser, async (req, res) => {
+router.post('/create-order', protect(['user']), async (req, res) => {
   const { mentorId, amount } = req.body;
 
   const order = await razorpay.orders.create({
@@ -946,7 +947,7 @@ router.post('/create-order', verifyUser, async (req, res) => {
 });
 
 // success payment saves in table
-router.post('/payment-success', verifyUser, async (req, res) => {
+router.post('/payment-success', protect(['user']), async (req, res) => {
   try {
     const userId = req.user.id;
     const {

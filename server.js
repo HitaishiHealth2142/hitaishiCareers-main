@@ -17,8 +17,9 @@ const companyRoute = require('./routes/company');
 const mentorsRoute = require('./routes/mentors');
 const adminRoute = require('./routes/admin');
 const aiInterviewRoute = require('./routes/aiInterview');
-const { protectRoute, protectEmployerRoute } = require('./middleware/authMiddleware');
-const { protectAdminRoute } = require('./middleware/adminAuthMiddleware');
+const { protect } = require('./middleware/auth');
+
+
 
 
 const app = express();
@@ -116,17 +117,23 @@ app.use((req, res, next) => {
 
 // Socket authentication middleware
 io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
-  const userId = socket.handshake.auth.userId;
+  const token = socket.handshake.auth?.token;
 
-  if (!token || !userId) {
-    // Allow anonymous connections for now
-    // In production, verify JWT token here
-    socket.handshake.auth.userId = userId || null;
+  if (!token) {
+    return next(new Error('Authentication error: Token missing'));
   }
 
-  next();
+  const jwt = require('jsonwebtoken');
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.user = decoded; // Attach decoded user to socket
+    next();
+  } catch (error) {
+    console.error('Socket Auth Error:', error.message);
+    next(new Error('Authentication error: Invalid token'));
+  }
 });
+
 
 // ========================================
 // API ROUTES
@@ -134,7 +141,7 @@ io.use((socket, next) => {
 
 app.use('/api', registerRoute);
 app.use('/api/auth', authRoute);
-app.use('/api/profile', protectRoute, profileRoute);
+app.use('/api/profile', protect(['user']), profileRoute);
 app.use('/api/jobs', jobsRoute);
 app.use('/api/applicant', applicantRoute);
 app.use('/api/company', companyRoute);

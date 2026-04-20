@@ -3,13 +3,14 @@ const express = require("express");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const { query } = require("../db");
-const { protectEmployerRoute } = require("../middleware/authMiddleware"); // Import employer protection
+const { protect } = require("../middleware/auth");
+
 const { sendEmailAsync, sendJobPostedEmail } = require("../services/emailService");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
-// NOTE: authenticateToken is removed. We will rely on protectEmployerRoute for employer-specific API calls,
+// NOTE: authenticateToken is removed. We will rely on protect(['company']) for employer-specific API calls,
 // which is applied either directly here or in server.js. The general routes like /active and /:id remain public.
 
 
@@ -114,11 +115,11 @@ const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
   }
 })();
 
-// Post a new job (PROTECTED by protectEmployerRoute)
-router.post("/post", protectEmployerRoute, async (req, res) => {
+// Post a new job (PROTECTED by protect(['company']))
+router.post("/post", protect(['company']), async (req, res) => {
   try {
-    // req.company is set by protectEmployerRoute
-    const company_id = req.company.id; 
+    // req.company is set by protect(['company'])
+    const company_id = req.user.id; 
     const { 
         posted_by_name, posted_by_email, job_title, required_experience, 
         job_description, required_skills, additional_skills, country, 
@@ -245,12 +246,12 @@ router.get("/:id", async (req, res) => {
 });
 
 
-// GET all jobs for a specific company (for the dashboard) (PROTECTED by protectEmployerRoute)
-router.get("/company/:companyId", protectEmployerRoute, async (req, res) => {
+// GET all jobs for a specific company (for the dashboard) (PROTECTED by protect(['company']))
+router.get("/company/:companyId", protect(['company']), async (req, res) => {
     try {
         const { companyId } = req.params;
-        // req.company is set by protectEmployerRoute
-        if (req.company.id !== companyId) {
+        // req.company is set by protect(['company'])
+        if (req.user.id !== companyId) {
             // Added check to ensure the company ID in the token matches the requested companyId
             return res.status(403).json({ error: "Forbidden: You can only view your own company's jobs." });
         }
