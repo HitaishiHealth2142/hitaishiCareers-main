@@ -200,7 +200,8 @@
     });
 
     async function loadNavbarProfile() {
-      const email = sessionStorage.getItem("email");
+      const user = Auth.getUser();
+      const email = user ? user.email : null;
       if (!email) return;
 
       try {
@@ -346,17 +347,15 @@
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: id_token }),
-        credentials: "include", // important for cookie auth on web
+        body: JSON.stringify({ token: id_token })
       });
 
       const result = await res.json();
-      if (res.ok) {
+      if (res.ok && result.success) {
         showCustomAlert("✅ Login successful with Google!", 'success');
         
         // Store tokens and user info
-        Auth.setTokens(result.accessToken, result.refreshToken);
-        Auth.setUser(result.user);
+        Auth.login(result);
         
         // Redirect to profile
         window.location.href = "userProfile.html";
@@ -427,19 +426,15 @@
         const res = await fetch("/api/user/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-          credentials: "include", // important for cookie auth
+          body: JSON.stringify({ email, password })
         });
 
         const result = await res.json();
-        if (res.ok) {
-          
-          
+        if (res.ok && result.success) {
           showCustomAlert("✅ " + result.message, 'success');
           
           // Store tokens and user info
-          Auth.setTokens(result.accessToken, result.refreshToken);
-          Auth.setUser(result.user);
+          Auth.login(result);
 
           // Redirect
           window.location.href = "userProfile.html";

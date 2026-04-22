@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { query } = require('../db');
 const { protect } = require('../middleware/auth');
+const authController = require('../controllers/authController');
 const { sendEmailAsync, sendAdminOTPEmail } = require('../services/emailService');
 
 
@@ -179,30 +180,8 @@ router.post('/verify-otp', async (req, res) => {
     // Update last login timestamp
     await query('UPDATE admins SET last_login = NOW() WHERE id = ?', [adminId]);
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: admin.id, email: admin.email, role: 'admin' },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    // Set HttpOnly cookie
-    res.cookie('adminToken', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
-
-    res.status(200).json({
-      success: true,
-      message: 'Admin authenticated successfully!',
-      token: token,
-      admin: {
-        id: admin.id,
-        email: admin.email
-      }
-    });
+    // Return response using unified auth
+    return await authController.performLogin(admin, 'admin', res);
 
   } catch (err) {
     console.error('Error verifying OTP:', err);
@@ -243,16 +222,7 @@ router.get('/profile', protect(['admin']), async (req, res) => {
 // POST /api/admin/logout
 // Admin logout (PROTECTED)
 // ==========================================
-router.post('/logout', protect(['admin']), (req, res) => {
-  res.cookie('adminToken', '', {
-    httpOnly: true,
-    expires: new Date(0),
-    sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production'
-  });
-
-  res.status(200).json({ success: true, message: 'Logged out successfully.' });
-});
+router.post('/logout', protect(['admin']), authController.logout);
 
 // ==========================================
 // GET /api/admin/dashboard/all-users

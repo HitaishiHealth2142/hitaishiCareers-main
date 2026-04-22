@@ -17,6 +17,7 @@
     
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="scripts/auth.js"></script>
     
     <style>
         :root {
@@ -342,11 +343,12 @@
     });
 
     async function loadNavbarProfile() {
-      const email = sessionStorage.getItem("email");
+      const user = Auth.getUser();
+      const email = user ? user.email : null;
       if (!email) return;
 
       try {
-        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+        const res = await Auth.fetchWithAuth(`/api/profile/full?email=${encodeURIComponent(email)}`);
         if (!res.ok) return;
 
         const data = await res.json();

@@ -49,19 +49,11 @@ const generateTokens = async (userId, role) => {
 const performLogin = async (user, role, res) => {
     const { accessToken, refreshToken } = await generateTokens(user.id, role);
 
-    // Set Refresh Token in HttpOnly cookie
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    });
-
     return res.status(200).json({
         success: true,
         message: 'Login successful!',
         accessToken,
-        refreshToken, // Also send for mobile apps
+        refreshToken,
         user: {
             id: user.id,
             role: role,
@@ -70,6 +62,10 @@ const performLogin = async (user, role, res) => {
         }
     });
 };
+
+exports.performLogin = performLogin;
+exports.generateTokens = generateTokens;
+
 
 /**
  * REGISTER (Candidates)
@@ -129,7 +125,7 @@ exports.login = async (req, res) => {
  */
 exports.refresh = async (req, res) => {
     try {
-        const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+        const { refreshToken } = req.body;
         if (!refreshToken) return res.status(401).json({ success: false, message: 'Refresh token required.' });
 
         const hashedToken = hashToken(refreshToken);
@@ -138,7 +134,7 @@ exports.refresh = async (req, res) => {
         if (results.length === 0) return res.status(403).json({ success: false, message: 'Invalid refresh token.' });
 
         const session = results[0];
-        if (new Date() > session.expires_at) {
+        if (new Date() > new Date(session.expires_at)) {
             await query('DELETE FROM refresh_tokens WHERE id = ?', [session.id]);
             return res.status(401).json({ success: false, message: 'Refresh token expired. Please login again.' });
         }
@@ -147,7 +143,7 @@ exports.refresh = async (req, res) => {
         const accessToken = jwt.sign(
             { id: session.user_id, role: session.role },
             process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+            { expiresIn: process.env.JWT_EXPIRES_IN || '30m' }
         );
 
         res.json({ success: true, accessToken });
@@ -162,13 +158,12 @@ exports.refresh = async (req, res) => {
  */
 exports.logout = async (req, res) => {
     try {
-        const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+        const { refreshToken } = req.body;
         if (refreshToken) {
             const hashedToken = hashToken(refreshToken);
             await query('DELETE FROM refresh_tokens WHERE token_hash = ?', [hashedToken]);
         }
 
-        res.clearCookie('refreshToken');
         res.status(200).json({ success: true, message: 'Logged out successfully.' });
     } catch (error) {
         console.error('Logout Error:', error);

@@ -6,6 +6,7 @@
     <title>Winjob - Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+    <script src="scripts/auth.js"></script>
 </head>
 <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f5f7fa; color: #333;">
 
@@ -21,11 +22,12 @@
     });
 
     async function loadNavbarProfile() {
-      const email = sessionStorage.getItem("email");
+      const user = Auth.getUser();
+      const email = user ? user.email : null;
       if (!email) return;
 
       try {
-        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+        const res = await Auth.fetchWithAuth(`/api/profile/full?email=${encodeURIComponent(email)}`);
         if (!res.ok) return;
 
         const data = await res.json();

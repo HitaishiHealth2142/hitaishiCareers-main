@@ -947,7 +947,7 @@
     </div>
 
     <script>
-        const BASE_URL = 'https://winjob.in/api';
+        const BASE_URL = '/api';
         let currentAdminId = null;
         let currentToken = null;
         let otpTimer = null;
@@ -1073,8 +1073,7 @@
                 }
 
                 // 🚨 CRITICAL: Use the unified Auth utility
-                Auth.setTokens(data.accessToken, data.refreshToken);
-                if (data.admin) Auth.setUser(data.admin);
+                Auth.login(data);
                 
                 clearInterval(otpTimer);
                 loginSuccess();
@@ -2146,32 +2145,13 @@
 
 
                 alert('✓ Mentor rejected successfully!');
-                loadMentors();
-            } catch (error) {
+                loadMentors();                } catch (error) {
                 alert('Error: ' + error.message);
             }
         }
 
         async function logout() {
-            try {
-                await fetch(`${BASE_URL}/admin/logout`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
-
-                localStorage.removeItem('adminToken');
-                currentToken = null;
-                expandedCards.clear();
-                document.getElementById('dashboardContainer').classList.remove('active');
-                document.getElementById('loginContainer').style.display = 'flex';
-                document.getElementById('credentialsStep').classList.add('active');
-                document.getElementById('otpStep').classList.remove('active');
-                document.querySelectorAll('.otp-input').forEach(input => input.value = '');
-                document.getElementById('adminEmail').value = '';
-                document.getElementById('adminPassword').value = '';
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
+            await Auth.logout();
         }
 
         // Initialize on page load

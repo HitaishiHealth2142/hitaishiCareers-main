@@ -1,37 +1,28 @@
 /**
- * auth.js - Frontend Auth Utility
- * Centralized logic for tokens, user info, and auto-refresh
+ * Global Auth Utility for Winjob
+ * Handles JWT token storage, retrieval, and authenticated fetch requests.
  */
 
 const Auth = {
-    // --- Token Management ---
-    getAccessToken: () => localStorage.getItem('accessToken'),
-    getRefreshToken: () => localStorage.getItem('refreshToken'),
+    // Keys for localStorage
+    TOKEN_KEY: 'token',
+    REFRESH_TOKEN_KEY: 'refreshToken',
+    USER_KEY: 'user',
 
-    setTokens: (accessToken, refreshToken) => {
-        if (accessToken) localStorage.setItem('accessToken', accessToken);
-        if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+    /**
+     * Save tokens and user info on login
+     */
+    login(data) {
+        if (data.accessToken) localStorage.setItem(this.TOKEN_KEY, data.accessToken);
+        if (data.refreshToken) localStorage.setItem(this.REFRESH_TOKEN_KEY, data.refreshToken);
+        if (data.user) localStorage.setItem(this.USER_KEY, JSON.stringify(data.user));
     },
 
-    // --- User Info ---
-    setUser: (user) => {
-        if (user) {
-            localStorage.setItem('user', JSON.stringify(user));
-            // Keep email in sessionStorage for backward compatibility with navbar
-            sessionStorage.setItem('email', user.email);
-        }
-    },
-
-    getUser: () => {
-        const user = localStorage.getItem('user');
-        return user ? JSON.parse(user) : null;
-    },
-
-    isLoggedIn: () => !!Auth.getAccessToken(),
-
-    // --- Logout ---
-    logout: async () => {
-        const refreshToken = Auth.getRefreshToken();
+    /**
+     * Clear tokens and user info on logout
+     */
+    async logout() {
+        const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
         try {
             if (refreshToken) {
                 await fetch('/api/auth/logout', {
@@ -41,79 +32,98 @@ const Auth = {
                 });
             }
         } catch (err) {
-            console.error('Logout API failed:', err);
+            console.error('Logout error:', err);
+        } finally {
+            localStorage.removeItem(this.TOKEN_KEY);
+            localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+            localStorage.removeItem(this.USER_KEY);
+            window.location.href = '/login.html';
         }
-
-        // Cleanup
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
-        sessionStorage.removeItem('email');
-        sessionStorage.removeItem('authToken'); // Cleanup old keys
-        localStorage.removeItem('mentorToken'); // Cleanup old keys
-        
-        // Redirect based on current role if possible, or back to index
-        window.location.href = '/index.html';
     },
 
-    // --- API Wrapper ---
     /**
-     * fetchWithAuth - Wrapper for fetch that handles JWT logic and automatic Refresh
+     * Get the current access token
      */
-    fetchWithAuth: async (url, options = {}) => {
-        let accessToken = Auth.getAccessToken();
+    getToken() {
+        return localStorage.getItem(this.TOKEN_KEY);
+    },
 
-        // 1. Prepare headers
-        const headers = {
-            ...options.headers,
-            'Authorization': accessToken ? `Bearer ${accessToken}` : ''
-        };
+    /**
+     * Get the current user info
+     */
+    getUser() {
+        const user = localStorage.getItem(this.USER_KEY);
+        return user ? JSON.parse(user) : null;
+    },
 
-        // 2. Perform original request
-        let response = await fetch(url, { ...options, headers });
+    /**
+     * Refresh the access token
+     */
+    async refreshToken() {
+        const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
+        if (!refreshToken) return null;
 
-        // 3. If 401 Unauthorized, try to refresh token once
-        if (response.status === 401) {
-            console.warn('Access token expired or missing, attempting refresh...');
-            const refreshToken = Auth.getRefreshToken();
+        try {
+            const response = await fetch('/api/auth/refresh', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ refreshToken })
+            });
 
-            if (!refreshToken) {
-                console.error('No refresh token found. Logging out.');
-                Auth.logout();
-                return response; 
+            const data = await response.json();
+            if (data.success && data.accessToken) {
+                localStorage.setItem(this.TOKEN_KEY, data.accessToken);
+                return data.accessToken;
+            } else {
+                // Refresh failed, logout
+                this.logout();
+                return null;
             }
+        } catch (err) {
+            console.error('Token refresh error:', err);
+            return null;
+        }
+    },
 
-            try {
-                const refreshRes = await fetch('/api/auth/refresh', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ refreshToken })
-                });
+    /**
+     * Global fetch wrapper with automatic token handling
+     */
+    async fetchWithAuth(url, options = {}) {
+        let token = this.getToken();
 
-                const data = await refreshRes.json();
+        // Initialize headers
+        options.headers = options.headers || {};
+        if (token) {
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
 
-                if (refreshRes.ok && data.success && data.accessToken) {
-                    console.log('Token refreshed successfully!');
-                    Auth.setTokens(data.accessToken);
+        let response = await fetch(url, options);
 
-                    // Retry original request with NEW token
-                    headers['Authorization'] = `Bearer ${data.accessToken}`;
-                    return await fetch(url, { ...options, headers });
-                } else {
-                    console.error('Refresh token invalid or expired. Logging out.');
-                    Auth.logout();
-                    return response;
-                }
-            } catch (err) {
-                console.error('Network error during token refresh:', err);
-                Auth.logout();
-                return response;
+        // If unauthorized (401), try refreshing token
+        if (response.status === 401) {
+            console.warn('Access token expired. Attempting refresh...');
+            const newToken = await this.refreshToken();
+            
+            if (newToken) {
+                // Retry the original request with the new token
+                options.headers['Authorization'] = `Bearer ${newToken}`;
+                response = await fetch(url, options);
+            } else {
+                // Refresh failed
+                window.location.href = '/login.html';
             }
         }
 
         return response;
+    },
+
+    /**
+     * Check if user is logged in
+     */
+    isLoggedIn() {
+        return !!this.getToken();
     }
 };
 
-// Expose globally
+// Export to global scope for vanilla JS usage
 window.Auth = Auth;

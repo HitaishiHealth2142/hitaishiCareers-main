@@ -8,6 +8,7 @@
     <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/auth.js"></script>
 
     <style>
         :root {
@@ -542,11 +543,12 @@
     });
 
     async function loadNavbarProfile() {
-      const email = sessionStorage.getItem("email");
+      const user = Auth.getUser();
+      const email = user ? user.email : null;
       if (!email) return;
 
       try {
-        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+        const res = await Auth.fetchWithAuth(`/api/profile/full?email=${encodeURIComponent(email)}`);
         if (!res.ok) return;
 
         const data = await res.json();

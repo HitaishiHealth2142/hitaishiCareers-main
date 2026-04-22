@@ -40,6 +40,7 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="scripts/auth.js"></script>
 
   <!-- Structured Data / Schema.org -->
   <script type="application/ld+json">
@@ -556,11 +557,12 @@
 
     // Load user profile information into navbar
     async function loadNavbarProfile() {
-      const email = sessionStorage.getItem("email");
+      const user = Auth.getUser();
+      const email = user ? user.email : null;
       if (!email) return;
 
       try {
-        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+        const res = await Auth.fetchWithAuth(`/api/profile/full?email=${encodeURIComponent(email)}`);
         if (!res.ok) return;
 
         const data = await res.json();

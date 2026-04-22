@@ -141,7 +141,8 @@
     });
 
     async function loadNavbarProfile() {
-      const email = sessionStorage.getItem("email");
+      const user = Auth.getUser();
+      const email = user ? user.email : null;
       if (!email) return;
 
       try {
@@ -262,8 +263,7 @@
 
                 if (response.ok && result.success && result.accessToken) {
                     // Store tokens and user info using the move unified Auth utility
-                    Auth.setTokens(result.accessToken, result.refreshToken);
-                    Auth.setUser(result.user);
+                    Auth.login(result);
                     
                     window.location.href = 'employer.html';
                 } else {

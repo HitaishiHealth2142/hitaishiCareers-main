@@ -511,9 +511,7 @@
 
         if (data.success && data.accessToken) {
           // Store tokens and user info using the unified Auth utility
-          Auth.setTokens(data.accessToken, data.refreshToken);
-          Auth.setUser(data.user);
-
+          Auth.login(data);
 
           document.getElementById('successMessage').classList.add('show');
           setTimeout(() => {

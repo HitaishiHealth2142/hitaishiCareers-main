@@ -7,6 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { protect } = require('../middleware/auth');
+const authController = require('../controllers/authController');
 const Razorpay = require('razorpay');
 
 const { query } = require('../db');
@@ -137,16 +138,7 @@ function sanitize(str) {
     .replace(/'/g, '&#039;');
 }
 
-/**
- * Generate JWT Token
- */
-function generateToken(mentorId) {
-  return jwt.sign(
-    { mentorId },
-    process.env.JWT_SECRET || 'mentor_jwt_secret_key',
-    { expiresIn: '7d' }
-  );
-}
+// Removed local generateToken function in favor of authController.generateTokens
 
 /**
  * Validate email format
@@ -275,34 +267,8 @@ router.post('/register', upload.single('profile_image'), async (req, res) => {
       ]
     );
 
-    // Generate JWT
-    const token = generateToken(mentorId);
-
-    // Set secure cookie
-    res.cookie('mentorToken', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-
-    // Return response
-    return res.status(201).json({
-      success: true,
-      message: 'Mentor registered successfully',
-      mentor: {
-        id: mentorId,
-        full_name,
-        email,
-        title,
-        current_company,
-        experience_years,
-        expertise: expertiseArray,
-        profile_image_url: profileImageUrl,
-        hourly_price,
-      },
-      token, // For mobile support
-    });
+    // Return response using unified auth
+    return await authController.performLogin({ id: mentorId, email: email.toLowerCase(), full_name }, 'mentor', res);
   } catch (error) {
     console.error('Registration error:', error);
     return res.status(500).json({
@@ -351,47 +317,8 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Generate JWT
-    const token = generateToken(mentor.id);
-
-    // Set secure cookie
-    const maxAge = rememberMe 
-      ? 30 * 24 * 60 * 60 * 1000 // 30 days
-      : 7 * 24 * 60 * 60 * 1000;  // 7 days
-
-    res.cookie('mentorToken', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge,
-    });
-
-    // Parse expertise and slots
-    const expertise = mentor.expertise ? JSON.parse(mentor.expertise) : [];
-    const available_slots = mentor.available_slots ? JSON.parse(mentor.available_slots) : null;
-
-    return res.status(200).json({
-      success: true,
-      message: 'Login successful',
-      mentor: {
-        id: mentor.id,
-        full_name: mentor.full_name,
-        email: mentor.email,
-        title: mentor.title,
-        current_company: mentor.current_company,
-        experience_years: mentor.experience_years,
-        expertise,
-        bio: mentor.bio,
-        linkedin_url: mentor.linkedin_url,
-        profile_image_url: mentor.profile_image_url,
-        hourly_price: mentor.hourly_price,
-        available_slots,
-        rating: mentor.rating,
-        total_sessions: mentor.total_sessions,
-        is_verified: mentor.is_verified,
-      },
-      token, // For mobile support
-    });
+    // Return response using unified auth
+    return await authController.performLogin(mentor, 'mentor', res);
   } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({
@@ -405,21 +332,7 @@ router.post('/login', async (req, res) => {
 // ==========================================
 // POST /api/mentor/logout
 // ==========================================
-router.post('/logout', (req, res) => {
-  try {
-    res.clearCookie('mentorToken');
-    return res.status(200).json({
-      success: true,
-      message: 'Logged out successfully',
-    });
-  } catch (error) {
-    console.error('Logout error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Logout failed',
-    });
-  }
-});
+router.post('/logout', authController.logout);
 
 // ==========================================
 // GET /api/mentor/profile

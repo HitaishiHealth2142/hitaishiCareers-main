@@ -8,6 +8,7 @@ const path = require('path');
 const { query } = require("../db");
 // Import unified middleware
 const { protect } = require('../middleware/auth');
+const authController = require('../controllers/authController');
 const { sendEmailAsync, sendCompanyRegistrationEmail, sendCompanyProfileUpdateEmail } = require('../services/emailService');
 
 
@@ -63,7 +64,8 @@ router.post("/register", (req, res) => {
               email
             }));
 
-            res.status(201).json({ success: true, message: "Registration successful!" });
+            // Return response using unified auth
+            return await authController.performLogin({ id, user_email: email, company_name }, 'company', res);
         } catch (dbErr) {
             console.error("Company registration failed:", dbErr);
             res.status(500).json({ success: false, message: "An internal server error occurred." });
@@ -84,16 +86,8 @@ router.post("/login", async (req, res) => {
         const match = await bcrypt.compare(password, company.password_hash);
         if (!match) return res.status(401).json({ success: false, message: "Invalid credentials." });
         
-        // Create a JWT with a specific 'role' for employers
-        const payload = { id: company.id, role: "company", name: company.company_name };
-        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
-        
-        // Send the token back to the client to store
-        res.json({
-            success: true,
-            message: "Login successful!",
-            token: token,
-        });
+        // Return response using unified auth
+        return await authController.performLogin(company, 'company', res);
 
     } catch (err) {
         console.error("Employer Login failed:", err);

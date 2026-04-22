@@ -600,11 +600,12 @@
     });
 
     async function loadNavbarProfile() {
-      const email = sessionStorage.getItem("email");
+      const user = Auth.getUser();
+      const email = user ? user.email : null;
       if (!email) return;
 
       try {
-        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+        const res = await Auth.fetchWithAuth(`/api/profile/full?email=${encodeURIComponent(email)}`);
         if (!res.ok) return;
 
         const data = await res.json();
@@ -1775,11 +1776,10 @@ link.addEventListener('click', function(e) {
         }
 
         try {
-            const response = await fetch('/api/profile/update-password', {
+            const response = await Auth.fetchWithAuth('/api/profile/update-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ newPassword }),
-                credentials: 'include'
+                body: JSON.stringify({ newPassword })
             });
 
             const result = await response.json();
