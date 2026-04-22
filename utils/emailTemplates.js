@@ -490,6 +490,52 @@ const getPasswordChangeEmail = (user, ipAddress = 'IP address unavailable') => {
 };
 
 // ==========================================
+// 10. PASSWORD RESET OTP EMAIL
+// ==========================================
+const getPasswordResetOTPEmail = (data) => {
+    const content = `
+        <div class="header">
+            <div class="header-logo">🔐 WinJob</div>
+            <p style="font-size: 14px; opacity: 0.95;">Password Reset - One-Time Password</p>
+        </div>
+        <div class="content">
+            <p class="section-text">Hello,</p>
+            <p class="section-text">We received a request to reset your WinJob account password. Use the One-Time Password (OTP) below to proceed with the reset.</p>
+            
+            <div class="info-box">
+                <div class="info-box-title">🔑 Your Reset OTP</div>
+                <div style="background: #f0f4ff; padding: 20px; border-radius: 8px; text-align: center; margin: 15px 0;">
+                    <p style="font-size: 14px; color: #555; margin-bottom: 10px; letter-spacing: 2px;">
+                        <span style="font-family: 'Courier New', monospace; font-size: 32px; font-weight: bold; color: #5B9BFF; letter-spacing: 4px;">
+                            ${data.otp}
+                        </span>
+                    </p>
+                    <p style="font-size: 12px; color: #e67e22; margin: 0;">
+                        ⏱️ Valid for <strong>10 minutes</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="security-alert">
+                <strong>⚠️ Security Warning:</strong>
+                <ul style="margin-left: 10px; font-size: 13px; color: #333;">
+                    <li>Never share this OTP with anyone.</li>
+                    <li>If you didn't request a password reset, please ignore this email or change your password if you're concerned about your account security.</li>
+                </ul>
+            </div>
+
+            <p class="section-text">After entering the OTP, you will be able to create a new password for your account.</p>
+        </div>
+        <div class="footer">
+            <p>© 2026 WinJob. All rights reserved.</p>
+            <p><a href="${BASE_URL}/help.html">Help Center</a> | <a href="${BASE_URL}/privacy.html">Privacy Policy</a></p>
+            <p style="margin-top: 15px; color: #aaa;">This is an automated security email. Do not reply.</p>
+        </div>
+    `;
+    return emailWrapper(content);
+};
+
+// ==========================================
 // 9. ADMIN OTP EMAIL
 // ==========================================
 const getAdminOTPEmail = (data) => {
@@ -563,5 +609,6 @@ module.exports = {
     getJobApplicationConfirmationEmail,
     getJobApplicationAlertEmail,
     getPasswordChangeEmail,
-    getAdminOTPEmail
+    getAdminOTPEmail,
+    getPasswordResetOTPEmail
 };

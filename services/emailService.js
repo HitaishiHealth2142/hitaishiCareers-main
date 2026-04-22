@@ -232,6 +232,24 @@ const sendAdminOTPEmail = async (adminData) => {
     return await sendEmail(mailOptions);
 };
 
+/**
+ * Send password reset OTP email
+ */
+const sendPasswordResetOTPEmail = async (email, otp) => {
+    if (!email) {
+        console.error('❌ sendPasswordResetOTPEmail: Email is required');
+        return;
+    }
+
+    const mailOptions = {
+        to: email,
+        subject: 'WinJob - Password Reset Verification Code 🔐',
+        html: emailTemplates.getPasswordResetOTPEmail({ otp })
+    };
+
+    return await sendEmail(mailOptions);
+};
+
 // ==========================================
 // BACKGROUND EMAIL SENDER (Non-blocking)
 // ==========================================
@@ -292,6 +310,7 @@ module.exports = {
     sendJobApplicationAlertEmail,
     sendPasswordChangeEmail,
     sendAdminOTPEmail,
+    sendPasswordResetOTPEmail,
 
     // Transporter for advanced usage if needed
     transporter

@@ -18,6 +18,11 @@ router.post('/refresh', authController.refresh);
 // Logout (Unified)
 router.post('/logout', authController.logout);
 
+// Password Reset Flow
+router.post('/forgot-password', authController.requestPasswordReset);
+router.post('/verify-reset-otp', authController.verifyResetOTP);
+router.post('/reset-password', authController.resetPassword);
+
 module.exports = router;
 
 
