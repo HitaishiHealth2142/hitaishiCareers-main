@@ -11,8 +11,6 @@ const pool = mysql.createPool({
   database: 'winjob'
 });
 
-// working
-
 
 /**
  * A helper function to execute SQL queries with promises.
