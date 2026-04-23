@@ -46,22 +46,32 @@ const generateTokens = async (userId, role) => {
 /**
  * Common Login Logic
  */
-const performLogin = async (user, role, res) => {
+const performLogin = async (user, role, req, res) => {
+
     const { accessToken, refreshToken } = await generateTokens(user.id, role);
 
-    // Set Refresh Token in HttpOnly cookie
+    await query(
+        `INSERT INTO login_logs (user_id, role, ip_address, user_agent)
+         VALUES (?, ?, ?, ?)`,
+        [
+            user.id,
+            role,
+            req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+            req.headers['user-agent']
+        ]
+    );
+
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     return res.status(200).json({
         success: true,
         message: 'Login successful!',
         accessToken,
-        refreshToken, // Also send for mobile apps
         user: {
             id: user.id,
             role: role,
@@ -97,7 +107,7 @@ exports.register = async (req, res) => {
             sendEmailAsync(() => sendUserRegistrationEmail({ fullName, email }));
         }
 
-        return await performLogin({ id: result.insertId, email, full_name: fullName }, 'user', res);
+        return await performLogin({ id: result.insertId, email, full_name: fullName }, 'user', req, res);
     } catch (error) {
         console.error('Registration Error:', error);
         res.status(500).json({ success: false, message: 'Server error during registration.' });
@@ -117,7 +127,7 @@ exports.login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password_hash);
         if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid credentials.' });
 
-        return await performLogin(user, 'user', res);
+        return await performLogin(user, 'user', req, res);
     } catch (error) {
         console.error('Login Error:', error);
         res.status(500).json({ success: false, message: 'Server error during login.' });
@@ -161,19 +171,35 @@ exports.refresh = async (req, res) => {
  * LOGOUT
  */
 exports.logout = async (req, res) => {
-    try {
-        const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
-        if (refreshToken) {
-            const hashedToken = hashToken(refreshToken);
-            await query('DELETE FROM refresh_tokens WHERE token_hash = ?', [hashedToken]);
-        }
+  try {
+    const refreshToken = req.cookies.refreshToken;
 
-        res.clearCookie('refreshToken');
-        res.status(200).json({ success: true, message: 'Logged out successfully.' });
-    } catch (error) {
-        console.error('Logout Error:', error);
-        res.status(500).json({ success: false, message: 'Server error during logout.' });
+    if (!refreshToken) {
+      return res.status(400).json({ message: "No refresh token" });
     }
+
+    const hashed = hashToken(refreshToken);
+
+    // delete refresh token
+    await query("DELETE FROM refresh_tokens WHERE token_hash = ?", [hashed]);
+
+    // ✅ UPDATE logout time
+    await query(`
+      UPDATE login_logs 
+      SET logout_time = NOW()
+      WHERE user_id = ? AND logout_time IS NULL
+      ORDER BY login_time DESC
+      LIMIT 1
+    `, [req.user.id]);
+
+    res.clearCookie("refreshToken");
+
+    res.json({ message: "Logged out successfully" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Logout error" });
+  }
 };
 
 /**
@@ -209,7 +235,7 @@ exports.googleLogin = async (req, res) => {
             user = { id: result.insertId, email, full_name: payload.name };
         }
 
-        return await performLogin(user, 'user', res);
+        return await performLogin(user, 'user', req, res);
     } catch (err) {
         console.error('Google Auth error:', err);
         res.status(500).json({ success: false, message: 'Server error during Google authentication.' });

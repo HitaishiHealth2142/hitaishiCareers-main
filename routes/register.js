@@ -109,15 +109,7 @@ router.get('/jobseekers', async (req, res) => {
 
 // --- UPDATED Logout Route ---
 
-router.post('/logout', (req, res) => {
-    // To log out, we clear the JWT HttpOnly cookie.
-    res.cookie('token', '', {
-        httpOnly: true,
-        expires: new Date(0), // Set expiry date to the past
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
-    });
-    res.status(200).json({ message: 'Logout successful!' });
-});
+router.post('/logout', protect(), authController.logout);
+
 
 module.exports = router;

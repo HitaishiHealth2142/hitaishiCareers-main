@@ -20,6 +20,12 @@ const aiInterviewRoute = require('./routes/aiInterview');
 const { protect } = require('./middleware/auth');
 
 
+// Initialize Auth Tables (Refresh Tokens & Login Logs)
+const initAuthTablesRoutes = require('./utils/initAuthTables');
+
+initAuthTablesRoutes();
+// ========================================
+
 
 
 const app = express();
@@ -148,6 +154,7 @@ app.use('/api/company', companyRoute);
 app.use('/api/mentors', mentorsRoute);
 app.use('/api/admin', adminRoute);
 app.use('/api/ai', aiInterviewRoute);
+
 
 // ========================================
 // FRONTEND ROUTES
