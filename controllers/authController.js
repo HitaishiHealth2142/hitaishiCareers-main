@@ -21,27 +21,30 @@ const hashToken = (token) => {
 /**
  * Utility: Generate Access and Refresh Tokens
  */
-const generateTokens = async (userId, role) => {
-    const accessToken = jwt.sign(
-        { id: userId, role: role },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
-    );
+const generateTokens = async (user, role) => {
 
-    const refreshToken = crypto.randomBytes(40).toString('hex');
-    const hashedRefreshToken = hashToken(refreshToken);
+  const accessToken = jwt.sign(
+    {
+      id: user.id,          // ✅ FIXED
+      role: role,
+      email: user.email     // ✅ REQUIRED
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+  );
 
-    // Set expiry (default 7 days)
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
+  const refreshToken = crypto.randomBytes(40).toString('hex');
+  const hashedRefreshToken = hashToken(refreshToken);
 
-    // Store hashed token in DB
-    await query(
-        'INSERT INTO refresh_tokens (user_id, role, token_hash, expires_at) VALUES (?, ?, ?, ?)',
-        [userId, role, hashedRefreshToken, expiresAt]
-    );
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
 
-    return { accessToken, refreshToken };
+  await query(
+    'INSERT INTO refresh_tokens (user_id, role, token_hash, expires_at) VALUES (?, ?, ?, ?)',
+    [user.id, role, hashedRefreshToken, expiresAt]   // ✅ FIXED
+  );
+
+  return { accessToken, refreshToken };
 };
 
 /**
@@ -49,7 +52,7 @@ const generateTokens = async (userId, role) => {
  */
 const performLogin = async (user, role, req, res) => {
 
-    const { accessToken, refreshToken } = await generateTokens(user.id, role);
+    const { accessToken, refreshToken } = await generateTokens(user, role);
 
     await query(
     `INSERT INTO login_logs (user_id, role, session_id, ip_address, user_agent)
@@ -79,6 +82,7 @@ const performLogin = async (user, role, req, res) => {
         success: true,
         message: 'Login successful!',
         accessToken,
+        refreshToken,
         user: {
             id: user.id,
             role: role,

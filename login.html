@@ -424,28 +424,29 @@
       }
 
       try {
-        const res = await fetch("/api/user/login", {
+        const res = await fetch("/api/auth/login", {   // ✅ FIXED
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
-          credentials: "include", // important for cookie auth
+          credentials: "include",
         });
 
         const result = await res.json();
+
         if (res.ok) {
-          
-          
           showCustomAlert("✅ " + result.message, 'success');
-          
-          // Store tokens and user info
+
+          // ✅ Store tokens
           Auth.setTokens(result.accessToken, result.refreshToken);
+
+          // ✅ Store user
           Auth.setUser(result.user);
 
-          // Redirect
+          // ✅ Redirect
           window.location.href = "userProfile.html";
 
         } else {
-          showCustomAlert("❌ " + (result.error || "Login failed."), 'danger');
+          showCustomAlert("❌ " + (result.message || "Login failed."), 'danger');
         }
       } catch (err) {
         console.error("Login request failed:", err);
