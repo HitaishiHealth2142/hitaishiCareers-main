@@ -1,4 +1,5 @@
 const { query } = require("../db");
+const sessionId = crypto.randomBytes(16).toString('hex');
 
 async function initAuthTables() {
   try {
@@ -22,6 +23,7 @@ async function initAuthTables() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id VARCHAR(50),
         role ENUM('user','admin','company','mentor'),
+        session_id VARCHAR(100),
         login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         logout_time TIMESTAMP NULL,
         ip_address VARCHAR(100),

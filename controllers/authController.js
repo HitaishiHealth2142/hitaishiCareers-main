@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const { query } = require('../db');
 const { sendEmailAsync, sendUserRegistrationEmail } = require('../services/emailService');
+const sessionId = crypto.randomBytes(16).toString('hex');
 
 // Google OAuth Setup
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -51,14 +52,15 @@ const performLogin = async (user, role, req, res) => {
     const { accessToken, refreshToken } = await generateTokens(user.id, role);
 
     await query(
-        `INSERT INTO login_logs (user_id, role, ip_address, user_agent)
-         VALUES (?, ?, ?, ?)`,
-        [
-            user.id,
-            role,
-            req.headers['x-forwarded-for'] || req.socket.remoteAddress,
-            req.headers['user-agent']
-        ]
+    `INSERT INTO login_logs (user_id, role, session_id, ip_address, user_agent)
+    VALUES (?, ?, ?, ?, ?)`,
+    [
+        user.id,
+        role,
+        sessionId,
+        req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+        req.headers['user-agent']
+    ]
     );
 
     res.cookie('refreshToken', refreshToken, {
@@ -66,6 +68,11 @@ const performLogin = async (user, role, req, res) => {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.cookie('sessionId', sessionId, {
+        httpOnly: false, // frontend can read if needed
+        sameSite: 'strict'
     });
 
     return res.status(200).json({
@@ -187,7 +194,7 @@ exports.logout = async (req, res) => {
     await query(`
       UPDATE login_logs 
       SET logout_time = NOW()
-      WHERE user_id = ? AND logout_time IS NULL
+      WHERE user_id = ? AND session_id = ? AND logout_time IS NULL
       ORDER BY login_time DESC
       LIMIT 1
     `, [req.user.id]);
