@@ -6,6 +6,7 @@ const fs = require('fs');
 const { query } = require('../db');
 const authController = require('../controllers/authController');
 const router = express.Router();
+const { protect } = require('../middleware/auth');
 
 // --- Ensure 'uploads' directory exists ---
 const uploadDir = path.join(__dirname, '../uploads');

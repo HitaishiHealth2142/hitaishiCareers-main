@@ -799,1043 +799,1055 @@
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("accessToken");
+
+            if (!token) {
+                window.location.href = "/login.html";
+                return;
+            }
+        });
+    </script>
+
+
 <script>
-    // === XSS SAFETY: HTML Escaping Function ===
-    function escapeHTML(str) {
-        if (typeof str !== 'string' || str === null) return '';
-        // Replaces HTML special characters with their entity equivalents
-        return str.replace(/&/g, '&amp;')
-                  .replace(/</g, '&lt;')
-                  .replace(/>/g, '&gt;')
-                  .replace(/"/g, '&quot;')
-                  .replace(/'/g, '&#039;');
-    }
-    
-    // === GLOBAL STATE ===
-    let nextEntryId = 1;
-    let profileData = {
-        personalDetails: {},
-        professionalDetails: [],
-        projects: [],
-        resume: null,
-        skills: [],
-        education: [],
-        certifications: [],
-        languages: []
-    };
-
-    // === INITIALIZATION ===
-    document.addEventListener('DOMContentLoaded', async function() {
-        setupNavigation();
-        setupEventListeners();
-        await loadProfileData();
-    });
-
-    // === NAVIGATION HANDLER ===
-    function setupNavigation() {
-        document.querySelectorAll('#profileNav .nav-link').forEach(link => {
-link.addEventListener('click', function(e) {
-    if (this.id === 'logoutButton') {
-        e.preventDefault();
-        return;
-    }
-
-    const href = this.getAttribute('href');
-    const sectionId = this.getAttribute('data-section');
-        // allow real page navigation
-        if (href && href !== '#' && href !== '') {
-            return;
+        // === XSS SAFETY: HTML Escaping Function ===
+        function escapeHTML(str) {
+            if (typeof str !== 'string' || str === null) return '';
+            // Replaces HTML special characters with their entity equivalents
+            return str.replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
         }
-
-        e.preventDefault();
-
-        document.querySelectorAll('#profileNav .nav-link')
-            .forEach(l => l.classList.remove('active'));
-
-        this.classList.add('active');
-
-        document.querySelectorAll('.section-content')
-            .forEach(section => section.classList.remove('active'));
-
-        const targetSection = document.getElementById(sectionId);
-        if (targetSection) {
-            targetSection.classList.add('active');
-        }
-    });
-        });
-    }
-
-    // === EVENT LISTENERS ===
-    function setupEventListeners() {
-        // Profile photo preview
-        const photoInput = document.getElementById('profilePhoto');
-        if (photoInput) {
-            photoInput.addEventListener('change', e => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = e => document.getElementById('profilePhotoPreview').src = e.target.result;
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        // Logout button
-        const logoutBtn = document.getElementById('logoutButton');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', async e => {
-                e.preventDefault();
-                await logout();
-            });
-        }
-    }
-
-    // === LOGOUT ===
-    async function logout() {
-        await Auth.logout();
-    }
-
-
-    // === LOAD PROFILE DATA ===
-    async function loadProfileData() {
-        try {
-            const response = await Auth.fetchWithAuth('/api/profile/full');
-            
-            if (!response.ok) {
-                if (response.status === 401) return; // Auth utility handles redirect
-                throw new Error('Failed to fetch profile data.');
-            }
-
-            profileData = await response.json();
-            populateAllSections();
-            updateProfileCompletion();
-        } catch (error) {
-            console.error('Error loading profile data:', error);
-            showToast('Error loading your profile. Please try refreshing.', 'danger');
-        }
-    }
-
-
-    // === POPULATE PROFILE SECTIONS ===
-    function populateAllSections() {
-        populatePersonalDetails();
-        // The following functions (render...View) must use escapeHTML for dynamic content
-        renderDynamicSection('professionalDetails', 'Professional Details', profileData.professionalDetails, renderProfessionalView, 'addProfessionalEntry', 'saveProfessionalDetails', populateProfessionalForm);
-        renderDynamicSection('projects', 'Projects', profileData.projects, renderProjectView, 'addProjectEntry', 'saveProjects', populateProjectsForm);
-        renderDynamicSection('skills', 'Skills', profileData.skills, renderSkillView, 'addSkillEntry', 'saveSkills', populateSkillsForm);
-        renderDynamicSection('education', 'Education', profileData.education, renderEducationView, 'addEducationEntry', 'saveEducation', populateEducationForm);
-        renderDynamicSection('certifications', 'Certifications', profileData.certifications, renderCertificationView, 'addCertificationEntry', 'saveCertifications', populateCertificationsForm);
-        renderDynamicSection('languages', 'Languages', profileData.languages, renderLanguageView, 'addLanguageEntry', 'saveLanguages', populateLanguagesForm);
-        renderResumeSection();
-    }
-
-    // === PERSONAL DETAILS (Updated with XSS Safety) ===
-    function populatePersonalDetails() {
-        const pd = profileData.personalDetails || {};
-        const na = '<span class="text-muted">N/A</span>';
-        const viewContainer = document.getElementById('personalDetailsView');
-        if (!viewContainer) return;
-
-        // XSS Safety applied to all dynamic data inside innerHTML
-        const safeFullName = escapeHTML(pd.fullName) || na;
-        const safeEmail = escapeHTML(pd.email) || na;
-        const safePhone = escapeHTML(pd.phone) || na;
-        const safeGender = pd.gender ? escapeHTML(pd.gender[0].toUpperCase() + pd.gender.slice(1)) : na;
-        const safeExperience = pd.experienceLevel ? escapeHTML(pd.experienceLevel[0].toUpperCase() + pd.experienceLevel.slice(1)) : na;
-        const safeCtc = pd.ctcExpected ? `${escapeHTML(pd.ctcExpected.toString())} LPA` : na;
-
-        viewContainer.innerHTML = `
-            <div class="row">
-                <div class="col-md-3 text-center mb-3">
-                    <img src="${pd.profilePhoto || 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo'}" class="profile-photo-preview" alt="Profile Photo">
-                </div>
-                <div class="col-md-9">
-                    <p><strong>Full Name:</strong> ${safeFullName}</p>
-                    <p><strong>Email:</strong> ${safeEmail}</p>
-                    <p><strong>Phone:</strong> ${safePhone}</p>
-                    <p><strong>Gender:</strong> ${safeGender}</p>
-                    <p><strong>Experience:</strong> ${safeExperience}</p>
-                    <p><strong>Expected CTC:</strong> ${safeCtc}</p>
-                </div>
-            </div>`;
-
-        // Input values use textContent, which is safe
-        document.getElementById('fullName').value = pd.fullName || '';
-        document.getElementById('email').value = pd.email || '';
-        document.getElementById('phone').value = pd.phone || '';
-        document.getElementById('gender').value = pd.gender || '';
-        document.getElementById('ctcExpected').value = pd.ctcExpected || '';
-        document.getElementById('profilePhotoPreview').src = pd.profilePhoto || 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo';
-
-        const expEl = document.querySelector(`input[name="experienceLevel"][value="${pd.experienceLevel || ''}"]`);
-        if (expEl) expEl.checked = true;
-    }
-
-    // === GENERIC RENDER/EDIT FUNCTIONS ===
-    
-    // Renders the section content (view mode)
-    function renderDynamicSection(id, title, data, renderViewFn, addFn, saveFn, populateFormFn) {
-        const container = document.getElementById(id);
-        // Special case for skills: Render view directly inside the container
-        const itemsHTML = data?.length ? data.map(renderViewFn).join('') : '<p class="text-muted">No information added yet.</p>';
         
-        container.innerHTML = `
-            <div class="section-header">
-                <h2 class="h5 mb-0">${title}</h2>
-                <button type="button" class="btn btn-outline-primary btn-sm edit-btn" onclick="toggleEdit('${id}', true)">
-                    <i class="bi bi-pencil me-1"></i> Edit
-                </button>
-            </div>
-            <div id="${id}View">${itemsHTML}</div>
-            <form id="${id}Form" class="d-none" onsubmit="event.preventDefault(); ${saveFn}();">
-                <div id="${id}Entries"></div>
-                ${id !== 'skills' ? `
-                    <button type="button" class="btn btn-outline-primary mb-3" onclick="${addFn}()">
-                        <i class="bi bi-plus"></i> Add Entry
-                    </button>
-                ` : ''}
-                <div class="action-buttons">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-outline-secondary" onclick="toggleEdit('${id}', false)">Cancel</button>
-                </div>
-            </form>`;
-    }
+        // === GLOBAL STATE ===
+        let nextEntryId = 1;
+        let profileData = {
+            personalDetails: {},
+            professionalDetails: [],
+            projects: [],
+            resume: null,
+            skills: [],
+            education: [],
+            certifications: [],
+            languages: []
+        };
 
-    // Toggles between view and edit mode
-    function toggleEdit(id, show) {
-        const view = document.getElementById(id + 'View');
-        const form = document.getElementById(id + 'Form');
-        const editBtn = document.querySelector(`#${id} .edit-btn`);
-        
-        if (!view || !form) return;
-
-        if (show) {
-            view.classList.add('d-none');
-            form.classList.remove('d-none');
-            if (editBtn) editBtn.classList.add('d-none');
-            
-            // Populate form content only when entering edit mode
-            if (typeof window['populate' + id.charAt(0).toUpperCase() + id.slice(1) + 'Form'] === 'function') {
-                window['populate' + id.charAt(0).toUpperCase() + id.slice(1) + 'Form']();
-            }
-        } else {
-            view.classList.remove('d-none');
-            form.classList.add('d-none');
-            if (editBtn) editBtn.classList.remove('d-none');
-        }
-    }
-
-
-    // === PROFILE COMPLETION ===
-    function updateProfileCompletion() {
-        const checks = [
-            profileData.personalDetails?.fullName,
-            profileData.professionalDetails?.length,
-            profileData.projects?.length,
-            profileData.resume,
-            profileData.skills?.length
-        ];
-        const completed = checks.filter(Boolean).length;
-        const percentage = Math.round((completed / 5) * 100);
-        
-        document.querySelector('.progress-bar').style.width = percentage + '%';
-        document.querySelector('.completion-percentage').textContent = percentage + '%';
-        
-        // Update completion status in sections
-        const sections = ['Personal Details', 'Professional', 'Projects', 'Resume', 'Skills'];
-        document.querySelectorAll('.completion-section').forEach((el, index) => {
-            const statusEl = el.querySelector('.section-status');
-            if (checks[index]) {
-                el.classList.add('completed');
-                statusEl.classList.add('completed');
-                statusEl.innerHTML = '<i class="fas fa-check"></i>';
-            } else {
-                el.classList.remove('completed');
-                statusEl.classList.remove('completed');
-                statusEl.innerHTML = '<i class="fas fa-times"></i>';
-            }
-        });
-    }
-
-    // === SAVE HELPERS (XSS consideration: Data sent to server is client-side escaped before submission) ===
-    async function saveData(endpoint, payload) {
-        const isFormData = payload instanceof FormData;
-        try {
-            const response = await Auth.fetchWithAuth(endpoint, {
-                method: 'POST',
-                // Use default Content-Type for FormData, explicitly set for JSON
-                headers: isFormData ? {} : { 'Content-Type': 'application/json' },
-                body: isFormData ? payload : JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                if (response.status === 401) return null; // Auth utility handles redirect
-
-                 // Throwing the error here will catch the 413 error message from the proxy.
-                 if (response.status === 413) {
-                    throw new Error("File upload failed. The maximum allowed file size is 20MB. Please check your file size.");
-                 }
-                 const errorBody = await response.json();
-                 throw new Error(errorBody.error || 'Failed to save data. Check server logs.');
-            }
-
-            const data = await response.json();
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', async function() {
+            setupNavigation();
+            setupEventListeners();
             await loadProfileData();
-            return data;
-        } catch (err) {
-            showToast(err.message, 'danger');
-            console.error('Save Data Error:', err);
-            return null;
+        });
+
+        // === NAVIGATION HANDLER ===
+        function setupNavigation() {
+            document.querySelectorAll('#profileNav .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        if (this.id === 'logoutButton') {
+            e.preventDefault();
+            return;
         }
-    }
-    
-    // Function to ensure JSON data going to the server is client-side escaped
-    function sanitizeDataForSubmission(data) {
-        if (typeof data === 'string') {
-            return escapeHTML(data);
+
+        const href = this.getAttribute('href');
+        const sectionId = this.getAttribute('data-section');
+            // allow real page navigation
+            if (href && href !== '#' && href !== '') {
+                return;
+            }
+
+            e.preventDefault();
+
+            document.querySelectorAll('#profileNav .nav-link')
+                .forEach(l => l.classList.remove('active'));
+
+            this.classList.add('active');
+
+            document.querySelectorAll('.section-content')
+                .forEach(section => section.classList.remove('active'));
+
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        });
+            });
         }
-        if (Array.isArray(data)) {
-            return data.map(sanitizeDataForSubmission);
+
+        // === EVENT LISTENERS ===
+        function setupEventListeners() {
+            // Profile photo preview
+            const photoInput = document.getElementById('profilePhoto');
+            if (photoInput) {
+                photoInput.addEventListener('change', e => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = e => document.getElementById('profilePhotoPreview').src = e.target.result;
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Logout button
+            const logoutBtn = document.getElementById('logoutButton');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async e => {
+                    e.preventDefault();
+                    await logout();
+                });
+            }
         }
-        if (typeof data === 'object' && data !== null) {
-            const newObject = {};
-            for (const key in data) {
-                if (data.hasOwnProperty(key)) {
-                    newObject[key] = sanitizeDataForSubmission(data[key]);
+
+        // === LOGOUT ===
+        async function logout() {
+            await Auth.logout();
+        }
+
+
+        // === LOAD PROFILE DATA ===
+        async function loadProfileData() {
+            try {
+                const response = await Auth.fetchWithAuth('/api/profile/full');
+                
+                if (!response.ok) {
+                    if (response.status === 401) return; // Auth utility handles redirect
+                    throw new Error('Failed to fetch profile data.');
                 }
-            }
-            return newObject;
-        }
-        return data;
-    }
 
-    // === PERSONAL DETAILS SAVE (UPDATED: Removed client-side size check) ===
-    async function savePersonalDetails() {
-        const formData = new FormData();
-        const photoInput = document.getElementById('profilePhoto');
-        const photo = photoInput.files[0];
+                profileData = await response.json();
+                populateAllSections();
+                updateProfileCompletion();
+            } catch (error) {
+                console.error('Error loading profile data:', error);
+                showToast('Error loading your profile. Please try refreshing.', 'danger');
+            }
+        }
+
+
+        // === POPULATE PROFILE SECTIONS ===
+        function populateAllSections() {
+            populatePersonalDetails();
+            // The following functions (render...View) must use escapeHTML for dynamic content
+            renderDynamicSection('professionalDetails', 'Professional Details', profileData.professionalDetails, renderProfessionalView, 'addProfessionalEntry', 'saveProfessionalDetails', populateProfessionalForm);
+            renderDynamicSection('projects', 'Projects', profileData.projects, renderProjectView, 'addProjectEntry', 'saveProjects', populateProjectsForm);
+            renderDynamicSection('skills', 'Skills', profileData.skills, renderSkillView, 'addSkillEntry', 'saveSkills', populateSkillsForm);
+            renderDynamicSection('education', 'Education', profileData.education, renderEducationView, 'addEducationEntry', 'saveEducation', populateEducationForm);
+            renderDynamicSection('certifications', 'Certifications', profileData.certifications, renderCertificationView, 'addCertificationEntry', 'saveCertifications', populateCertificationsForm);
+            renderDynamicSection('languages', 'Languages', profileData.languages, renderLanguageView, 'addLanguageEntry', 'saveLanguages', populateLanguagesForm);
+            renderResumeSection();
+        }
+
+        // === PERSONAL DETAILS (Updated with XSS Safety) ===
+        function populatePersonalDetails() {
+            const pd = profileData.personalDetails || {};
+            const na = '<span class="text-muted">N/A</span>';
+            const viewContainer = document.getElementById('personalDetailsView');
+            if (!viewContainer) return;
+
+            // XSS Safety applied to all dynamic data inside innerHTML
+            const safeFullName = escapeHTML(pd.fullName) || na;
+            const safeEmail = escapeHTML(pd.email) || na;
+            const safePhone = escapeHTML(pd.phone) || na;
+            const safeGender = pd.gender ? escapeHTML(pd.gender[0].toUpperCase() + pd.gender.slice(1)) : na;
+            const safeExperience = pd.experienceLevel ? escapeHTML(pd.experienceLevel[0].toUpperCase() + pd.experienceLevel.slice(1)) : na;
+            const safeCtc = pd.ctcExpected ? `${escapeHTML(pd.ctcExpected.toString())} LPA` : na;
+
+            viewContainer.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3 text-center mb-3">
+                        <img src="${pd.profilePhoto || 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo'}" class="profile-photo-preview" alt="Profile Photo">
+                    </div>
+                    <div class="col-md-9">
+                        <p><strong>Full Name:</strong> ${safeFullName}</p>
+                        <p><strong>Email:</strong> ${safeEmail}</p>
+                        <p><strong>Phone:</strong> ${safePhone}</p>
+                        <p><strong>Gender:</strong> ${safeGender}</p>
+                        <p><strong>Experience:</strong> ${safeExperience}</p>
+                        <p><strong>Expected CTC:</strong> ${safeCtc}</p>
+                    </div>
+                </div>`;
+
+            // Input values use textContent, which is safe
+            document.getElementById('fullName').value = pd.fullName || '';
+            document.getElementById('email').value = pd.email || '';
+            document.getElementById('phone').value = pd.phone || '';
+            document.getElementById('gender').value = pd.gender || '';
+            document.getElementById('ctcExpected').value = pd.ctcExpected || '';
+            document.getElementById('profilePhotoPreview').src = pd.profilePhoto || 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo';
+
+            const expEl = document.querySelector(`input[name="experienceLevel"][value="${pd.experienceLevel || ''}"]`);
+            if (expEl) expEl.checked = true;
+        }
+
+        // === GENERIC RENDER/EDIT FUNCTIONS ===
         
-        let shouldClearFileInput = false;
-
-        // --- Now relies completely on server-side Multer limit (20MB) ---
-        if (photo) {
-            formData.append('profilePhoto', photo);
-            shouldClearFileInput = true;
-        }
-
-        // Always append textual fields
-        formData.append('fullName', document.getElementById('fullName').value);
-        formData.append('phone', document.getElementById('phone').value);
-        formData.append('gender', document.getElementById('gender').value);
-        const exp = document.querySelector('input[name="experienceLevel"]:checked');
-        formData.append('experienceLevel', exp ? exp.value : '');
-        formData.append('ctcExpected', document.getElementById('ctcExpected').value);
-
-        const res = await saveData('/api/profile/update', formData);
-        if (res) {
-            showToast('Personal details updated!', 'success');
-            toggleEdit('personalDetails', false);
+        // Renders the section content (view mode)
+        function renderDynamicSection(id, title, data, renderViewFn, addFn, saveFn, populateFormFn) {
+            const container = document.getElementById(id);
+            // Special case for skills: Render view directly inside the container
+            const itemsHTML = data?.length ? data.map(renderViewFn).join('') : '<p class="text-muted">No information added yet.</p>';
             
-            // Clear the file input reference after a successful save
-            if (shouldClearFileInput) {
-                photoInput.value = null;
-                document.getElementById('profilePhotoPreview').src = profileData.personalDetails.profilePhoto || 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo';
-            }
-        }
-    }
-
-    // ---------------------------------------------
-    // --- 1. PROFESSIONAL DETAILS IMPLEMENTATION ---
-    // ---------------------------------------------
-    // ... (Professional Details functions remain unchanged) ...
-
-    function renderProfessionalView(item) {
-        const safeItem = sanitizeDataForSubmission(item);
-        const descriptionHtml = safeItem.description ? `<p class="mt-2 text-muted">${safeItem.description.replace(/\n/g, '<br>')}</p>` : '';
-        return `
-            <div class="view-section">
-                <h4 class="mb-1">${safeItem.title} at ${safeItem.company}</h4>
-                <p class="text-secondary mb-1">${safeItem.startDate} - ${safeItem.isCurrent ? 'Present' : safeItem.endDate}</p>
-                ${descriptionHtml}
-            </div>`;
-    }
-
-    function getProfessionalEntryHtml(item = {}, index) {
-        const safeItem = sanitizeDataForSubmission(item);
-        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
-
-        return `
-            <div class="dynamic-section" data-id="${itemId}" data-type="professionalDetails">
-                <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Job Title</label>
-                        <input type="text" class="form-control" name="title" value="${safeItem.title || ''}" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Company</label>
-                        <input type="text" class="form-control" name="company" value="${safeItem.company || ''}" required>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Start Date</label>
-                        <input type="month" class="form-control" name="startDate" value="${safeItem.startDate || ''}" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">End Date</label>
-                        <input type="month" class="form-control" name="endDate" value="${safeItem.endDate || ''}">
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="isCurrent" id="isCurrent-${itemId}" ${safeItem.isCurrent ? 'checked' : ''}>
-                        <label class="form-check-label" for="isCurrent-${itemId}">Currently working here</label>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Description / Achievements</label>
-                    <textarea class="form-control" name="description" rows="3">${safeItem.description || ''}</textarea>
-                </div>
-            </div>`;
-    }
-
-    function populateProfessionalForm() {
-        const entriesContainer = document.getElementById('professionalDetailsEntries');
-        entriesContainer.innerHTML = '';
-        profileData.professionalDetails.forEach((item, index) => {
-            entriesContainer.insertAdjacentHTML('beforeend', getProfessionalEntryHtml(item, index));
-        });
-        // Add one empty entry if none exists
-        if (profileData.professionalDetails.length === 0) {
-            addProfessionalEntry();
-        }
-    }
-
-    function addProfessionalEntry() {
-        const entriesContainer = document.getElementById('professionalDetailsEntries');
-        entriesContainer.insertAdjacentHTML('beforeend', getProfessionalEntryHtml({}));
-    }
-    
-    function getProfessionalDataFromForm() {
-        const entries = document.querySelectorAll('#professionalDetailsEntries .dynamic-section');
-        const data = [];
-        entries.forEach(entry => {
-            const title = entry.querySelector('[name="title"]').value.trim();
-            const company = entry.querySelector('[name="company"]').value.trim();
-            if (title && company) {
-                data.push({
-                    title: title,
-                    company: company,
-                    startDate: entry.querySelector('[name="startDate"]').value,
-                    endDate: entry.querySelector('[name="endDate"]').value,
-                    isCurrent: entry.querySelector('[name="isCurrent"]').checked,
-                    description: entry.querySelector('[name="description"]').value.trim()
-                });
-            }
-        });
-        return data;
-    }
-
-    async function saveProfessionalDetails() {
-        const data = getProfessionalDataFromForm();
-        const safeData = sanitizeDataForSubmission(data);
-        const res = await saveData('/api/profile/update', { professionalDetails: safeData });
-        if (res) {
-            showToast('Professional details updated!', 'success');
-            toggleEdit('professionalDetails', false);
-        }
-    }
-
-
-    // -------------------------------------
-    // --- 2. PROJECTS IMPLEMENTATION ---
-    // ... (Projects functions remain unchanged) ...
-
-    function renderProjectView(item) {
-        const safeItem = sanitizeDataForSubmission(item);
-        const linkHtml = safeItem.link ? `<a href="${safeItem.link}" target="_blank" class="text-primary d-block mb-1"><i class="bi bi-link me-1"></i>View Project</a>` : '';
-        return `
-            <div class="view-section">
-                <h4 class="mb-1">${safeItem.name}</h4>
-                ${linkHtml}
-                <p class="mt-2 text-muted">${safeItem.description.replace(/\n/g, '<br>')}</p>
-            </div>`;
-    }
-
-    function getProjectEntryHtml(item = {}, index) {
-        const safeItem = sanitizeDataForSubmission(item);
-        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
-
-        return `
-            <div class="dynamic-section" data-id="${itemId}" data-type="projects">
-                <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
-                <div class="mb-3">
-                    <label class="form-label">Project Name</label>
-                    <input type="text" class="form-control" name="name" value="${safeItem.name || ''}" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Project Link (URL)</label>
-                    <input type="url" class="form-control" name="link" value="${safeItem.link || ''}">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Description / Details</label>
-                    <textarea class="form-control" name="description" rows="4">${safeItem.description || ''}</textarea>
-                </div>
-            </div>`;
-    }
-
-    function populateProjectsForm() {
-        const entriesContainer = document.getElementById('projectsEntries');
-        entriesContainer.innerHTML = '';
-        profileData.projects.forEach((item, index) => {
-            entriesContainer.insertAdjacentHTML('beforeend', getProjectEntryHtml(item, index));
-        });
-        if (profileData.projects.length === 0) addProjectEntry();
-    }
-    
-    function addProjectEntry(item = {}) {
-        const entriesContainer = document.getElementById('projectsEntries');
-        entriesContainer.insertAdjacentHTML('beforeend', getProjectEntryHtml(item));
-    }
-    
-    function getProjectDataFromForm() {
-        const entries = document.querySelectorAll('#projectsEntries .dynamic-section');
-        const data = [];
-        entries.forEach(entry => {
-            const name = entry.querySelector('[name="name"]').value.trim();
-            if (name) {
-                data.push({
-                    name: name,
-                    link: entry.querySelector('[name="link"]').value.trim(),
-                    description: entry.querySelector('[name="description"]').value.trim()
-                });
-            }
-        });
-        return data;
-    }
-
-    async function saveProjects() {
-        const data = getProjectDataFromForm();
-        const safeData = sanitizeDataForSubmission(data);
-        const res = await saveData('/api/profile/update', { projects: safeData });
-        if (res) {
-            showToast('Projects updated!', 'success');
-            toggleEdit('projects', false);
-        }
-    }
-    
-    // -------------------------------------
-    // --- 3. EDUCATION IMPLEMENTATION ---
-    // ... (Education functions remain unchanged) ...
-
-    function renderEducationView(item) {
-        const safeItem = sanitizeDataForSubmission(item);
-        return `
-            <div class="view-section">
-                <h4 class="mb-1">${safeItem.degree} - ${safeItem.field}</h4>
-                <p class="text-secondary mb-1">${safeItem.institution}</p>
-                <p class="text-muted mb-0">${safeItem.startDate} - ${safeItem.endDate || 'Present'}</p>
-            </div>`;
-    }
-
-    function getEducationEntryHtml(item = {}, index) {
-        const safeItem = sanitizeDataForSubmission(item);
-        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
-
-        return `
-            <div class="dynamic-section" data-id="${itemId}" data-type="education">
-                <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Degree/Course</label>
-                        <input type="text" class="form-control" name="degree" value="${safeItem.degree || ''}" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Field of Study</label>
-                        <input type="text" class="form-control" name="field" value="${safeItem.field || ''}" required>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Institution/School</label>
-                    <input type="text" class="form-control" name="institution" value="${safeItem.institution || ''}" required>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Start Date</label>
-                        <input type="month" class="form-control" name="startDate" value="${safeItem.startDate || ''}" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">End Date (or expected)</label>
-                        <input type="month" class="form-control" name="endDate" value="${safeItem.endDate || ''}">
-                    </div>
-                </div>
-            </div>`;
-    }
-
-    function populateEducationForm() {
-        const entriesContainer = document.getElementById('educationEntries');
-        entriesContainer.innerHTML = '';
-        profileData.education.forEach((item, index) => {
-            entriesContainer.insertAdjacentHTML('beforeend', getEducationEntryHtml(item, index));
-        });
-        if (profileData.education.length === 0) addEducationEntry();
-    }
-    
-    function addEducationEntry(item = {}) {
-        const entriesContainer = document.getElementById('educationEntries');
-        entriesContainer.insertAdjacentHTML('beforeend', getEducationEntryHtml(item));
-    }
-    
-    function getEducationDataFromForm() {
-        const entries = document.querySelectorAll('#educationEntries .dynamic-section');
-        const data = [];
-        entries.forEach(entry => {
-            const degree = entry.querySelector('[name="degree"]').value.trim();
-            const institution = entry.querySelector('[name="institution"]').value.trim();
-            if (degree && institution) {
-                data.push({
-                    degree: degree,
-                    field: entry.querySelector('[name="field"]').value.trim(),
-                    institution: institution,
-                    startDate: entry.querySelector('[name="startDate"]').value,
-                    endDate: entry.querySelector('[name="endDate"]').value
-                });
-            }
-        });
-        return data;
-    }
-
-    async function saveEducation() {
-        const data = getEducationDataFromForm();
-        const safeData = sanitizeDataForSubmission(data);
-        const res = await saveData('/api/profile/update', { education: safeData });
-        if (res) {
-            showToast('Education updated!', 'success');
-            toggleEdit('education', false);
-        }
-    }
-
-
-    // ------------------------------------------
-    // --- 4. CERTIFICATIONS IMPLEMENTATION ---
-    // ... (Certifications functions remain unchanged) ...
-
-    function renderCertificationView(item) {
-        const safeItem = sanitizeDataForSubmission(item);
-        return `
-            <div class="view-section">
-                <h4 class="mb-1">${safeItem.name}</h4>
-                <p class="text-secondary mb-1">Issued by: ${safeItem.issuer}</p>
-                <p class="text-muted mb-0">Issued: ${safeItem.issueDate}</p>
-            </div>`;
-    }
-
-    function getCertificationEntryHtml(item = {}, index) {
-        const safeItem = sanitizeDataForSubmission(item);
-        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
-
-        return `
-            <div class="dynamic-section" data-id="${itemId}" data-type="certifications">
-                <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
-                <div class="mb-3">
-                    <label class="form-label">Certification Name</label>
-                    <input type="text" class="form-control" name="name" value="${safeItem.name || ''}" required>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Issuing Organization</label>
-                        <input type="text" class="form-control" name="issuer" value="${safeItem.issuer || ''}" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Issue Date</label>
-                        <input type="month" class="form-control" name="issueDate" value="${safeItem.issueDate || ''}" required>
-                    </div>
-                </div>
-            </div>`;
-    }
-
-    function populateCertificationsForm() {
-        const entriesContainer = document.getElementById('certificationsEntries');
-        entriesContainer.innerHTML = '';
-        profileData.certifications.forEach((item, index) => {
-            entriesContainer.insertAdjacentHTML('beforeend', getCertificationEntryHtml(item, index));
-        });
-        if (profileData.certifications.length === 0) addCertificationEntry();
-    }
-    
-    function addCertificationEntry(item = {}) {
-        const entriesContainer = document.getElementById('certificationsEntries');
-        entriesContainer.insertAdjacentHTML('beforeend', getCertificationEntryHtml(item));
-    }
-    
-    function getCertificationDataFromForm() {
-        const entries = document.querySelectorAll('#certificationsEntries .dynamic-section');
-        const data = [];
-        entries.forEach(entry => {
-            const name = entry.querySelector('[name="name"]').value.trim();
-            const issuer = entry.querySelector('[name="issuer"]').value.trim();
-            if (name && issuer) {
-                data.push({
-                    name: name,
-                    issuer: issuer,
-                    issueDate: entry.querySelector('[name="issueDate"]').value
-                });
-            }
-        });
-        return data;
-    }
-
-    async function saveCertifications() {
-        const data = getCertificationDataFromForm();
-        const safeData = sanitizeDataForSubmission(data);
-        const res = await saveData('/api/profile/update', { certifications: safeData });
-        if (res) {
-            showToast('Certifications updated!', 'success');
-            toggleEdit('certifications', false);
-        }
-    }
-
-
-    // ------------------------------------
-    // --- 5. LANGUAGES IMPLEMENTATION ---
-    // ... (Languages functions remain unchanged) ...
-
-    function renderLanguageView(item) {
-        const safeItem = sanitizeDataForSubmission(item);
-        // Languages are displayed as tags, not view-sections
-        const proficiencyColor = {
-            'basic': 'info',
-            'conversational': 'warning',
-            'fluent': 'success',
-            'native': 'primary'
-        }[safeItem.proficiency.toLowerCase()] || 'secondary';
-
-        return `<span class="tag text-capitalize bg-${proficiencyColor}">${safeItem.name} (${safeItem.proficiency})</span>`;
-    }
-
-    function getLanguageEntryHtml(item = {}, index) {
-        const safeItem = sanitizeDataForSubmission(item);
-        const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
-
-        return `
-            <div class="dynamic-section row g-2 align-items-end" data-id="${itemId}" data-type="languages">
-                <div class="col-6 mb-3">
-                    <label class="form-label">Language</label>
-                    <input type="text" class="form-control" name="name" value="${safeItem.name || ''}" required>
-                </div>
-                <div class="col-4 mb-3">
-                    <label class="form-label">Proficiency</label>
-                    <select class="form-select" name="proficiency" required>
-                        <option value="">Select Level</option>
-                        <option value="Basic" ${safeItem.proficiency === 'Basic' ? 'selected' : ''}>Basic</option>
-                        <option value="Conversational" ${safeItem.proficiency === 'Conversational' ? 'selected' : ''}>Conversational</option>
-                        <option value="Fluent" ${safeItem.proficiency === 'Fluent' ? 'selected' : ''}>Fluent</option>
-                        <option value="Native" ${safeItem.proficiency === 'Native' ? 'selected' : ''}>Native</option>
-                    </select>
-                </div>
-                <div class="col-2 mb-3 text-end">
-                    <button type="button" class="btn btn-sm btn-danger remove-btn me-0 mt-0" style="position: static;" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
-                </div>
-            </div>`;
-    }
-
-    function populateLanguagesForm() {
-        const entriesContainer = document.getElementById('languagesEntries');
-        entriesContainer.innerHTML = '';
-        profileData.languages.forEach((item, index) => {
-            entriesContainer.insertAdjacentHTML('beforeend', getLanguageEntryHtml(item, index));
-        });
-        if (profileData.languages.length === 0) addLanguageEntry();
-    }
-    
-    function addLanguageEntry(item = {}) {
-        const entriesContainer = document.getElementById('languagesEntries');
-        entriesContainer.insertAdjacentHTML('beforeend', getLanguageEntryHtml(item));
-    }
-    
-    function getLanguageDataFromForm() {
-        const entries = document.querySelectorAll('#languagesEntries .dynamic-section');
-        const data = [];
-        entries.forEach(entry => {
-            const name = entry.querySelector('[name="name"]').value.trim();
-            const proficiency = entry.querySelector('[name="proficiency"]').value;
-            if (name && proficiency) {
-                data.push({
-                    name: name,
-                    proficiency: proficiency
-                });
-            }
-        });
-        return data;
-    }
-
-    async function saveLanguages() {
-        const data = getLanguageDataFromForm();
-        const safeData = sanitizeDataForSubmission(data);
-        const res = await saveData('/api/profile/update', { languages: safeData });
-        if (res) {
-            showToast('Languages updated!', 'success');
-            toggleEdit('languages', false);
-        }
-    }
-
-
-    // ---------------------------------
-    // --- 6. SKILLS IMPLEMENTATION ---
-    // ---------------------------------
-
-    function renderSkillView(item) {
-        const safeItem = sanitizeDataForSubmission(item);
-        // Render each skill as a clickable tag
-        return `<span class="tag">${safeItem.name}</span>`;
-    }
-    
-    // Renders the interactive tag input area
-    function populateSkillsForm() {
-        const entriesContainer = document.getElementById('skillsEntries');
-        entriesContainer.innerHTML = `
-            <div class="mb-3">
-                <label class="form-label">Skills</label>
-                <div id="skillTagsContainer" class="d-flex flex-wrap p-2 border rounded-3 mb-3">
-                    <!-- Existing skills will be added here -->
-                </div>
-                <div class="input-group" id="skillInputGroup">
-                    <input type="text" class="form-control" id="skillInput" placeholder="Enter a skill and press Enter or +">
-                    <button type="button" class="btn btn-primary" id="addSkillBtn">
-                        <i class="bi bi-plus-lg"></i>
+            container.innerHTML = `
+                <div class="section-header">
+                    <h2 class="h5 mb-0">${title}</h2>
+                    <button type="button" class="btn btn-outline-primary btn-sm edit-btn" onclick="toggleEdit('${id}', true)">
+                        <i class="bi bi-pencil me-1"></i> Edit
                     </button>
                 </div>
-            </div>
-        `;
-        
-        const tagsContainer = document.getElementById('skillTagsContainer');
-        
-        // Populate existing skills
-        profileData.skills.forEach(skill => {
-            if (skill.name) {
-                tagsContainer.insertAdjacentHTML('beforeend', createSkillTagHtml(skill.name));
-            }
-        });
+                <div id="${id}View">${itemsHTML}</div>
+                <form id="${id}Form" class="d-none" onsubmit="event.preventDefault(); ${saveFn}();">
+                    <div id="${id}Entries"></div>
+                    ${id !== 'skills' ? `
+                        <button type="button" class="btn btn-outline-primary mb-3" onclick="${addFn}()">
+                            <i class="bi bi-plus"></i> Add Entry
+                        </button>
+                    ` : ''}
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="toggleEdit('${id}', false)">Cancel</button>
+                    </div>
+                </form>`;
+        }
 
-        const inputEl = document.getElementById('skillInput');
-        
-        // Add event listeners for the new elements
-        document.getElementById('addSkillBtn').addEventListener('click', () => addSkillTag(inputEl));
-        
-        inputEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // Prevent form submission
-                addSkillTag(inputEl);
-            }
-        });
-    }
-
-    // Helper to create the HTML for a single skill tag
-    function createSkillTagHtml(name) {
-        const safeName = escapeHTML(name);
-        return `
-            <span class="tag" data-skill="${safeName}">
-                ${safeName}
-                <span class="tag-remove" onclick="removeSkillTag(this)"><i class="fas fa-times"></i></span>
-            </span>
-        `;
-    }
-    
-    // Function to add a new skill tag
-    function addSkillTag(inputEl) {
-        const skillName = inputEl.value.trim();
-        const tagsContainer = document.getElementById('skillTagsContainer');
-        
-        if (skillName) {
-            const existingTags = Array.from(tagsContainer.querySelectorAll('.tag')).map(tag => tag.dataset.skill.toLowerCase());
+        // Toggles between view and edit mode
+        function toggleEdit(id, show) {
+            const view = document.getElementById(id + 'View');
+            const form = document.getElementById(id + 'Form');
+            const editBtn = document.querySelector(`#${id} .edit-btn`);
             
-            if (!existingTags.includes(skillName.toLowerCase())) {
-                tagsContainer.insertAdjacentHTML('beforeend', createSkillTagHtml(skillName));
+            if (!view || !form) return;
+
+            if (show) {
+                view.classList.add('d-none');
+                form.classList.remove('d-none');
+                if (editBtn) editBtn.classList.add('d-none');
+                
+                // Populate form content only when entering edit mode
+                if (typeof window['populate' + id.charAt(0).toUpperCase() + id.slice(1) + 'Form'] === 'function') {
+                    window['populate' + id.charAt(0).toUpperCase() + id.slice(1) + 'Form']();
+                }
             } else {
-                showToast(`Skill "${skillName}" is already listed.`, 'warning');
+                view.classList.remove('d-none');
+                form.classList.add('d-none');
+                if (editBtn) editBtn.classList.remove('d-none');
             }
-            inputEl.value = ''; // Clear input field
         }
-    }
-    
-    // Function to remove a skill tag
-    function removeSkillTag(buttonElement) {
-        buttonElement.closest('.tag').remove();
-    }
-
-    // Not used for this format
-    function addSkillEntry() {} 
-
-    // Collects all current tags from the container
-    function getSkillDataFromForm() {
-        const tagsContainer = document.getElementById('skillTagsContainer');
-        const tags = tagsContainer ? tagsContainer.querySelectorAll('.tag') : [];
-        const data = [];
-        tags.forEach(tag => {
-            const skillName = tag.dataset.skill.trim();
-            if (skillName) {
-                // The database expects an array of objects: [{name: 'Skill1'}, {name: 'Skill2'}]
-                data.push({ name: skillName });
-            }
-        });
-        return data;
-    }
-
-    async function saveSkills() {
-        const data = getSkillDataFromForm();
-        const safeData = sanitizeDataForSubmission(data);
-        const res = await saveData('/api/profile/update', { skills: safeData }); 
-        if (res) {
-            showToast('Skills updated!', 'success');
-            toggleEdit('skills', false);
-        }
-    }
 
 
-    // ---------------------------------
-    // --- 7. RESUME IMPLEMENTATION ---
-    // ... (Resume functions remain unchanged) ...
-
-    function renderResumeSection() {
-        const container = document.getElementById('resume');
-        const resume = profileData.resume;
-        const resumeUrl = resume?.url || '';
-        const resumeName = resume?.name || 'No file uploaded';
-        const na = '<span class="text-muted">N/A</span>';
-        
-        const viewHTML = `
-            <div class="resume-preview">
-                <i class="fas fa-file-pdf fa-2x text-danger"></i>
-                <div>
-                    <p class="mb-0 fw-bold">${resumeName}</p>
-                    <small class="text-muted">${resume ? 'File size: Unknown' : 'Upload your professional resume.'}</small>
-                </div>
-                ${resume ? `<a href="${resumeUrl}" target="_blank" class="btn btn-sm btn-outline-primary ms-auto">View</a>` : ''}
-            </div>`;
+        // === PROFILE COMPLETION ===
+        function updateProfileCompletion() {
+            const checks = [
+                profileData.personalDetails?.fullName,
+                profileData.professionalDetails?.length,
+                profileData.projects?.length,
+                profileData.resume,
+                profileData.skills?.length
+            ];
+            const completed = checks.filter(Boolean).length;
+            const percentage = Math.round((completed / 5) * 100);
             
-        const formHTML = `
-            <form id="resumeForm" class="d-none">
+            document.querySelector('.progress-bar').style.width = percentage + '%';
+            document.querySelector('.completion-percentage').textContent = percentage + '%';
+            
+            // Update completion status in sections
+            const sections = ['Personal Details', 'Professional', 'Projects', 'Resume', 'Skills'];
+            document.querySelectorAll('.completion-section').forEach((el, index) => {
+                const statusEl = el.querySelector('.section-status');
+                if (checks[index]) {
+                    el.classList.add('completed');
+                    statusEl.classList.add('completed');
+                    statusEl.innerHTML = '<i class="fas fa-check"></i>';
+                } else {
+                    el.classList.remove('completed');
+                    statusEl.classList.remove('completed');
+                    statusEl.innerHTML = '<i class="fas fa-times"></i>';
+                }
+            });
+        }
+
+        // === SAVE HELPERS (XSS consideration: Data sent to server is client-side escaped before submission) ===
+        async function saveData(endpoint, payload) {
+            const isFormData = payload instanceof FormData;
+            try {
+                const response = await Auth.fetchWithAuth(endpoint, {
+                    method: 'POST',
+                    // Use default Content-Type for FormData, explicitly set for JSON
+                    headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+                    body: isFormData ? payload : JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) return null; // Auth utility handles redirect
+
+                    // Throwing the error here will catch the 413 error message from the proxy.
+                    if (response.status === 413) {
+                        throw new Error("File upload failed. The maximum allowed file size is 20MB. Please check your file size.");
+                    }
+                    const errorBody = await response.json();
+                    throw new Error(errorBody.error || 'Failed to save data. Check server logs.');
+                }
+
+                const data = await response.json();
+                await loadProfileData();
+                return data;
+            } catch (err) {
+                showToast(err.message, 'danger');
+                console.error('Save Data Error:', err);
+                return null;
+            }
+        }
+        
+        // Function to ensure JSON data going to the server is client-side escaped
+        function sanitizeDataForSubmission(data) {
+            if (typeof data === 'string') {
+                return escapeHTML(data);
+            }
+            if (Array.isArray(data)) {
+                return data.map(sanitizeDataForSubmission);
+            }
+            if (typeof data === 'object' && data !== null) {
+                const newObject = {};
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        newObject[key] = sanitizeDataForSubmission(data[key]);
+                    }
+                }
+                return newObject;
+            }
+            return data;
+        }
+
+        // === PERSONAL DETAILS SAVE (UPDATED: Removed client-side size check) ===
+        async function savePersonalDetails() {
+            const formData = new FormData();
+            const photoInput = document.getElementById('profilePhoto');
+            const photo = photoInput.files[0];
+            
+            let shouldClearFileInput = false;
+
+            // --- Now relies completely on server-side Multer limit (20MB) ---
+            if (photo) {
+                formData.append('profilePhoto', photo);
+                shouldClearFileInput = true;
+            }
+
+            // Always append textual fields
+            formData.append('fullName', document.getElementById('fullName').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('gender', document.getElementById('gender').value);
+            const exp = document.querySelector('input[name="experienceLevel"]:checked');
+            formData.append('experienceLevel', exp ? exp.value : '');
+            formData.append('ctcExpected', document.getElementById('ctcExpected').value);
+
+            const res = await saveData('/api/profile/update', formData);
+            if (res) {
+                showToast('Personal details updated!', 'success');
+                toggleEdit('personalDetails', false);
+                
+                // Clear the file input reference after a successful save
+                if (shouldClearFileInput) {
+                    photoInput.value = null;
+                    document.getElementById('profilePhotoPreview').src = profileData.personalDetails.profilePhoto || 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Photo';
+                }
+            }
+        }
+
+        // ---------------------------------------------
+        // --- 1. PROFESSIONAL DETAILS IMPLEMENTATION ---
+        // ---------------------------------------------
+        // ... (Professional Details functions remain unchanged) ...
+
+        function renderProfessionalView(item) {
+            const safeItem = sanitizeDataForSubmission(item);
+            const descriptionHtml = safeItem.description ? `<p class="mt-2 text-muted">${safeItem.description.replace(/\n/g, '<br>')}</p>` : '';
+            return `
+                <div class="view-section">
+                    <h4 class="mb-1">${safeItem.title} at ${safeItem.company}</h4>
+                    <p class="text-secondary mb-1">${safeItem.startDate} - ${safeItem.isCurrent ? 'Present' : safeItem.endDate}</p>
+                    ${descriptionHtml}
+                </div>`;
+        }
+
+        function getProfessionalEntryHtml(item = {}, index) {
+            const safeItem = sanitizeDataForSubmission(item);
+            const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+            return `
+                <div class="dynamic-section" data-id="${itemId}" data-type="professionalDetails">
+                    <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Job Title</label>
+                            <input type="text" class="form-control" name="title" value="${safeItem.title || ''}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Company</label>
+                            <input type="text" class="form-control" name="company" value="${safeItem.company || ''}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Start Date</label>
+                            <input type="month" class="form-control" name="startDate" value="${safeItem.startDate || ''}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">End Date</label>
+                            <input type="month" class="form-control" name="endDate" value="${safeItem.endDate || ''}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="isCurrent" id="isCurrent-${itemId}" ${safeItem.isCurrent ? 'checked' : ''}>
+                            <label class="form-check-label" for="isCurrent-${itemId}">Currently working here</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description / Achievements</label>
+                        <textarea class="form-control" name="description" rows="3">${safeItem.description || ''}</textarea>
+                    </div>
+                </div>`;
+        }
+
+        function populateProfessionalForm() {
+            const entriesContainer = document.getElementById('professionalDetailsEntries');
+            entriesContainer.innerHTML = '';
+            profileData.professionalDetails.forEach((item, index) => {
+                entriesContainer.insertAdjacentHTML('beforeend', getProfessionalEntryHtml(item, index));
+            });
+            // Add one empty entry if none exists
+            if (profileData.professionalDetails.length === 0) {
+                addProfessionalEntry();
+            }
+        }
+
+        function addProfessionalEntry() {
+            const entriesContainer = document.getElementById('professionalDetailsEntries');
+            entriesContainer.insertAdjacentHTML('beforeend', getProfessionalEntryHtml({}));
+        }
+        
+        function getProfessionalDataFromForm() {
+            const entries = document.querySelectorAll('#professionalDetailsEntries .dynamic-section');
+            const data = [];
+            entries.forEach(entry => {
+                const title = entry.querySelector('[name="title"]').value.trim();
+                const company = entry.querySelector('[name="company"]').value.trim();
+                if (title && company) {
+                    data.push({
+                        title: title,
+                        company: company,
+                        startDate: entry.querySelector('[name="startDate"]').value,
+                        endDate: entry.querySelector('[name="endDate"]').value,
+                        isCurrent: entry.querySelector('[name="isCurrent"]').checked,
+                        description: entry.querySelector('[name="description"]').value.trim()
+                    });
+                }
+            });
+            return data;
+        }
+
+        async function saveProfessionalDetails() {
+            const data = getProfessionalDataFromForm();
+            const safeData = sanitizeDataForSubmission(data);
+            const res = await saveData('/api/profile/update', { professionalDetails: safeData });
+            if (res) {
+                showToast('Professional details updated!', 'success');
+                toggleEdit('professionalDetails', false);
+            }
+        }
+
+
+        // -------------------------------------
+        // --- 2. PROJECTS IMPLEMENTATION ---
+        // ... (Projects functions remain unchanged) ...
+
+        function renderProjectView(item) {
+            const safeItem = sanitizeDataForSubmission(item);
+            const linkHtml = safeItem.link ? `<a href="${safeItem.link}" target="_blank" class="text-primary d-block mb-1"><i class="bi bi-link me-1"></i>View Project</a>` : '';
+            return `
+                <div class="view-section">
+                    <h4 class="mb-1">${safeItem.name}</h4>
+                    ${linkHtml}
+                    <p class="mt-2 text-muted">${safeItem.description.replace(/\n/g, '<br>')}</p>
+                </div>`;
+        }
+
+        function getProjectEntryHtml(item = {}, index) {
+            const safeItem = sanitizeDataForSubmission(item);
+            const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+            return `
+                <div class="dynamic-section" data-id="${itemId}" data-type="projects">
+                    <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                    <div class="mb-3">
+                        <label class="form-label">Project Name</label>
+                        <input type="text" class="form-control" name="name" value="${safeItem.name || ''}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Project Link (URL)</label>
+                        <input type="url" class="form-control" name="link" value="${safeItem.link || ''}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description / Details</label>
+                        <textarea class="form-control" name="description" rows="4">${safeItem.description || ''}</textarea>
+                    </div>
+                </div>`;
+        }
+
+        function populateProjectsForm() {
+            const entriesContainer = document.getElementById('projectsEntries');
+            entriesContainer.innerHTML = '';
+            profileData.projects.forEach((item, index) => {
+                entriesContainer.insertAdjacentHTML('beforeend', getProjectEntryHtml(item, index));
+            });
+            if (profileData.projects.length === 0) addProjectEntry();
+        }
+        
+        function addProjectEntry(item = {}) {
+            const entriesContainer = document.getElementById('projectsEntries');
+            entriesContainer.insertAdjacentHTML('beforeend', getProjectEntryHtml(item));
+        }
+        
+        function getProjectDataFromForm() {
+            const entries = document.querySelectorAll('#projectsEntries .dynamic-section');
+            const data = [];
+            entries.forEach(entry => {
+                const name = entry.querySelector('[name="name"]').value.trim();
+                if (name) {
+                    data.push({
+                        name: name,
+                        link: entry.querySelector('[name="link"]').value.trim(),
+                        description: entry.querySelector('[name="description"]').value.trim()
+                    });
+                }
+            });
+            return data;
+        }
+
+        async function saveProjects() {
+            const data = getProjectDataFromForm();
+            const safeData = sanitizeDataForSubmission(data);
+            const res = await saveData('/api/profile/update', { projects: safeData });
+            if (res) {
+                showToast('Projects updated!', 'success');
+                toggleEdit('projects', false);
+            }
+        }
+        
+        // -------------------------------------
+        // --- 3. EDUCATION IMPLEMENTATION ---
+        // ... (Education functions remain unchanged) ...
+
+        function renderEducationView(item) {
+            const safeItem = sanitizeDataForSubmission(item);
+            return `
+                <div class="view-section">
+                    <h4 class="mb-1">${safeItem.degree} - ${safeItem.field}</h4>
+                    <p class="text-secondary mb-1">${safeItem.institution}</p>
+                    <p class="text-muted mb-0">${safeItem.startDate} - ${safeItem.endDate || 'Present'}</p>
+                </div>`;
+        }
+
+        function getEducationEntryHtml(item = {}, index) {
+            const safeItem = sanitizeDataForSubmission(item);
+            const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+            return `
+                <div class="dynamic-section" data-id="${itemId}" data-type="education">
+                    <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Degree/Course</label>
+                            <input type="text" class="form-control" name="degree" value="${safeItem.degree || ''}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Field of Study</label>
+                            <input type="text" class="form-control" name="field" value="${safeItem.field || ''}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Institution/School</label>
+                        <input type="text" class="form-control" name="institution" value="${safeItem.institution || ''}" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Start Date</label>
+                            <input type="month" class="form-control" name="startDate" value="${safeItem.startDate || ''}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">End Date (or expected)</label>
+                            <input type="month" class="form-control" name="endDate" value="${safeItem.endDate || ''}">
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function populateEducationForm() {
+            const entriesContainer = document.getElementById('educationEntries');
+            entriesContainer.innerHTML = '';
+            profileData.education.forEach((item, index) => {
+                entriesContainer.insertAdjacentHTML('beforeend', getEducationEntryHtml(item, index));
+            });
+            if (profileData.education.length === 0) addEducationEntry();
+        }
+        
+        function addEducationEntry(item = {}) {
+            const entriesContainer = document.getElementById('educationEntries');
+            entriesContainer.insertAdjacentHTML('beforeend', getEducationEntryHtml(item));
+        }
+        
+        function getEducationDataFromForm() {
+            const entries = document.querySelectorAll('#educationEntries .dynamic-section');
+            const data = [];
+            entries.forEach(entry => {
+                const degree = entry.querySelector('[name="degree"]').value.trim();
+                const institution = entry.querySelector('[name="institution"]').value.trim();
+                if (degree && institution) {
+                    data.push({
+                        degree: degree,
+                        field: entry.querySelector('[name="field"]').value.trim(),
+                        institution: institution,
+                        startDate: entry.querySelector('[name="startDate"]').value,
+                        endDate: entry.querySelector('[name="endDate"]').value
+                    });
+                }
+            });
+            return data;
+        }
+
+        async function saveEducation() {
+            const data = getEducationDataFromForm();
+            const safeData = sanitizeDataForSubmission(data);
+            const res = await saveData('/api/profile/update', { education: safeData });
+            if (res) {
+                showToast('Education updated!', 'success');
+                toggleEdit('education', false);
+            }
+        }
+
+
+        // ------------------------------------------
+        // --- 4. CERTIFICATIONS IMPLEMENTATION ---
+        // ... (Certifications functions remain unchanged) ...
+
+        function renderCertificationView(item) {
+            const safeItem = sanitizeDataForSubmission(item);
+            return `
+                <div class="view-section">
+                    <h4 class="mb-1">${safeItem.name}</h4>
+                    <p class="text-secondary mb-1">Issued by: ${safeItem.issuer}</p>
+                    <p class="text-muted mb-0">Issued: ${safeItem.issueDate}</p>
+                </div>`;
+        }
+
+        function getCertificationEntryHtml(item = {}, index) {
+            const safeItem = sanitizeDataForSubmission(item);
+            const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+            return `
+                <div class="dynamic-section" data-id="${itemId}" data-type="certifications">
+                    <button type="button" class="remove-btn" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                    <div class="mb-3">
+                        <label class="form-label">Certification Name</label>
+                        <input type="text" class="form-control" name="name" value="${safeItem.name || ''}" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Issuing Organization</label>
+                            <input type="text" class="form-control" name="issuer" value="${safeItem.issuer || ''}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Issue Date</label>
+                            <input type="month" class="form-control" name="issueDate" value="${safeItem.issueDate || ''}" required>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function populateCertificationsForm() {
+            const entriesContainer = document.getElementById('certificationsEntries');
+            entriesContainer.innerHTML = '';
+            profileData.certifications.forEach((item, index) => {
+                entriesContainer.insertAdjacentHTML('beforeend', getCertificationEntryHtml(item, index));
+            });
+            if (profileData.certifications.length === 0) addCertificationEntry();
+        }
+        
+        function addCertificationEntry(item = {}) {
+            const entriesContainer = document.getElementById('certificationsEntries');
+            entriesContainer.insertAdjacentHTML('beforeend', getCertificationEntryHtml(item));
+        }
+        
+        function getCertificationDataFromForm() {
+            const entries = document.querySelectorAll('#certificationsEntries .dynamic-section');
+            const data = [];
+            entries.forEach(entry => {
+                const name = entry.querySelector('[name="name"]').value.trim();
+                const issuer = entry.querySelector('[name="issuer"]').value.trim();
+                if (name && issuer) {
+                    data.push({
+                        name: name,
+                        issuer: issuer,
+                        issueDate: entry.querySelector('[name="issueDate"]').value
+                    });
+                }
+            });
+            return data;
+        }
+
+        async function saveCertifications() {
+            const data = getCertificationDataFromForm();
+            const safeData = sanitizeDataForSubmission(data);
+            const res = await saveData('/api/profile/update', { certifications: safeData });
+            if (res) {
+                showToast('Certifications updated!', 'success');
+                toggleEdit('certifications', false);
+            }
+        }
+
+
+        // ------------------------------------
+        // --- 5. LANGUAGES IMPLEMENTATION ---
+        // ... (Languages functions remain unchanged) ...
+
+        function renderLanguageView(item) {
+            const safeItem = sanitizeDataForSubmission(item);
+            // Languages are displayed as tags, not view-sections
+            const proficiencyColor = {
+                'basic': 'info',
+                'conversational': 'warning',
+                'fluent': 'success',
+                'native': 'primary'
+            }[safeItem.proficiency.toLowerCase()] || 'secondary';
+
+            return `<span class="tag text-capitalize bg-${proficiencyColor}">${safeItem.name} (${safeItem.proficiency})</span>`;
+        }
+
+        function getLanguageEntryHtml(item = {}, index) {
+            const safeItem = sanitizeDataForSubmission(item);
+            const itemId = index !== undefined ? index : `new-${nextEntryId++}`;
+
+            return `
+                <div class="dynamic-section row g-2 align-items-end" data-id="${itemId}" data-type="languages">
+                    <div class="col-6 mb-3">
+                        <label class="form-label">Language</label>
+                        <input type="text" class="form-control" name="name" value="${safeItem.name || ''}" required>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">Proficiency</label>
+                        <select class="form-select" name="proficiency" required>
+                            <option value="">Select Level</option>
+                            <option value="Basic" ${safeItem.proficiency === 'Basic' ? 'selected' : ''}>Basic</option>
+                            <option value="Conversational" ${safeItem.proficiency === 'Conversational' ? 'selected' : ''}>Conversational</option>
+                            <option value="Fluent" ${safeItem.proficiency === 'Fluent' ? 'selected' : ''}>Fluent</option>
+                            <option value="Native" ${safeItem.proficiency === 'Native' ? 'selected' : ''}>Native</option>
+                        </select>
+                    </div>
+                    <div class="col-2 mb-3 text-end">
+                        <button type="button" class="btn btn-sm btn-danger remove-btn me-0 mt-0" style="position: static;" onclick="removeEntry(this)"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>`;
+        }
+
+        function populateLanguagesForm() {
+            const entriesContainer = document.getElementById('languagesEntries');
+            entriesContainer.innerHTML = '';
+            profileData.languages.forEach((item, index) => {
+                entriesContainer.insertAdjacentHTML('beforeend', getLanguageEntryHtml(item, index));
+            });
+            if (profileData.languages.length === 0) addLanguageEntry();
+        }
+        
+        function addLanguageEntry(item = {}) {
+            const entriesContainer = document.getElementById('languagesEntries');
+            entriesContainer.insertAdjacentHTML('beforeend', getLanguageEntryHtml(item));
+        }
+        
+        function getLanguageDataFromForm() {
+            const entries = document.querySelectorAll('#languagesEntries .dynamic-section');
+            const data = [];
+            entries.forEach(entry => {
+                const name = entry.querySelector('[name="name"]').value.trim();
+                const proficiency = entry.querySelector('[name="proficiency"]').value;
+                if (name && proficiency) {
+                    data.push({
+                        name: name,
+                        proficiency: proficiency
+                    });
+                }
+            });
+            return data;
+        }
+
+        async function saveLanguages() {
+            const data = getLanguageDataFromForm();
+            const safeData = sanitizeDataForSubmission(data);
+            const res = await saveData('/api/profile/update', { languages: safeData });
+            if (res) {
+                showToast('Languages updated!', 'success');
+                toggleEdit('languages', false);
+            }
+        }
+
+
+        // ---------------------------------
+        // --- 6. SKILLS IMPLEMENTATION ---
+        // ---------------------------------
+
+        function renderSkillView(item) {
+            const safeItem = sanitizeDataForSubmission(item);
+            // Render each skill as a clickable tag
+            return `<span class="tag">${safeItem.name}</span>`;
+        }
+        
+        // Renders the interactive tag input area
+        function populateSkillsForm() {
+            const entriesContainer = document.getElementById('skillsEntries');
+            entriesContainer.innerHTML = `
                 <div class="mb-3">
-                    <label for="resumeFile" class="form-label">Upload New Resume (PDF or DOCX)</label>
-                    <input type="file" class="form-control" id="resumeFile" name="resume" accept=".pdf,.doc,.docx" required>
+                    <label class="form-label">Skills</label>
+                    <div id="skillTagsContainer" class="d-flex flex-wrap p-2 border rounded-3 mb-3">
+                        <!-- Existing skills will be added here -->
+                    </div>
+                    <div class="input-group" id="skillInputGroup">
+                        <input type="text" class="form-control" id="skillInput" placeholder="Enter a skill and press Enter or +">
+                        <button type="button" class="btn btn-primary" id="addSkillBtn">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
                 </div>
-                <p class="text-muted">Current File: ${resumeName}</p>
-                <div class="action-buttons">
-                    <button type="button" class="btn btn-primary" onclick="saveResume()">Upload & Save</button>
-                    <button type="button" class="btn btn-outline-secondary" onclick="toggleEdit('resume', false)">Cancel</button>
-                </div>
-            </form>`;
-
-        container.innerHTML = `
-            <div class="section-header">
-                <h2 class="h5 mb-0">Resume / Documents</h2>
-                <button type="button" class="btn btn-outline-primary btn-sm edit-btn" onclick="toggleEdit('resume', true)">
-                    <i class="bi bi-cloud-upload me-1"></i> Upload
-                </button>
-            </div>
-            <div id="resumeView">${viewHTML}</div>
-            ${formHTML}`;
-    }
-
-    async function saveResume() {
-        const fileInput = document.getElementById('resumeFile');
-        const file = fileInput.files[0];
-        if (!file) {
-            showToast('Please select a file to upload.', 'warning');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('resume', file);
-        
-        const res = await saveData('/api/profile/upload-resume', formData);
-        if (res) {
-            showToast('Resume uploaded successfully!', 'success');
-            toggleEdit('resume', false);
-        }
-    }
-
-
-    // -----------------------------------
-    // --- 8. PASSWORD IMPLEMENTATION ---
-    // ... (Password functions remain unchanged) ...
-
-    async function updatePassword() {
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        
-        if (newPassword.length < 6) {
-            showToast('Password must be at least 6 characters long.', 'danger');
-            return;
-        }
-        if (newPassword !== confirmPassword) {
-            showToast('New password and confirmation password do not match.', 'danger');
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/profile/update-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ newPassword }),
-                credentials: 'include'
+            `;
+            
+            const tagsContainer = document.getElementById('skillTagsContainer');
+            
+            // Populate existing skills
+            profileData.skills.forEach(skill => {
+                if (skill.name) {
+                    tagsContainer.insertAdjacentHTML('beforeend', createSkillTagHtml(skill.name));
+                }
             });
 
-            const result = await response.json();
-            if (response.ok) {
-                showToast(result.message, 'success');
-                // Clear fields on success
-                document.getElementById('newPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-            } else {
-                showToast(result.error || 'Failed to update password.', 'danger');
+            const inputEl = document.getElementById('skillInput');
+            
+            // Add event listeners for the new elements
+            document.getElementById('addSkillBtn').addEventListener('click', () => addSkillTag(inputEl));
+            
+            inputEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent form submission
+                    addSkillTag(inputEl);
+                }
+            });
+        }
+
+        // Helper to create the HTML for a single skill tag
+        function createSkillTagHtml(name) {
+            const safeName = escapeHTML(name);
+            return `
+                <span class="tag" data-skill="${safeName}">
+                    ${safeName}
+                    <span class="tag-remove" onclick="removeSkillTag(this)"><i class="fas fa-times"></i></span>
+                </span>
+            `;
+        }
+        
+        // Function to add a new skill tag
+        function addSkillTag(inputEl) {
+            const skillName = inputEl.value.trim();
+            const tagsContainer = document.getElementById('skillTagsContainer');
+            
+            if (skillName) {
+                const existingTags = Array.from(tagsContainer.querySelectorAll('.tag')).map(tag => tag.dataset.skill.toLowerCase());
+                
+                if (!existingTags.includes(skillName.toLowerCase())) {
+                    tagsContainer.insertAdjacentHTML('beforeend', createSkillTagHtml(skillName));
+                } else {
+                    showToast(`Skill "${skillName}" is already listed.`, 'warning');
+                }
+                inputEl.value = ''; // Clear input field
             }
-        } catch (error) {
-            console.error('Password update failed:', error);
-            showToast('Server error while updating password.', 'danger');
         }
-    }
-
-
-    // ------------------------------------
-    // --- 9. GENERIC UTILITY FUNCTIONS ---
-    // ... (Utility functions remain unchanged) ...
-
-    // Helper to remove an entry from a dynamic form section
-    function removeEntry(buttonElement) {
-        const entry = buttonElement.closest('.dynamic-section');
-        if (entry) {
-            entry.remove();
+        
+        // Function to remove a skill tag
+        function removeSkillTag(buttonElement) {
+            buttonElement.closest('.tag').remove();
         }
-    }
 
-    // TOAST (Replaces alert, now more secure)
-    function showToast(message, type = 'info') {
-        const toastContainer = document.querySelector('.toast-container');
-        const id = 'toast-' + Date.now();
-        // XSS Safety: The message content is passed directly into a text node (toast-body) 
-        // and doesn't contain user-generated HTML, so this is safe.
-        const toastHTML = `
-            <div id="${id}" class="toast text-white bg-${type}" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">${escapeHTML(message)}</div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        // Not used for this format
+        function addSkillEntry() {} 
+
+        // Collects all current tags from the container
+        function getSkillDataFromForm() {
+            const tagsContainer = document.getElementById('skillTagsContainer');
+            const tags = tagsContainer ? tagsContainer.querySelectorAll('.tag') : [];
+            const data = [];
+            tags.forEach(tag => {
+                const skillName = tag.dataset.skill.trim();
+                if (skillName) {
+                    // The database expects an array of objects: [{name: 'Skill1'}, {name: 'Skill2'}]
+                    data.push({ name: skillName });
+                }
+            });
+            return data;
+        }
+
+        async function saveSkills() {
+            const data = getSkillDataFromForm();
+            const safeData = sanitizeDataForSubmission(data);
+            const res = await saveData('/api/profile/update', { skills: safeData }); 
+            if (res) {
+                showToast('Skills updated!', 'success');
+                toggleEdit('skills', false);
+            }
+        }
+
+
+        // ---------------------------------
+        // --- 7. RESUME IMPLEMENTATION ---
+        // ... (Resume functions remain unchanged) ...
+
+        function renderResumeSection() {
+            const container = document.getElementById('resume');
+            const resume = profileData.resume;
+            const resumeUrl = resume?.url || '';
+            const resumeName = resume?.name || 'No file uploaded';
+            const na = '<span class="text-muted">N/A</span>';
+            
+            const viewHTML = `
+                <div class="resume-preview">
+                    <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                    <div>
+                        <p class="mb-0 fw-bold">${resumeName}</p>
+                        <small class="text-muted">${resume ? 'File size: Unknown' : 'Upload your professional resume.'}</small>
+                    </div>
+                    ${resume ? `<a href="${resumeUrl}" target="_blank" class="btn btn-sm btn-outline-primary ms-auto">View</a>` : ''}
+                </div>`;
+                
+            const formHTML = `
+                <form id="resumeForm" class="d-none">
+                    <div class="mb-3">
+                        <label for="resumeFile" class="form-label">Upload New Resume (PDF or DOCX)</label>
+                        <input type="file" class="form-control" id="resumeFile" name="resume" accept=".pdf,.doc,.docx" required>
+                    </div>
+                    <p class="text-muted">Current File: ${resumeName}</p>
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-primary" onclick="saveResume()">Upload & Save</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="toggleEdit('resume', false)">Cancel</button>
+                    </div>
+                </form>`;
+
+            container.innerHTML = `
+                <div class="section-header">
+                    <h2 class="h5 mb-0">Resume / Documents</h2>
+                    <button type="button" class="btn btn-outline-primary btn-sm edit-btn" onclick="toggleEdit('resume', true)">
+                        <i class="bi bi-cloud-upload me-1"></i> Upload
+                    </button>
                 </div>
-            </div>`;
+                <div id="resumeView">${viewHTML}</div>
+                ${formHTML}`;
+        }
 
-        toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-        const toast = new bootstrap.Toast(document.getElementById(id), { delay: 4000 });
-        toast.show();
-        document.getElementById(id).addEventListener('hidden.bs.toast', e => e.target.remove());
-    }
-    
-    // --- Stubs for unused functions (to prevent reference errors if any old code calls them) ---
-    function renderProfessionalView(item) {
-        const safeItem = sanitizeDataForSubmission(item);
-        const descriptionHtml = safeItem.description ? `<p class="mt-2 text-muted">${safeItem.description.replace(/\n/g, '<br>')}</p>` : '';
-        return `<div class="view-section"><h4>${safeItem.title} at ${safeItem.company}</h4><p class="text-secondary mb-1">${safeItem.startDate} - ${safeItem.isCurrent ? 'Present' : safeItem.endDate}</p>${descriptionHtml}</div>`;
-    }
+        async function saveResume() {
+            const fileInput = document.getElementById('resumeFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                showToast('Please select a file to upload.', 'warning');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('resume', file);
+            
+            const res = await saveData('/api/profile/upload-resume', formData);
+            if (res) {
+                showToast('Resume uploaded successfully!', 'success');
+                toggleEdit('resume', false);
+            }
+        }
+
+
+        // -----------------------------------
+        // --- 8. PASSWORD IMPLEMENTATION ---
+        // ... (Password functions remain unchanged) ...
+
+        async function updatePassword() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword.length < 6) {
+                showToast('Password must be at least 6 characters long.', 'danger');
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                showToast('New password and confirmation password do not match.', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/profile/update-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newPassword }),
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showToast(result.message, 'success');
+                    // Clear fields on success
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                } else {
+                    showToast(result.error || 'Failed to update password.', 'danger');
+                }
+            } catch (error) {
+                console.error('Password update failed:', error);
+                showToast('Server error while updating password.', 'danger');
+            }
+        }
+
+
+        // ------------------------------------
+        // --- 9. GENERIC UTILITY FUNCTIONS ---
+        // ... (Utility functions remain unchanged) ...
+
+        // Helper to remove an entry from a dynamic form section
+        function removeEntry(buttonElement) {
+            const entry = buttonElement.closest('.dynamic-section');
+            if (entry) {
+                entry.remove();
+            }
+        }
+
+        // TOAST (Replaces alert, now more secure)
+        function showToast(message, type = 'info') {
+            const toastContainer = document.querySelector('.toast-container');
+            const id = 'toast-' + Date.now();
+            // XSS Safety: The message content is passed directly into a text node (toast-body) 
+            // and doesn't contain user-generated HTML, so this is safe.
+            const toastHTML = `
+                <div id="${id}" class="toast text-white bg-${type}" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">${escapeHTML(message)}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>`;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            const toast = new bootstrap.Toast(document.getElementById(id), { delay: 4000 });
+            toast.show();
+            document.getElementById(id).addEventListener('hidden.bs.toast', e => e.target.remove());
+        }
+        
+        // --- Stubs for unused functions (to prevent reference errors if any old code calls them) ---
+        function renderProfessionalView(item) {
+            const safeItem = sanitizeDataForSubmission(item);
+            const descriptionHtml = safeItem.description ? `<p class="mt-2 text-muted">${safeItem.description.replace(/\n/g, '<br>')}</p>` : '';
+            return `<div class="view-section"><h4>${safeItem.title} at ${safeItem.company}</h4><p class="text-secondary mb-1">${safeItem.startDate} - ${safeItem.isCurrent ? 'Present' : safeItem.endDate}</p>${descriptionHtml}</div>`;
+        }
 </script>
 
 

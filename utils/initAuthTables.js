@@ -1,4 +1,5 @@
 const { query } = require("../db");
+const crypto = require('crypto');
 const sessionId = crypto.randomBytes(16).toString('hex');
 
 async function initAuthTables() {
