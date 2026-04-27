@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="scripts/auth.js"></script>
   <style>
     :root {
       --primary-color: #6a0dad;
@@ -180,6 +181,30 @@
     .btn-primary-hero:hover {
       transform: translateY(-3px);
       box-shadow: 0 15px 40px rgba(106, 13, 173, 0.25);
+    }
+
+    .btn-outline-hero {
+      padding: 12px 30px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-radius: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-outline-hero:hover {
+      background: white;
+      color: #6a0dad;
+      border-color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
 
     /* ==========================================
@@ -1233,6 +1258,9 @@
           <button class="btn-primary-hero" onclick="document.querySelector('.filters-section').scrollIntoView({behavior: 'smooth'})">
             <i class="fas fa-magnifying-glass"></i> Explore Mentors
           </button>
+          <a href="mentorsLogin.html" class="btn-outline-hero">
+            <i class="fas fa-sign-in-alt"></i> Mentor Login
+          </a>
         </div>
       </div>
     </div>
@@ -1709,21 +1737,15 @@
     // ==========================================
     async function bookMentor(mentorId, mentorName, price) {
       try {
-        const checkAuth = await fetch('/api/profile/full', {
-          credentials: 'include'
-        });
-
-        if (checkAuth.status === 401) {
+        if (!Auth.isLoggedIn()) {
           alert('Please login to book a session');
           window.location.href = 'login.html';
           return;
         }
 
         // Start booking without payment
-        const bookingRes = await fetch('/api/mentors/start-booking', {
+        const bookingRes = await Auth.fetchWithAuth('/api/mentors/start-booking', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
           body: JSON.stringify({ mentorId })
         });
 
@@ -1777,8 +1799,7 @@
     // Chat Mentor
     // ==========================================
     function chatMentor(mentorId) {
-      const token = localStorage.getItem('userToken');
-      if (!token) {
+      if (!Auth.isLoggedIn()) {
         alert('Please login to chat');
         window.location.href = 'login.html';
         return;

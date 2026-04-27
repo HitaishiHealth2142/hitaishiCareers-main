@@ -6,6 +6,7 @@
   <title>Edit Mentor Profile - WinJob</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="scripts/auth.js"></script>
   <style>
     :root {
       --primary: #6366f1;
@@ -278,7 +279,7 @@
 </head>
 <body>
   <div class="profile-container">
-    <a href="mentor-dashboard.html" class="back-link">
+    <a href="mentorsDashboard.html" class="back-link">
       <i class="fas fa-arrow-left"></i>
       Back to Dashboard
     </a>
@@ -425,7 +426,7 @@
 
       <!-- FORM ACTIONS -->
       <div class="form-actions">
-        <button type="button" class="btn-cancel" onclick="window.location.href='mentor-dashboard.html'">
+        <button type="button" class="btn-cancel" onclick="window.location.href='mentorsDashboard.html'">
           Cancel
         </button>
         <button type="submit" class="btn-save">
@@ -450,26 +451,16 @@
 
     async function loadProfile() {
       try {
-        const token = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('mentorToken='))
-          ?.split('=')[1] || localStorage.getItem('mentorToken');
-
-        if (!token) {
-          window.location.href = 'mentor-login.html';
+        if (!Auth.isLoggedIn()) {
+          window.location.href = 'mentorsLogin.html';
           return;
         }
 
-        const response = await fetch('/api/mentor/profile', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await Auth.fetchWithAuth('/api/mentor/profile');
 
         if (!response.ok) {
-          if (response.status === 401) {
-            window.location.href = 'mentor-login.html';
-          }
+          if (response.status === 401) return; // Auth utility handles redirect
+          showError('Failed to load profile');
           return;
         }
 
@@ -592,11 +583,6 @@
       saveBtn.disabled = true;
       loadingSpinner.style.display = 'inline-block';
 
-      const token = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('mentorToken='))
-        ?.split('=')[1] || localStorage.getItem('mentorToken');
-
       const formData = new FormData();
       formData.append('full_name', document.getElementById('fullName').value);
       formData.append('title', document.getElementById('title').value);
@@ -613,20 +599,27 @@
       }
 
       try {
-        const response = await fetch('/api/mentor/profile', {
+        const response = await Auth.fetchWithAuth('/api/mentor/profile', {
           method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
           body: formData,
         });
 
         const data = await response.json();
 
         if (data.success) {
+          // Update local user data if name or image changed
+          const user = Auth.getUser();
+          if (user) {
+            user.name = document.getElementById('fullName').value;
+            if (data.mentor && data.mentor.profile_image_url) {
+                user.profile_image_url = data.mentor.profile_image_url;
+            }
+            Auth.setUser(user);
+          }
+
           showSuccess('Profile updated successfully!');
           setTimeout(() => {
-            window.location.href = 'mentor-dashboard.html';
+            window.location.href = 'mentorsDashboard.html';
           }, 1500);
         } else {
           showError(data.message || 'Failed to update profile');

@@ -600,7 +600,7 @@
       <div class="page-header">
         <h1 class="page-title">Welcome back, <span id="mentorName">Mentor</span>! 👋</h1>
         <div class="header-actions">
-          <a href="mentor-profile.html" class="btn-primary-gradient">
+          <a href="mentorProfile.html" class="btn-primary-gradient">
             <i class="fas fa-edit"></i>
             Edit Profile
           </a>
@@ -845,31 +845,7 @@
         });
       });
 
-      // Logout
-      document.getElementById('logoutBtn').addEventListener('click', async () => {
-        try {
-          const token = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('mentorToken='))
-            ?.split('=')[1];
-
-          if (token) {
-            await fetch('/api/mentor/logout', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-          }
-
-          localStorage.removeItem('mentorToken');
-          localStorage.removeItem('mentor');
-          window.location.href = 'membersLogin.html';
-        } catch (error) {
-          console.error('Logout error:', error);
-          window.location.href = 'membersLogin.html';
-        }
-      });
+      // Logout - handled by sidebar button onclick="Auth.logout()"
     }
 
     // ==========================================
