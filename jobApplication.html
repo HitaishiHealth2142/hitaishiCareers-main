@@ -86,7 +86,7 @@
       if (!email) return;
 
       try {
-        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+        const res = await fetch(`https://www.winjob.in/api/profile/full?email=${encodeURIComponent(email)}`);
         if (!res.ok) return;
 
         const data = await res.json();
@@ -250,10 +250,13 @@
                 
                 try {
                     // This POST request relies on the HttpOnly cookie for authentication!
-                    const response = await fetch('/api/applicant/apply', {
+                    const token = localStorage.getItem('accessToken');
+                    const response = await fetch('https://www.winjob.in/api/applicant/apply', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
                         body: JSON.stringify({ jobId })
                     });
                     const result = await response.json();
@@ -290,8 +293,13 @@
                 // 🚨 FIX: We now rely purely on the HttpOnly cookie for authentication.
                 // Requesting the profile using 'credentials: include' will fail with 401 if not logged in.
                 const [jobRes, userRes] = await Promise.all([
-                    fetch(`/api/jobs/${jobId}`),
-                    fetch(`/api/profile/full`, { credentials: 'include' }) // Fetch profile using cookie
+                    fetch(`https://www.winjob.in/api/jobs/${jobId}`),
+                    fetch(`https://www.winjob.in/api/profile/full`, { 
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                        }
+                    })
                 ]);
 
                 if (!jobRes.ok) throw new Error('Job not found or could not be loaded.');

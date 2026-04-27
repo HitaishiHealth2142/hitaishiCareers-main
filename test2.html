@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Voice Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f4f6f9;
+    }
+
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .mic { background: #28a745; }
+    .search { background: #007bff; }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h3>Voice Search</h3>
+
+  <input type="text" id="searchInput" placeholder="Speak or type..." />
+
+  <button class="mic" onclick="startVoice()">🎤 Speak</button>
+  <button class="search" onclick="doSearch()">Search</button>
+</div>
+
+<script>
+  function startVoice() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      document.getElementById("searchInput").value = transcript;
+
+      // 🔥 AUTO SEARCH after speaking (optional)
+      doSearch();
+    };
+
+    recognition.onerror = function(event) {
+      alert("Error: " + event.error);
+    };
+
+    recognition.start();
+  }
+
+  function doSearch() {
+    const query = document.getElementById("searchInput").value;
+
+    if (!query.trim()) {
+      alert("Enter or speak something!");
+      return;
+    }
+
+    // 🔍 Replace this with your actual search logic
+    alert("Searching for: " + query);
+
+    // Example:
+    // window.location.href = "/search.html?q=" + encodeURIComponent(query);
+  }
+</script>
+
+</body>
+</html> 
