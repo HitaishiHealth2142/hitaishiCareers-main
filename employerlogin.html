@@ -145,7 +145,7 @@
       if (!email) return;
 
       try {
-        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
+        const res = await fetch(`https://www.winjob.in/api/profile/full?email=${encodeURIComponent(email)}`);
         if (!res.ok) return;
 
         const data = await res.json();
@@ -260,15 +260,23 @@
 
                 const result = await response.json();
 
-                if (response.ok && result.success && result.accessToken) {
-                    // Store tokens and user info using the move unified Auth utility
-                    Auth.setTokens(result.accessToken, result.refreshToken);
-                    Auth.setUser(result.user);
-                    
-                    window.location.href = 'employer.html';
-                } else {
+                if (response.ok && result.success && result.token) {
 
-                    showMessage(result.error || `Error ${response.status}: Login failed.`);
+                    // ✅ STORE JWT TOKEN
+                    localStorage.setItem("token", result.token);
+
+                    // ✅ OPTIONAL (useful)
+                    localStorage.setItem("role", "company");
+
+                    // ✅ OPTIONAL (store company info)
+                    localStorage.setItem("company", JSON.stringify(result.company));
+
+                    window.location.href = 'employer.html';
+                }
+                else if (response.ok && !result.success) {
+                    showMessage(result.message || 'Login failed. Please check your credentials and try again.');
+                } else {
+                    showMessage(result.message || 'An error occurred during login. Please try again later.');
                 }
             } catch (error) {
                 console.error('Login error:', error);
