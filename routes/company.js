@@ -102,13 +102,15 @@ router.post("/login", async (req, res) => {
     );
 
     res.json({
-      success: true,
-      token,
-      company: {
-        id: company.id,
-        name: company.company_name,
-        email: company.user_email
-      }
+          success: true,
+          accessToken: token,        // Changed from 'token' to 'accessToken'
+          refreshToken: null,         // Optional: Add if your utility needs it
+          company: {
+            id: company.id,
+            name: company.company_name,
+            email: company.user_email,
+            role: "company"          // Crucial for frontend logic
+          }
     });
 
   } catch (err) {

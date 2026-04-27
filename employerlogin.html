@@ -251,7 +251,6 @@
             submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Logging in...';
 
             try {
-                // The /api/company/login endpoint must be UNPROTECTED in routes/company.js
                 const response = await fetch('/api/company/login', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -260,23 +259,25 @@
 
                 const result = await response.json();
 
-                if (response.ok && result.success && result.token) {
+                if (response.ok && result.success) {
+                    // 1. Unified Token Storage (Matches your auth.js utility)
+                    // Use the property names returned by your backend (result.token or result.accessToken)
+                    const token = result.accessToken || result.token;
+                    const refresh = result.refreshToken || null;
+                    
+                    Auth.setTokens(token, refresh);
 
-                    // ✅ STORE JWT TOKEN
-                    localStorage.setItem("token", result.token);
+                    // 2. Set the User and Role (Crucial for profile access)
+                    Auth.setUser(result.company || result.user);
+                    localStorage.setItem("userRole", "company"); // Helps profile page identify context
 
-                    // ✅ OPTIONAL (useful)
-                    localStorage.setItem("role", "company");
+                    // 3. For Capacitor compatibility: Ensure 'token' is also in basic localStorage
+                    localStorage.setItem("accessToken", token); 
 
-                    // ✅ OPTIONAL (store company info)
-                    localStorage.setItem("company", JSON.stringify(result.company));
-
+                    // Redirect to Dashboard
                     window.location.href = 'employer.html';
-                }
-                else if (response.ok && !result.success) {
-                    showMessage(result.message || 'Login failed. Please check your credentials and try again.');
                 } else {
-                    showMessage(result.message || 'An error occurred during login. Please try again later.');
+                    showMessage(result.message || 'Login failed. Please check your credentials.');
                 }
             } catch (error) {
                 console.error('Login error:', error);
@@ -287,10 +288,6 @@
             }
         });
 
-        function showMessage(message) {
-            const messageContainer = document.getElementById('message-container');
-            messageContainer.innerHTML = `<div class="alert alert-danger" role="alert">${message}</div>`;
-        }
     </script>
 
 
