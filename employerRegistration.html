@@ -5,103 +5,171 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employer Registration</title>
     <link rel="icon" href="https://winjob.in/images/favicon.ico" type="image/x-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Bootstrap CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Navbar CSS -->
+    <link rel="stylesheet" href="navbar.css">
     <style>
-        body, html {
-            height: 100%;
-            background-color: #f8f9fa;
+        :root {
+            --primary-color: #6a0dad;
+            --secondary-color: #d653c9;
+            --accent-color: #ff6b00;
         }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf2 100%);
+            min-height: 100vh;
+            padding-top: 80px; /* Space for fixed navbar */
+        }
+
         .container-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100%;
-            padding: 2rem 0;
+            padding: 3rem 0;
         }
+
         .card {
-            border-radius: 0.75rem;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important;
+            overflow: hidden;
         }
+
+        .card-header-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2.5rem;
+            text-align: center;
+            color: white;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(106, 13, 173, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(106, 13, 173, 0.3);
+            opacity: 0.95;
+        }
+
         .invalid-feedback {
-            display: none;
-            width: 100%;
-            margin-top: .25rem;
-            font-size: .875em;
-            color: #dc3545;
-        }
-        .is-invalid ~ .invalid-feedback,
-        .is-invalid ~ .form-text + .invalid-feedback {
-            display: block;
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body>
+    <!-- Navbar Container -->
+    <div id="navbar-container"></div>
 
     <div class="container-wrapper">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-6">
+                <div class="col-md-10 col-lg-9 col-xl-8">
                     <div class="card shadow-sm border-0">
+                        <div class="card-header-gradient">
+                            <h2 class="fw-bold mb-0">Create Your Employer Account</h2>
+                            <p class="mb-0 mt-2 opacity-75">Join thousands of companies hiring on Winjob</p>
+                        </div>
                         <div class="card-body p-4 p-md-5">
-                            <h2 class="card-title text-center fw-bold mb-4">Create Your Employer Account</h2>
                             <!-- Form for employer registration -->
                             <form id="register-form" novalidate>
                                 <!-- Container for success/error messages -->
                                 <div id="message-container"></div>
 
-                                <div class="mb-3">
-                                    <label for="companyName" class="form-label">Company Name</label>
-                                    <input type="text" id="companyName" name="company_name" class="form-control" required>
-                                    <div class="invalid-feedback">Please enter the company name.</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Company Email</label>
-                                    <input type="email" id="email" name="email" class="form-control" required>
-                                    <div class="invalid-feedback">Please enter a valid email address.</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" id="password" name="password" class="form-control" required aria-describedby="passwordHelpBlock">
-                                     <div id="passwordHelpBlock" class="form-text">
-                                        Use at least 8 characters with uppercase, lowercase, number & special (@$!%*?&)..
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="companyName" class="form-label">Company Name</label>
+                                        <input type="text" id="companyName" name="company_name" class="form-control" placeholder="e.g. Acme Corp" required>
+                                        <div class="invalid-feedback">Please enter the company name.</div>
                                     </div>
-                                    <div class="invalid-feedback">Your password does not meet the requirements.</div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="email" class="form-label">Company Email</label>
+                                        <input type="email" id="email" name="email" class="form-control" placeholder="hr@company.com" required>
+                                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="website" class="form-label">Company Website <span class="text-muted">(Optional)</span></label>
-                                    <input type="url" id="website" name="website" class="form-control" placeholder="https://example.com">
-                                    <div class="invalid-feedback">Please enter a valid URL.</div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" id="password" name="password" class="form-control" required aria-describedby="passwordHelpBlock">
+                                        <div id="passwordHelpBlock" class="form-text small opacity-75">
+                                            Min 8 chars, uppercase, lowercase, number & special char.
+                                        </div>
+                                        <div class="invalid-feedback">Password requirements not met.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="website" class="form-label">Website <span class="text-muted fw-normal">(Optional)</span></label>
+                                        <input type="url" id="website" name="website" class="form-control" placeholder="https://example.com">
+                                        <div class="invalid-feedback">Please enter a valid URL.</div>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="logoFile" class="form-label">Company Logo <span class="text-muted">(Optional, max 2MB)</span></label>
+
+                                <div class="mb-4">
+                                    <label for="logoFile" class="form-label">Company Logo <span class="text-muted fw-normal">(Optional, max 2MB)</span></label>
                                     <input type="file" id="logoFile" name="logo" class="form-control" accept="image/png, image/jpeg, image/gif">
                                     <div class="invalid-feedback">Please select a valid image file.</div>
                                 </div>
-                                 <div class="mb-3">
-                                    <label for="contactPerson" class="form-label">Contact Person</label>
-                                    <input type="text" id="contactPerson" name="contact_person" class="form-control" required>
-                                    <div class="invalid-feedback">Please enter a contact person's name.</div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="contactPerson" class="form-label">Contact Person</label>
+                                        <input type="text" id="contactPerson" name="contact_person" class="form-control" placeholder="Full Name" required>
+                                        <div class="invalid-feedback">Please enter contact name.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="contactPhone" class="form-label">Contact Phone</label>
+                                        <input type="tel" id="contactPhone" name="contact_phone" class="form-control" placeholder="+91 00000 00000" required>
+                                        <div class="invalid-feedback">Please enter a valid phone number.</div>
+                                    </div>
                                 </div>
-                                 <div class="mb-3">
-                                    <label for="contactPhone" class="form-label">Contact Phone</label>
-                                    <input type="tel" id="contactPhone" name="contact_phone" class="form-control" required>
-                                    <div class="invalid-feedback">Please enter a valid phone number.</div>
-                                </div>
-                                <div class="mb-3">
+
+                                <div class="mb-4">
                                     <label for="address" class="form-label">Address</label>
-                                    <textarea id="address" name="address" rows="2" class="form-control" required></textarea>
+                                    <textarea id="address" name="address" rows="2" class="form-control" placeholder="Company physical address" required></textarea>
                                     <div class="invalid-feedback">Please enter your company address.</div>
                                 </div>
-                                <div class="mb-3">
+
+                                <div class="mb-4">
                                     <label for="description" class="form-label">Company Description</label>
-                                    <textarea id="description" name="description" rows="3" class="form-control"></textarea>
+                                    <textarea id="description" name="description" rows="3" class="form-control" placeholder="Briefly describe your company..."></textarea>
                                 </div>
+
                                 <div class="d-grid mt-4">
-                                     <button type="submit" id="submit-button" class="btn btn-primary btn-lg">Register</button>
+                                     <button type="submit" id="submit-button" class="btn btn-primary btn-lg shadow-sm">Register My Company</button>
                                 </div>
                             </form>
                             <p class="text-center text-muted mt-4 mb-0">
-                                Already have an account? <a href="employerlogin.html">Login here</a>
+                                Already have an account? <a href="employerlogin.html" class="text-primary fw-bold text-decoration-none">Login here</a>
                             </p>
                         </div>
                     </div>
@@ -111,7 +179,34 @@
     </div>
 
     <!-- Bootstrap JS Bundle CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Navbar Loading Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const navbarResponse = await fetch("navbar.html");
+                const navbarHtml = await navbarResponse.text();
+                document.getElementById("navbar-container").innerHTML = navbarHtml;
+
+                // Load Google Translate script dynamically if needed
+                const script = document.createElement("script");
+                script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+                script.async = true;
+                document.body.appendChild(script);
+            } catch (err) {
+                console.error("Error loading navbar:", err);
+            }
+        });
+
+        window.googleTranslateElementInit = function () {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,hi,te,ta,fr,de,es,ja,zh-CN',
+                autoDisplay: false
+            }, 'google_translate_element');
+        };
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -247,16 +342,16 @@
     .scroll-top-btn {
         position: fixed;
         bottom: 50px;
-        right: 100px;
+        right: 30px;
         width: 50px;
         height: 50px;
         border: none;
         border-radius: 50%;
-        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
         color: white;
         font-size: 18px;
         cursor: pointer;
-        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+        box-shadow: 0 8px 20px rgba(106, 13, 173, 0.3);
         display: none;
         z-index: 9999;
         transition: all 0.3s ease;
@@ -264,7 +359,7 @@
 
     .scroll-top-btn:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 25px rgba(99, 102, 241, 0.45);
+        box-shadow: 0 12px 25px rgba(106, 13, 173, 0.45);
     }
 </style>
 <script>
