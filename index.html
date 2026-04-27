@@ -540,8 +540,8 @@
         const navbarHtml = await navbarResponse.text();
         document.getElementById("navbar-container").innerHTML = navbarHtml;
 
-        // Load user profile photo
-        await loadNavbarProfile();
+        // Load user profile photo (Now handled in navbar.html)
+        // await loadNavbarProfile();
 
         // Load Google Translate script dynamically
         loadGoogleTranslateScript();
@@ -554,25 +554,7 @@
       }
     });
 
-    // Load user profile information into navbar
-    async function loadNavbarProfile() {
-      const email = sessionStorage.getItem("email");
-      if (!email) return;
-
-      try {
-        const res = await fetch(`/api/profile/full?email=${encodeURIComponent(email)}`);
-        if (!res.ok) return;
-
-        const data = await res.json();
-        const profilePhoto = data.personalDetails?.profilePhoto;
-
-        if (profilePhoto && typeof window.updateNavbarProfile === 'function') {
-          window.updateNavbarProfile(profilePhoto);
-        }
-      } catch (err) {
-        console.warn("Profile loading skipped:", err.message);
-      }
-    }
+    // Profile loading is now handled centrally in navbar.html
 
     // Load Google Translate script dynamically
     function loadGoogleTranslateScript() {

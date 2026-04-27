@@ -1377,6 +1377,28 @@
         // EXPOSE PROFILE UPDATE FUNCTION GLOBALLY
         // ============================================
         window.updateNavbarProfile = updateNavbarProfile;
+
+        // ============================================
+        // AUTO-LOAD PROFILE ON DOM CONTENT LOADED
+        // ============================================
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+                try {
+                    // Use fetchWithAuth to get profile data
+                    const res = await Auth.fetchWithAuth("/api/profile/full");
+                    if (res.ok) {
+                        const data = await res.json();
+                        // Handle both user and company roles
+                        const profilePhoto = data.personalDetails?.profilePhoto || data.company?.logo_url;
+                        if (profilePhoto) {
+                            updateNavbarProfile(profilePhoto);
+                        }
+                    }
+                } catch (err) {
+                    console.warn("Navbar profile auto-load failed:", err);
+                }
+            }
+        });
     </script>
 
     <!-- Hidden Google Translate Container (for API integration) -->

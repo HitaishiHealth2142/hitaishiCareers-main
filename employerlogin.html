@@ -260,19 +260,12 @@
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    // 1. Unified Token Storage (Matches your auth.js utility)
-                    // Use the property names returned by your backend (result.token or result.accessToken)
-                    const token = result.accessToken || result.token;
-                    const refresh = result.refreshToken || null;
+                    // 1. Unified Token & User Storage (Using Auth utility)
+                    Auth.setTokens(result.accessToken, result.refreshToken);
+                    Auth.setUser(result.user);
                     
-                    Auth.setTokens(token, refresh);
-
-                    // 2. Set the User and Role (Crucial for profile access)
-                    Auth.setUser(result.company || result.user);
-                    localStorage.setItem("userRole", "company"); // Helps profile page identify context
-
-                    // 3. For Capacitor compatibility: Ensure 'token' is also in basic localStorage
-                    localStorage.setItem("accessToken", token); 
+                    // Optional: Still keep userRole if other pages depend on it specifically
+                    localStorage.setItem("userRole", "company"); 
 
                     // Redirect to Dashboard
                     window.location.href = 'employer.html';

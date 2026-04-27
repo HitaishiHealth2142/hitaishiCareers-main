@@ -90,28 +90,13 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
-    // ✅ JWT Token
-    const token = jwt.sign(
-      {
-        id: company.id,
-        email: company.user_email,
-        role: "company"
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.json({
-          success: true,
-          accessToken: token,        // Changed from 'token' to 'accessToken'
-          refreshToken: null,         // Optional: Add if your utility needs it
-          company: {
-            id: company.id,
-            name: company.company_name,
-            email: company.user_email,
-            role: "company"          // Crucial for frontend logic
-          }
-    });
+    // ✅ Unified JWT Token & Response using performLogin
+    const { performLogin } = require('../controllers/authController');
+    return await performLogin({
+      id: company.id,
+      email: company.user_email,
+      company_name: company.company_name
+    }, "company", req, res);
 
   } catch (err) {
     console.error(err);

@@ -806,10 +806,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', async function() {
 
-    // ✅ CHECK LOGIN FIRST (ADD THIS)
-        const token = localStorage.getItem('accessToken');
-
-        if (!token) {
+    // ✅ CHECK LOGIN FIRST
+        if (!Auth.isLoggedIn()) {
             window.location.href = '/login.html';
             return;
         }
@@ -1802,11 +1800,10 @@
             }
 
             try {
-                const response = await fetch('/api/profile/update-password', {
+                const response = await Auth.fetchWithAuth('/api/profile/update-password', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ newPassword }),
-                    credentials: 'include'
+                    body: JSON.stringify({ newPassword })
                 });
 
                 const result = await response.json();

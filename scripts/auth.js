@@ -48,6 +48,8 @@ const Auth = {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
+        localStorage.removeItem('token'); // Cleanup legacy key
+        localStorage.removeItem('userRole'); // Cleanup role key
         sessionStorage.removeItem('email');
         sessionStorage.removeItem('authToken'); // Cleanup old keys
         localStorage.removeItem('mentorToken'); // Cleanup old keys

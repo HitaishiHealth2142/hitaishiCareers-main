@@ -161,7 +161,7 @@
         // wait DOM render after injection
         requestAnimationFrame(() => {
         initializeNavbarBootstrap();
-        loadNavbarProfile();
+        // loadNavbarProfile(); // Now handled in navbar.html
         });
 
     } catch (error) {
@@ -185,26 +185,7 @@
     });
     }
 
-    async function loadNavbarProfile() {
-    try {
-        const res = await fetch("/api/profile/full", {
-        credentials: "include"
-        });
-
-        if (!res.ok) return;
-
-        const data = await res.json();
-        const profilePhoto = data.personalDetails?.profilePhoto;
-
-        if (typeof window.updateNavbarProfile === "function") {
-        window.updateNavbarProfile(
-            profilePhoto || "https://winjob.in/images/default-avatar.png"
-        );
-        }
-    } catch (err) {
-        console.warn("Navbar profile image failed:", err.message);
-    }
-    }
+    // loadNavbarProfile() is now handled centrally in navbar.html
   </script>
     
 <main class="container" style="padding-top: 80px;">

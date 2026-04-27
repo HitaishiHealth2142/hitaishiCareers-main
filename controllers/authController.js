@@ -252,3 +252,10 @@ exports.googleLogin = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error during Google authentication.' });
     }
 };
+
+// Exporting utilities for reuse
+module.exports = {
+    ...exports,
+    generateTokens,
+    performLogin
+};
